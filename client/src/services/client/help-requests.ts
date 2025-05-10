@@ -57,7 +57,6 @@ return useMutation({
     },
     onSuccess: (data) => {
         if (data?.data) {
-            toast.success("Help request submitted successfully");
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.get_help_requests] });
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.get_help_request_stats] });
         } else {
