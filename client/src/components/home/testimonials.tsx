@@ -59,7 +59,7 @@ const PatternBackground = () => (
 const TestimonialCard = ({ testimonial, isActive }: { testimonial: Testimonial, isActive: boolean }) => {
   return (
     <motion.div
-      className={`bg-white rounded-2xl p-8 shadow-xl border border-gray-100 transition-all duration-500 ${isActive ? 'scale-100 opacity-100 z-10' : 'scale-95 opacity-50 z-0'}`}
+      className={`bg-white rounded-2xl p-3.5 md:p-8 shadow-xl border border-gray-100 transition-all duration-500 ${isActive ? 'scale-100 opacity-100 z-10' : 'scale-95 opacity-50 z-0'}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isActive ? 1 : 0.5, y: 0, scale: isActive ? 1 : 0.95 }}
       transition={{ duration: 0.5 }}
@@ -73,7 +73,7 @@ const TestimonialCard = ({ testimonial, isActive }: { testimonial: Testimonial, 
 
       {/* Testimonial text */}
       <div className="mb-6">
-        <p className="text-gray-700 leading-relaxed text-lg">{testimonial.quote}</p>
+        <p className="text-gray-700 leading-relaxed text-base md:text-lg">{testimonial.quote}</p>
       </div>
 
       {/* Rating stars */}
@@ -135,7 +135,7 @@ const Testimonials = ({ testimonials }: Props) => {
       <div className="absolute top-0 right-0 w-1/2 h-1/3 bg-gradient-to-b from-primary/5 to-transparent blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-gradient-to-t from-primary/5 to-transparent blur-3xl pointer-events-none"></div>
       
-      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+      <div className="container max-w-7xl mx-auto px-2 md:px-4 relative z-10">
         <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
           {/* Left section - Title and CTA */}
           <div className="lg:w-5/12 flex flex-col justify-center">
@@ -234,21 +234,24 @@ const Testimonials = ({ testimonials }: Props) => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative h-[480px] md:h-[420px]">
-                <AnimatePresence mode="wait">
-                  {testimonials?.map((testimonial, index) => (
-                    <div 
-                      key={testimonial.id}
-                      className={`absolute inset-0 transition-all duration-500 ${index === activeIndex ? 'z-10' : 'z-0'}`}
-                    >
-                      <TestimonialCard 
-                        testimonial={testimonial} 
-                        isActive={index === activeIndex} 
-                      />
-                    </div>
-                  ))}
-                </AnimatePresence>
-              </div>
+                <div className="relative w-full overflow-visible min-h-[350px]">
+                  <AnimatePresence mode="wait">
+                    {testimonials?.map((testimonial, index) => (
+                      <motion.div 
+                        key={testimonial.id}
+                        className={`${index === activeIndex ? 'relative z-10' : 'absolute inset-0 z-0'} transition-all duration-500`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: index === activeIndex ? 1 : 0 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <TestimonialCard 
+                          testimonial={testimonial} 
+                          isActive={index === activeIndex} 
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
               
               {/* Navigation buttons */}
               <div className="flex justify-center mt-8 space-x-2">

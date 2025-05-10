@@ -4,7 +4,7 @@ import { Metadata } from 'next'
 import React, { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Login | LawStack',
+  title: 'Login | Clinic',
   description: 'Login to your account. Don\'t have an account? Register.',
   openGraph: {
     images: [

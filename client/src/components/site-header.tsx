@@ -52,7 +52,7 @@ export function SiteHeader() {
               src="/images/logo/logo.png"
               alt="ABU Law Clinic Logo"
               width={50}
-              height={50}
+              height={30}
               className=""
             />
           </Link>
@@ -76,13 +76,18 @@ export function SiteHeader() {
             >
               <Link 
                 href={item.href} 
-                className={`text-sm font-medium transition-all duration-200 hover:scale-110 inline-block ${
-                  useDarkText
-                    ? 'text-foreground hover:text-primary' 
-                    : 'text-white hover:text-white text-shadow-sm hover:text-glow'
+                className={`text-sm font-medium transition-all duration-200 hover:scale-110 inline-block relative ${
+                  pathname === item.href || pathname.startsWith(item.href + "/")
+                    ? useDarkText ? 'text-primary' : 'text-white text-glow'
+                    : useDarkText
+                      ? 'text-foreground hover:text-primary' 
+                      : 'text-white hover:text-white text-shadow-sm hover:text-glow'
                 }`}
               >
                 {item.name}
+                {(pathname === item.href || pathname.startsWith(item.href + "/")) && (
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-full bg-primary rounded-full"></span>
+                )}
               </Link>
             </motion.div>
           ))}
@@ -91,7 +96,7 @@ export function SiteHeader() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.8 }}
           >
-            <Link passHref href="/get-help" className="">
+            <Link passHref href="/get-help">
               <Button className="rounded-xl">
                 Get help
                 <LucideHand />
@@ -99,6 +104,7 @@ export function SiteHeader() {
             </Link>
           </motion.div>
         </nav>
+
       </div>
     </motion.header>
   )

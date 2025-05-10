@@ -45,13 +45,14 @@ const Publications = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
+            className="hidden md:block"
           >
             <Button 
               variant="default" 
-              className="bg-primary hover:bg-primary/90 rounded-full group px-6"
+              className="bg-primary hover:bg-primary/90 rounded-full group px-6 "
               asChild
             >
-              <Link href="/blog" className="flex items-center gap-2">
+              <Link href="/publications" className="flex items-center gap-2">
                 SEE ALL
                 <motion.div
                   className="transition-transform"

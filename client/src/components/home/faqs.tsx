@@ -8,27 +8,27 @@ import { Button } from '../ui/button'
 
 const faqData = [
   {
-    icon: <HelpingHand className="h-5 w-5" />,
+    icon: <HelpingHand className="md:h-5 md:w-5 h-3.5 w-3.5" />,
     question: "Who can receive assistance from the Pro Bono Law Clinic?",
     answer: "Our Law Clinic serves individuals who cannot afford traditional legal representation. To qualify for assistance, your legal issue must fall within our practice areas including family law, tenant disputes, small claims, consumer issues, and civil rights cases. Priority is given to university community members and underserved populations in the surrounding area."
   },
   {
-    icon: <ScrollText className="h-5 w-5" />,
+    icon: <ScrollText className="md:h-5 md:w-5 h-3.5 w-3.5" />,
     question: "How do I apply for legal help?",
     answer: "Start by completing our intake form online or in person at the clinic. Our team will review your case to determine eligibility within our practice areas. If eligible, we'll schedule an initial consultation to gather more details. The process typically takes 5-7 business days, though urgent matters may receive expedited review."
   },
   {
-    icon: <ShieldCheck className="h-5 w-5" />,
+    icon: <ShieldCheck className="md:h-5 md:w-5 h-3.5 w-3.5" />,
     question: "Are your services completely free?",
     answer: "Yes, all legal services provided by ABU Law Clinic are completely free of charge. We operate on a pro bono basis, meaning you won't pay for legal counsel or representation. While external costs like court filing fees may still apply, we often help identify fee waivers or reduced-cost options for qualifying individuals."
   },
   {
-    icon: <BookOpen className="h-5 w-5" />,
+    icon: <BookOpen className="md:h-5 md:w-5 h-3.5 w-3.5" />,
     question: "Who provides the legal services?",
     answer: "Services are delivered by supervised law students in their final years of legal education, working under licensed attorneys who serve as faculty or volunteer practitioners. This teaching-service model ensures quality legal representation while providing valuable practical experience for future lawyers committed to access to justice."
   },
   {
-    icon: <FileQuestion className="h-5 w-5" />,
+    icon: <FileQuestion className="md:h-5 md:w-5 h-3.5 w-3.5" />,
     question: "How can I volunteer with the clinic?",
     answer: "We welcome volunteers in multiple roles. Law students can join as part of their coursework, attorneys can supervise or consult, and professionals can assist with outreach and specialized expertise. Please contact our clinic coordinator with your qualifications and interests, or visit our website for current volunteer opportunities."
   }
@@ -84,7 +84,7 @@ const FaqItem = ({ icon, question, answer, isOpen, toggleOpen, index }: FaqItemP
           <div className="p-2 rounded-full bg-primary/20 text-primary">
             {icon}
           </div>
-          <h3 className="text-lg font-medium text-white">{question}</h3>
+          <h3 className="text-base md:text-lg font-medium text-white">{question}</h3>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0, backgroundColor: isOpen ? "rgba(var(--primary), 0.2)" : "transparent" }}
@@ -104,7 +104,7 @@ const FaqItem = ({ icon, question, answer, isOpen, toggleOpen, index }: FaqItemP
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-6 pt-2 text-white/80 leading-relaxed">
+            <div className="px-6 text-sm md:text-base pb-6 pt-2 text-white/80 leading-relaxed">
               {answer}
             </div>
           </motion.div>
@@ -191,7 +191,7 @@ const FAQs = () => {
   };
 
   return (
-    <section className="relative py-20 bg-[#0a0c10] text-white overflow-hidden">
+    <section className="relative py-24 bg-[#0a0c10] text-white overflow-hidden">
       {/* Background elements */}
       <GradientBgSVG />
       <FloatingParticles />
@@ -200,7 +200,7 @@ const FAQs = () => {
         <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-primary/10 to-transparent blur-3xl"></div>
       </div>
       
-      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+      <div className="container max-w-7xl mx-auto px-2 md:px-4 relative z-10">
         <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
           {/* Left section - Title and CTA */}
           <div className="lg:w-5/12 flex flex-col justify-center">
@@ -277,7 +277,7 @@ const FAQs = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="bg-white/5 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-2xl border border-white/10 relative overflow-hidden"
+              className="bg-white/5 backdrop-blur-md rounded-2xl p-3.5 md:p-8 shadow-2xl border border-white/10 relative overflow-hidden"
             >
               {/* Shiny accent elements */}
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
@@ -302,7 +302,7 @@ const FAQs = () => {
                 transition={{ delay: 1.5 }}
               >
                 <p className="text-center text-white/60 text-sm flex items-center gap-1.5">
-                  <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span> 
+                  <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse text-xs md:text-base"></span> 
                   Our legal team is constantly updating these resources for you
                 </p>
               </motion.div>

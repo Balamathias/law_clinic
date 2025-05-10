@@ -199,13 +199,13 @@ export function Footer({ className, variant = "dark" }: FooterProps) {
           {footerLinks.map((group, groupIndex) => (
             <motion.div 
               key={group.title}
-              className="lg:col-span-1"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 + (groupIndex * 0.1) }}
+              className="max-md:p-2.5 lg:col-span-1"
             >
-              <h3 className="font-semibold text-lg mb-5 text-white">
+              <h3 className="font-semibold text-lg mb-5 text-white text-left">
                 {group.title}
               </h3>
               <ul className="space-y-3">

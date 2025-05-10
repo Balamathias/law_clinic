@@ -152,21 +152,21 @@ const Banner = () => {
           
           {/* Right content - Image gallery */}
           <motion.div 
-            className="lg:w-1/2 relative order-1 lg:order-2"
+            className="lg:w-1/2 relative order-1 lg:order-2 hidden md:block"
             style={{ opacity }}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="relative h-[400px] md:h-[500px] lg:h-[550px] transform -rotate-1">
+            <div className="relative h-[350px] sm:h-[400px] md:h-[500px] lg:h-[550px] transform -rotate-1 mx-4 sm:mx-0">
               {/* Image 1 */}
               <motion.div 
-                className="absolute top-0 left-0 w-[75%] h-[70%] overflow-hidden rounded-xl shadow-2xl border border-white/10 z-10"
+                className="absolute top-[5%] sm:top-0 left-[5%] sm:left-0 w-[65%] sm:w-[75%] h-[60%] sm:h-[70%] overflow-hidden rounded-xl shadow-2xl border border-white/10 z-10"
                 style={{ y: y1, rotate: rotateLeft, scale }}
               >
                 <div 
                   className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url('${bannerImages[0]}')` }}
+                  style={{ backgroundImage: `url('${bannerImages[0]}')`, backgroundPosition: 'center center' }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 </div>
@@ -179,7 +179,7 @@ const Banner = () => {
               
               {/* Image 2 */}
               <motion.div 
-                className="absolute bottom-0 right-0 w-[70%] h-[60%] overflow-hidden rounded-xl shadow-2xl border border-white/10"
+                className="absolute bottom-[5%] sm:bottom-0 right-[5%] sm:right-0 w-[60%] sm:w-[70%] h-[50%] sm:h-[60%] overflow-hidden rounded-xl shadow-2xl border border-white/10"
                 style={{ y: y2, rotate: rotateRight, scale }}
               >
                 <div 
@@ -197,7 +197,7 @@ const Banner = () => {
               
               {/* Image 3 */}
               <motion.div 
-                className="absolute top-[25%] right-[10%] w-[50%] h-[45%] overflow-hidden rounded-xl shadow-2xl border border-white/10 z-20"
+                className="absolute top-[25%] right-[15%] sm:right-[10%] w-[40%] sm:w-[50%] h-[35%] sm:h-[45%] overflow-hidden rounded-xl shadow-2xl border border-white/10 z-20"
                 style={{ y: y3, scale }}
               >
                 <div 
@@ -215,7 +215,7 @@ const Banner = () => {
               
               {/* Decorative elements */}
               <motion.div 
-                className="absolute -bottom-8 -left-8 w-32 h-32 border-2 border-primary/30 rounded-full"
+                className="absolute -bottom-8 -left-8 w-20 sm:w-32 h-20 sm:h-32 border-2 border-primary/30 rounded-full hidden sm:block"
                 animate={{
                   scale: [1, 1.2, 1],
                   borderColor: ["rgba(22, 163, 74, 0.3)", "rgba(22, 163, 74, 0.15)", "rgba(22, 163, 74, 0.3)"]
@@ -224,7 +224,7 @@ const Banner = () => {
               />
               
               {/* Animated dots */}
-              <div className="absolute -right-2 top-1/2 transform -translate-y-1/2">
+              <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 hidden sm:block">
                 <div className="space-y-2">
                   {[1, 2, 3, 4, 5].map(i => (
                     <motion.div
