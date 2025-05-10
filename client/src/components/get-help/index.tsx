@@ -90,8 +90,10 @@ const GetHelp = () => {
   });
 
   const onSubmit = async (data: HelpFormValues) => {
+
+  const _data = { ...data, legal_issue_type: data.legal_issue_type.toLowerCase() } as CreateHelpRequestPayload
     
-  createRequest(data as CreateHelpRequestPayload, {
+  createRequest(_data, {
       onSuccess: (response) => {
         if (response?.data) {
           setSubmitted(true)

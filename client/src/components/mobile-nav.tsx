@@ -12,7 +12,7 @@ import Image from "next/image"
 const navigation = [
   { name: "Home", href: "/", icon: <Home className="h-5 w-5" /> },
   { name: "About", href: "/about", icon: <Info className="h-5 w-5" /> },
-  { name: "Events", href: "/events", icon: <CalendarDays className="h-5 w-5" /> },
+  { name: "Events", href: "#events", icon: <CalendarDays className="h-5 w-5" /> },
   { name: "Excos", href: "/excos", icon: <Users className="h-5 w-5" /> },
   { name: "Sponsors", href: "/sponsors", icon: <Landmark className="h-5 w-5" /> },
   { name: "Publications", href: "/publications", icon: <BookOpen className="h-5 w-5" /> },

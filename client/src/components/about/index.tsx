@@ -102,7 +102,7 @@ const About = () => {
 
       {/* Mission and Visions Section */}
       <section className="py-20 bg-muted/30">
-        <div className="container px-4 md:px-6">
+        <div className="container px-2 md:px-6">
           <motion.div 
             className="grid md:grid-cols-2 gap-12 items-start"
             initial={{ opacity: 0, y: 40 }}
@@ -114,7 +114,7 @@ const About = () => {
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-3xl"></div>
               <div className="relative bg-card rounded-xl shadow-lg overflow-hidden border border-border/50">
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary to-primary/30"></div>
-                <div className="p-8">
+                <div className="p-3.5 md:p-8">
                   <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                     <Scale className="w-7 h-7 text-primary" />
                   </div>
@@ -169,110 +169,110 @@ const About = () => {
       </section>
 
       {/* History Section */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container px-4 md:px-6">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-4xl mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
+        className="max-w-4xl mx-auto"
           >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">OUR HISTORY</h2>
-              <div className="h-1 w-20 bg-primary mx-auto rounded-full"></div>
-            </div>
-            
-            <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2"></div>
-              
-              {/* Timeline entries */}
-              <div className="space-y-12">
-                <motion.div 
-                  className="relative grid md:grid-cols-2 gap-8 items-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="md:text-right md:pr-12">
-                    <h3 className="text-xl font-bold text-primary mb-2">2005</h3>
-                    <p className="text-muted-foreground">The Ahmadu Bello University Law Clinic was established, marking a significant milestone in practical legal education at Ahmadu Bello University.</p>
-                  </div>
-                  <div className="md:pl-12">
-                    <div className="absolute left-[-9px] md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  className="relative grid md:grid-cols-2 gap-8 items-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <div className="md:order-2 md:text-left md:pl-12">
-                    <h3 className="text-xl font-bold text-primary mb-2">Initial Growth</h3>
-                    <p className="text-muted-foreground">Our founders recognized that access to justice is a fundamental right and aimed to create a platform for law students to gain practical experience while providing free legal support to those in need.</p>
-                  </div>
-                  <div className="md:order-1 md:pr-12">
-                    <div className="absolute left-[-9px] md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  className="relative grid md:grid-cols-2 gap-8 items-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                  <div className="md:text-right md:pr-12">
-                    <h3 className="text-xl font-bold text-primary mb-2">Service Expansion</h3>
-                    <p className="text-muted-foreground">Initially operating with a small team of dedicated faculty and enthusiastic students, we began by offering basic legal advice to the local community. Over the years, we've expanded our services to include full representation in court, mediation, and community legal education programs.</p>
-                  </div>
-                  <div className="md:pl-12">
-                    <div className="absolute left-[-9px] md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  className="relative grid md:grid-cols-2 gap-8 items-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <div className="md:order-2 md:text-left md:pl-12">
-                    <h3 className="text-xl font-bold text-primary mb-2">Present Day</h3>
-                    <p className="text-muted-foreground">Our approach combines legal assistance with education, empowering clients to understand their rights and navigate the legal system effectively. We've also organized workshops and outreach programs to inform and empower community members about their legal rights through partnerships with local organizations and legal professionals.</p>
-                  </div>
-                  <div className="md:order-1 md:pr-12">
-                    <div className="absolute left-[-9px] md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
+        <div className="text-center mb-10 md:mb-12">
+          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">OUR HISTORY</h2>
+          <div className="h-1 w-20 bg-primary mx-auto rounded-full"></div>
+        </div>
+        
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2"></div>
+          
+          {/* Timeline entries */}
+          <div className="space-y-8 md:space-y-12">
+            <motion.div 
+          className="relative grid md:grid-cols-2 gap-4 md:gap-8 items-start md:items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+            >
+          <div className="pl-12 md:pl-0 md:text-right md:pr-12">
+            <h3 className="text-lg md:text-xl font-bold text-primary mb-2">2005</h3>
+            <p className="text-sm md:text-base text-muted-foreground">The Ahmadu Bello University Law Clinic was established, marking a significant milestone in practical legal education at Ahmadu Bello University.</p>
+          </div>
+          <div className="md:pl-12">
+            <div className="absolute left-4 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
+          </div>
+            </motion.div>
             
             <motion.div 
-              className="mt-16 text-center"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.5 }}
+          className="relative grid md:grid-cols-2 gap-4 md:gap-8 items-start md:items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <p className="text-lg font-medium">
-                Today, the ABU Law Clinic stands as a testament to innovation in legal education and a beacon of hope for those seeking justice in our community. As we look to the future, we remain committed to our founding principles of practical learning and public service, continually adapting to meet the evolving legal needs of our society, we strive for a more equitable legal system for all, upholding our commitment to social justice.
-              </p>
+          <div className="order-2 pl-12 md:order-2 md:pl-12 md:text-left">
+            <h3 className="text-lg md:text-xl font-bold text-primary mb-2">Initial Growth</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Our founders recognized that access to justice is a fundamental right and aimed to create a platform for law students to gain practical experience while providing free legal support to those in need.</p>
+          </div>
+          <div className="order-1 md:order-1 md:pr-12">
+            <div className="absolute left-4 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
+          </div>
             </motion.div>
+            
+            <motion.div 
+          className="relative grid md:grid-cols-2 gap-4 md:gap-8 items-start md:items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+            >
+          <div className="pl-12 md:pl-0 md:text-right md:pr-12">
+            <h3 className="text-lg md:text-xl font-bold text-primary mb-2">Service Expansion</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Initially operating with a small team of dedicated faculty and enthusiastic students, we began by offering basic legal advice to the local community. Over the years, we've expanded our services to include full representation in court, mediation, and community legal education programs.</p>
+          </div>
+          <div className="md:pl-12">
+            <div className="absolute left-4 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
+          </div>
+            </motion.div>
+            
+            <motion.div 
+          className="relative grid md:grid-cols-2 gap-4 md:gap-8 items-start md:items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+            >
+          <div className="order-2 pl-12 md:order-2 md:pl-12 md:text-left">
+            <h3 className="text-lg md:text-xl font-bold text-primary mb-2">Present Day</h3>
+            <p className="text-sm md:text-base text-muted-foreground">Our approach combines legal assistance with education, empowering clients to understand their rights and navigate the legal system effectively. We've also organized workshops and outreach programs to inform and empower community members about their legal rights through partnerships with local organizations and legal professionals.</p>
+          </div>
+          <div className="order-1 md:order-1 md:pr-12">
+            <div className="absolute left-4 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary md:-translate-x-1/2"></div>
+          </div>
+            </motion.div>
+          </div>
+        </div>
+        
+        <motion.div 
+          className="mt-12 md:mt-16 text-center px-4"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+        >
+          <p className="text-base md:text-lg font-medium">
+            Today, the ABU Law Clinic stands as a testament to innovation in legal education and a beacon of hope for those seeking justice in our community. As we look to the future, we remain committed to our founding principles of practical learning and public service, continually adapting to meet the evolving legal needs of our society, we strive for a more equitable legal system for all, upholding our commitment to social justice.
+          </p>
+        </motion.div>
           </motion.div>
         </div>
       </section>
       
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-br from-primary/10 to-primary/5">
-        <div className="container px-4 md:px-6">
+        <div className="container px-2 md:px-4 md:px-6">
           <motion.div 
             className="max-w-3xl mx-auto text-center"
             initial={{ opacity: 0, y: 20 }}

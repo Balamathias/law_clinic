@@ -62,7 +62,7 @@ export function SiteHeader() {
           {[
             { name: "Home", href: "/" },
             { name: "About", href: "/about" },
-            { name: "Events", href: "/events" },
+            { name: "Events", href: "#events" },
             { name: "Excos", href: "/excos" },
             { name: "Sponsors", href: "/sponsors" },
             { name: "Publications", href: "/publications" },

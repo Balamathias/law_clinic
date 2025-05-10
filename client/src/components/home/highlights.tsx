@@ -95,7 +95,7 @@ const Highlights = ({ events }: Props) => {
   }
 
   return (
-    <section className="py-12 sm:py-20 relative overflow-hidden">
+    <section className="py-12 sm:py-20 relative overflow-hidden" id="events">
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden z-0">
         <div className="absolute top-0 w-full h-full opacity-[0.02]" style={{

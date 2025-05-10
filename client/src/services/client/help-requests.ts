@@ -65,6 +65,7 @@ return useMutation({
         }
     },
     onError: (error: any) => {
+        console.error(error)
         toast.error(
             error?.message || "An error occurred while submitting the help request"
         );

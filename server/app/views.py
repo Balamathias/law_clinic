@@ -725,6 +725,7 @@ class HelpRequestViewSet(ModelViewSet, ClinicView):
                 message="Your help request has been submitted successfully. Our team will contact you soon.", 
                 status_code=status.HTTP_201_CREATED
             )
+        print(serializer.errors)
         return self.clinic_response(
             error=serializer.errors, 
             message="Failed to submit help request", 
