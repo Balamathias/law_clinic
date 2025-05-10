@@ -72,7 +72,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
       params.delete('q')
     }
     params.set('page', '1') // Reset to first page on new search
-    router.push(`/blog?${params.toString()}`)
+    router.push(`/publications?${params.toString()}`)
     
     // Simulate loading state for better UX
     setTimeout(() => setIsLoading(false), 500)
@@ -90,7 +90,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
     setSearchQuery('')
     const params = new URLSearchParams(searchParams.toString())
     params.delete('q')
-    router.push(`/blog?${params.toString()}`)
+    router.push(`/publications?${params.toString()}`)
   }
   
   // Pagination navigation
@@ -100,7 +100,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
     setIsLoading(true)
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', page.toString())
-    router.push(`/blog?${params.toString()}`)
+    router.push(`/publications?${params.toString()}`)
     
     // Scroll to top on page change
     window.scrollTo({ top: 0, behavior: 'smooth' })
