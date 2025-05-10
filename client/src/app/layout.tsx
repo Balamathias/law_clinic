@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { TanstackQueryProvider } from "@/lib/tanstack.query";
 import { Toaster } from "@/components/ui/sonner";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,12 @@ export default function RootLayout({
           <body
             className={`${inter.className} ${geistMono.variable} antialiased font-poppins min-h-screen w-full relative`}
           >
+            <NextTopLoader 
+              color="var(--primary)"
+              showSpinner={false}
+              height={3}
+              shadow="0 0 10px rgba(0, 0, 0, 0.5)"
+            />
             <Toaster richColors />
             {children}
           </body>
