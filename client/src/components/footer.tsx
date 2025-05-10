@@ -155,7 +155,7 @@ export function Footer({ className, variant = "dark" }: FooterProps) {
               {[
                 { icon: <Facebook size={18} />, href: "https://facebook.com/abu-law-clinic" },
                 { icon: <Twitter size={18} />, href: "https://twitter.com/abu_law_clinic" },
-                { icon: <Instagram size={18} />, href: "https://instagram.com/ABU_Law_Clinic" },
+                { icon: <Instagram size={18} />, href: "https://instagram.com/abu_lawclinic" },
                 { icon: <Linkedin size={18} />, href: "https://linkedin.com/abu_law_clinic" },
               ].map((social, i) => (
                 <motion.a
