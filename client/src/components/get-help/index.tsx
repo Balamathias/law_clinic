@@ -91,7 +91,7 @@ const GetHelp = () => {
 
   const onSubmit = async (data: HelpFormValues) => {
 
-  const _data = { ...data, legal_issue_type: data.legal_issue_type.toLowerCase() } as CreateHelpRequestPayload
+  const _data = { ...data, had_previous_help: data.had_previous_help.toLowerCase() } as CreateHelpRequestPayload
     
   createRequest(_data, {
       onSuccess: (response) => {
