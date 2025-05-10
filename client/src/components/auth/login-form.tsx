@@ -40,10 +40,11 @@ const AuthSchema = z.object({
 })
 
 const LoginForm = () => {
+    
     const router = useRouter()
     const [step, setStep] = useState(1)
-    const searchParams = useSearchParams()
     const [showPassword, setShowPassword] = useState(false)
+    const searchParams = useSearchParams()
 
     const { mutate: login, isPending } = useLogin()
 
