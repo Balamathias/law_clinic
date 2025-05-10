@@ -68,7 +68,7 @@ const Hero = () => {
                 size="lg"
                 asChild
               >
-                <Link href="/get-started">Reach Out</Link>
+                <Link href="/get-help">Reach Out</Link>
               </Button>
 
               <Button 
