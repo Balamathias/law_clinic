@@ -9,9 +9,9 @@ import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
-import { Spectral } from 'next/font/google'
+import { Merriweather } from 'next/font/google'
 
-const spectral = Spectral({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'] })
+const merriweather = Merriweather({ subsets: ['latin'], weight: ['300', '400', '700', '900'] })
 
 import MarkdownPreview from '@/components/markdown-preview'
 import { cn } from '@/lib/utils'
@@ -137,7 +137,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         transition={{ duration: 0.5, delay: 0.3 }}
         className="prose prose-lg dark:prose-invert max-w-none"
       >
-        <MarkdownPreview content={publication?.content!} className={cn(spectral.className, 'text-lg')} />
+        <MarkdownPreview content={publication?.content!} className={cn(merriweather.className, 'text-lg')} />
       </motion.div>
 
       {/* Author box */}
