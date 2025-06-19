@@ -156,7 +156,6 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold mb-2 line-clamp-1">{org.name}</h3>
-                        <div className="text-xs font-medium text-primary/80 mb-3">{org.description}</div>
                       </div>
                       {org.url && (
                         <Button 
@@ -216,7 +215,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
                     
                     <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <span className="inline-block px-2 py-0.5 bg-primary/20 backdrop-blur-sm text-primary text-xs rounded-md mb-2 font-medium">
+                      <span className="inline-block px-2 py-0.5 bg-primary/20 backdrop-blur-sm text-white text-xs rounded-md mb-2 font-medium">
                         {person.description}
                       </span>
                       <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-primary/90 transition-colors">
