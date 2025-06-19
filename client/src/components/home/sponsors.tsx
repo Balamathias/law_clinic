@@ -13,7 +13,7 @@ interface SponsorsProps {
 }
 
 const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
-  const [activeTab, setActiveTab] = useState<'organizations' | 'individuals'>('organizations')
+  const [activeTab, setActiveTab] = useState<'organizations' | 'individuals'>('individuals')
 
   const organizationSponsors = sponsors?.filter(sponsor => sponsor.type === 'organization') || []
   const individualSponsors = sponsors?.filter(sponsor => sponsor.type === 'person') || []
@@ -93,18 +93,6 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
         >
           <div className="bg-secondary/30 p-1 rounded-full border border-border/60">
             <Button
-              variant={activeTab === 'organizations' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setActiveTab('organizations')}
-              className={cn(
-                "rounded-full px-6 gap-2 transition-all",
-                activeTab === 'organizations' ? 'shadow-sm' : ''
-              )}
-            >
-              <Building2 className="w-4 h-4" />
-              Organizations ({organizationSponsors.length})
-            </Button>
-            <Button
               variant={activeTab === 'individuals' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setActiveTab('individuals')}
@@ -115,6 +103,18 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
             >
               <Users className="w-4 h-4" />
               Individuals ({individualSponsors.length})
+            </Button>
+            <Button
+              variant={activeTab === 'organizations' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveTab('organizations')}
+              className={cn(
+                "rounded-full px-6 gap-2 transition-all",
+                activeTab === 'organizations' ? 'shadow-sm' : ''
+              )}
+            >
+              <Building2 className="w-4 h-4" />
+              Organizations ({organizationSponsors.length})
             </Button>
           </div>
         </motion.div>
