@@ -135,9 +135,9 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="prose prose-lg dark:prose-invert max-w-none"
+        className="dark:prose-invert max-w-none"
       >
-        <MarkdownPreview content={publication?.content!} className={cn(merriweather.className, 'text-lg')} />
+        <MarkdownPreview content={publication?.content!} className={cn(merriweather.className, '')} />
       </motion.div>
 
       {/* Author box */}
