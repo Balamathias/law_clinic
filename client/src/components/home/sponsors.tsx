@@ -246,7 +246,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                       
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <motion.span 
-                          className="inline-block px-3 py-1 bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs rounded-full mb-3 font-semibold"
+                          className="px-3 py-1 bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs rounded-full mb-3 font-semibold hidden"
                           initial={{ opacity: 0, y: 10 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
