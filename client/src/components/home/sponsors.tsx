@@ -71,7 +71,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
   }
 
   return (
-    <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5">
+    <section className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5 max-w-7xl mx-auto">
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0 -z-10">
         {/* Gradient Orbs */}
@@ -390,7 +390,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                             animate={{ y: 0, opacity: 1 }}
                             className="space-y-3"
                           >
-                            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs rounded-full font-semibold border border-white/30">
+                            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs rounded-lg font-semibold border border-white/30">
                               {person.description}
                             </span>
                             <h3 className="text-xl font-bold text-white group-hover:text-primary/90 transition-colors duration-300">
