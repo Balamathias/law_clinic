@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Building2, Users, ArrowRight, Handshake, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Building2, Users, ArrowRight, Handshake, ExternalLink, Star } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { Sponsor } from '@/@types/db'
@@ -18,245 +18,294 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
   const organizationSponsors = sponsors?.filter(sponsor => sponsor.type === 'organization') || []
   const individualSponsors = sponsors?.filter(sponsor => sponsor.type === 'person') || []
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
-
-  const staggerContainer = {
-    animate: {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   }
-  
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  }
+
   if (organizationSponsors.length === 0 && individualSponsors.length === 0) {
     return null
   }
 
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <section className="py-20 lg:py-32 relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Enhanced background decorative elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute left-1/4 top-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <svg className="absolute right-0 top-0 h-full w-full stroke-primary/5" aria-hidden="true">
+        <div className="absolute left-1/4 top-1/3 w-[500px] h-[500px] bg-gradient-to-r from-primary/10 to-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute right-1/3 bottom-1/4 w-[400px] h-[400px] bg-gradient-to-l from-accent/10 to-primary/5 rounded-full blur-3xl animate-pulse delay-1000" />
+        
+        {/* Geometric patterns */}
+        <div className="absolute top-10 left-10 w-20 h-20 border border-primary/20 rounded-lg rotate-45 animate-spin" style={{animationDuration: '20s'}} />
+        <div className="absolute bottom-10 right-10 w-16 h-16 border border-accent/20 rounded-full animate-bounce" style={{animationDuration: '3s'}} />
+        
+        <svg className="absolute inset-0 h-full w-full" aria-hidden="true">
           <defs>
             <pattern
               id="sponsor-grid-pattern"
-              width={60}
-              height={60}
+              width={40}
+              height={40}
               patternUnits="userSpaceOnUse"
             >
-              <path d="M.5 60V.5H60" fill="none" />
+              <path d="M.5 40V.5H40" fill="none" stroke="currentColor" strokeWidth={0.5} className="text-primary/10" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" strokeWidth={0} fill="url(#sponsor-grid-pattern)" />
+          <rect width="100%" height="100%" fill="url(#sponsor-grid-pattern)" />
         </svg>
       </div>
 
       <div className="container px-4 mx-auto max-w-7xl">
-        {/* Header Section */}
+        {/* Enhanced Header Section */}
         <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.8 }}
         >
-          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-6 rounded-full bg-primary/10 text-primary text-sm font-medium">
-            <Handshake className="w-4 h-4 mr-2" />
-            Our Partners & Supporters
-          </div>
+          <motion.div 
+            className="inline-flex items-center justify-center px-6 py-2.5 mb-8 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary text-sm font-semibold shadow-sm"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Star className="w-4 h-4 mr-2 fill-current" />
+            Our Trusted Partners & Supporters
+          </motion.div>
           
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
-            Trusted by Leading Organizations
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight">
+            <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              Empowered by
+            </span>
             <br />
-            <span className="text-primary">& Distinguished Individuals</span>
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Excellence & Vision
+            </span>
           </h2>
           
-          <div className="h-1 w-20 bg-primary mx-auto rounded-full mb-6"></div>
+          <motion.div 
+            className="h-1.5 w-24 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-8"
+            initial={{ width: 0 }}
+            whileInView={{ width: 96 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
           
-          <p className="max-w-3xl mx-auto text-lg text-muted-foreground">
-           {"We're"} proud to collaborate with exceptional partners who share our commitment to advancing access to justice and legal education.
+          <p className="max-w-4xl mx-auto text-xl text-muted-foreground leading-relaxed">
+            We collaborate with visionary organizations and distinguished individuals who champion our mission to democratize access to justice and transform legal education.
           </p>
         </motion.div>
 
-        {/* Tab Navigation */}
+        {/* Enhanced Tab Navigation */}
         <motion.div 
-          className="flex justify-center mb-12"
+          className="flex justify-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <div className="bg-secondary/30 p-1 rounded-full border border-border/60">
+          <div className="bg-card/50 backdrop-blur-sm p-1.5 rounded-2xl border border-border/50 shadow-lg">
             <Button
               variant={activeTab === 'individuals' ? 'default' : 'ghost'}
-              size="sm"
+              size="lg"
               onClick={() => setActiveTab('individuals')}
               className={cn(
-                "rounded-full px-6 gap-2 transition-all",
-                activeTab === 'individuals' ? 'shadow-sm' : ''
+                "rounded-xl px-8 py-3 gap-3 transition-all duration-300 font-semibold",
+                activeTab === 'individuals' 
+                  ? 'shadow-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground' 
+                  : 'hover:bg-secondary/80'
               )}
             >
-              <Users className="w-4 h-4" />
-              Individuals ({individualSponsors.length})
+              <Users className="w-5 h-5" />
+              Individuals
+              <span className="bg-background/20 px-2 py-0.5 rounded-full text-xs">
+                {individualSponsors.length}
+              </span>
             </Button>
             <Button
               variant={activeTab === 'organizations' ? 'default' : 'ghost'}
-              size="sm"
+              size="lg"
               onClick={() => setActiveTab('organizations')}
               className={cn(
-                "rounded-full px-6 gap-2 transition-all",
-                activeTab === 'organizations' ? 'shadow-sm' : ''
+                "rounded-xl px-8 py-3 gap-3 transition-all duration-300 font-semibold",
+                activeTab === 'organizations' 
+                  ? 'shadow-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground' 
+                  : 'hover:bg-secondary/80'
               )}
             >
-              <Building2 className="w-4 h-4" />
-              Organizations ({organizationSponsors.length})
+              <Building2 className="w-5 h-5" />
+              Organizations
+              <span className="bg-background/20 px-2 py-0.5 rounded-full text-xs">
+                {organizationSponsors.length}
+              </span>
             </Button>
           </div>
         </motion.div>
 
-        {/* Organizations Tab */}
-        {activeTab === 'organizations' && organizationSponsors.length > 0 && (
-          <motion.div 
-            key="organizations"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.5 }}
-            className="mb-16"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {organizationSponsors.slice(0, 6).map((org, index) => (
-                <motion.div
-                  key={org.id}
-                  variants={fadeInUp}
-                  initial="initial"
-                  whileInView="animate"
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group bg-card rounded-xl border border-border/40 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="h-48 p-8 bg-gradient-to-br from-primary/5 to-transparent flex items-center justify-center overflow-hidden">
-                    <motion.img 
-                      src={org.image || '/placeholder-org.jpg'} 
-                      alt={org.name}
-                      className="max-h-full max-w-full object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-500" 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                  
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold mb-2 line-clamp-1">{org.name}</h3>
+        {/* Enhanced Tab Content */}
+        <AnimatePresence mode="wait">
+          {/* Organizations Tab */}
+          {activeTab === 'organizations' && organizationSponsors.length > 0 && (
+            <motion.div 
+              key="organizations"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="mb-20"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {organizationSponsors.slice(0, 6).map((org, index) => (
+                  <motion.div
+                    key={org.id}
+                    variants={itemVariants}
+                    className="group bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:border-primary/30"
+                    whileHover={{ y: -8, scale: 1.02 }}
+                  >
+                    <div className="h-56 p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
+                      <motion.img 
+                        src={org.image || '/placeholder-org.jpg'} 
+                        alt={org.name}
+                        className="max-h-full max-w-full object-contain filter drop-shadow-lg relative z-10" 
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.4 }}
+                      />
+                    </div>
+                    
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                          {org.name}
+                        </h3>
+                        {org.url && (
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            className="h-10 w-10 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary/10"
+                            asChild
+                          >
+                            <a href={org.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-5 h-5" />
+                            </a>
+                          </Button>
+                        )}
                       </div>
-                      {org.url && (
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
-                          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                          asChild
+                      
+                      <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                        {org.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Individuals Tab */}
+          {activeTab === 'individuals' && individualSponsors.length > 0 && (
+            <motion.div 
+              key="individuals"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="mb-20"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {individualSponsors.slice(0, 8).map((person, index) => (
+                  <motion.div
+                    key={person.id}
+                    variants={itemVariants}
+                    className="group bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:border-primary/30"
+                    whileHover={{ y: -8, scale: 1.02 }}
+                  >
+                    <div className="aspect-[3/4] overflow-hidden relative">
+                      <motion.img 
+                        src={person.image || '/placeholder-person.jpg'} 
+                        alt={person.name}
+                        className="w-full h-full object-cover transition-transform duration-700" 
+                        whileHover={{ scale: 1.1 }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+                      
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
+                        <motion.span 
+                          className="inline-block px-3 py-1 bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs rounded-full mb-3 font-semibold"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
                         >
-                          <a href={org.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
+                          {person.description}
+                        </motion.span>
+                        <h3 className="text-xl font-bold text-white group-hover:text-primary/90 transition-colors duration-300">
+                          {person.name}
+                        </h3>
+                      </div>
                     </div>
-                    
-                    <p className="text-muted-foreground text-sm line-clamp-3">
-                      {org.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Individuals Tab */}
-        {activeTab === 'individuals' && individualSponsors.length > 0 && (
-          <motion.div 
-            key="individuals"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.5 }}
-            className="mb-16"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {individualSponsors.slice(0, 8).map((person, index) => (
-                <motion.div
-                  key={person.id}
-                  variants={fadeInUp}
-                  initial="initial"
-                  whileInView="animate"
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group bg-card rounded-xl overflow-hidden border border-border/40 shadow-sm hover:shadow-lg transition-all duration-300"
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="aspect-[3/4] overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent relative">
-                    <motion.img 
-                      src={person.image || '/placeholder-person.jpg'} 
-                      alt={person.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                      initial={{ scale: 1.1, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 1 }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-                    
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <span className="inline-block px-2 py-0.5 bg-primary/20 backdrop-blur-sm text-white text-xs rounded-md mb-2 font-medium">
-                        {person.description}
-                      </span>
-                      <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-primary/90 transition-colors">
-                        {person.name}
-                      </h3>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Call to Action */}
+        {/* Enhanced Call to Action */}
         <motion.div 
           className="text-center"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div className="inline-flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="rounded-full px-8 gap-2 group">
+          <div className="inline-flex flex-col sm:flex-row gap-6">
+            <Button 
+              asChild 
+              size="lg" 
+              className="rounded-full px-10 py-4 gap-3 group bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg text-lg font-semibold"
+            >
               <Link href="/sponsors">
                 View All Partners
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
             </Button>
             
-            <Button asChild size="lg" variant="outline" className="rounded-full px-8 gap-2">
+            <Button 
+              asChild 
+              size="lg" 
+              variant="outline" 
+              className="rounded-full px-10 py-4 gap-3 border-2 hover:bg-primary/5 text-lg font-semibold"
+            >
               <Link href="/sponsors#contact-form">
-                <Handshake className="w-4 h-4" />
+                <Handshake className="w-5 h-5" />
                 Partner With Us
               </Link>
             </Button>
           </div>
           
-          <p className="text-sm text-muted-foreground mt-4">
+          <motion.p 
+            className="text-muted-foreground mt-6 text-lg"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             Join our mission to make justice accessible for all
-          </p>
+          </motion.p>
         </motion.div>
       </div>
     </section>
