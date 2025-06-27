@@ -211,7 +211,7 @@ const Highlights = ({ events }: Props) => {
                   initial="incoming"
                   animate="active"
                   exit="outgoing"
-                  className="flex flex-col absolute inset-0"
+                  className="flex flex-col"
                 >
                   {/* Image Section */}
                   <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80">
