@@ -18,7 +18,7 @@ import PublicationCard from '../publications/publication-card'
 const Publications = () => {
   const { data, isPending } = usePublications({ params: { limit: 6 } })
 
-  const publications = data?.data
+  const publications = data?.data?.slice(0, 6)
 
   if (isPending) {
     return <PublicationsSkeleton />
