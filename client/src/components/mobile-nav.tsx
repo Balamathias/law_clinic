@@ -54,7 +54,7 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-[300px] sm:w-[340px] border-l shadow-xl p-0 overflow-hidden backdrop-blur-xl bg-background/80 supports-[backdrop-filter]:bg-background/65"
+        className="w-[300px] sm:w-[340px] border-l shadow-xl p-0 overflow-hidden backdrop-blur-xl bg-white supports-[backdrop-filter]:bg-background/65 overflow-y-auto"
       >
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/5" />

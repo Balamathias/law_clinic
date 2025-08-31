@@ -130,7 +130,7 @@ const Hero = () => {
       {/* Main Content Container */}
       <div className="container relative z-20 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
         <motion.div 
-          className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[90vh] py-8"
+          className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[90vh] py-14"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
