@@ -31,15 +31,6 @@ interface HighlightsProps {
 }
 
 // -------------------- Helpers --------------------
-const safeDate = (d?: string | null) => {
-  if (!d) return null
-  try { return parseISO(d) } catch { try { return new Date(d) } catch { return null } }
-}
-
-const fmt = (d?: Date | null, f?: string, fallback = '—') => {
-  if (!d || isNaN(d.getTime())) return fallback
-  try { return format(d, f!) } catch { return fallback }
-}
 
 const categoryColors: Record<string, string> = {
   Workshop: 'bg-emerald-500',
@@ -48,10 +39,11 @@ const categoryColors: Record<string, string> = {
   Seminar: 'bg-amber-500'
 }
 
-const slideVariants = {
-  incoming: (dir: number) => ({ x: dir > 0 ? 340 : -340, opacity: 0, scale: 0.9 }),
-  active: { x: 0, opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 280, damping: 26 } },
-  outgoing: (dir: number) => ({ x: dir > 0 ? -340 : 340, opacity: 0, scale: 0.9, transition: { type: 'spring', stiffness: 280, damping: 26 } })
+// Simpler fade variants to prevent horizontal layout shifts / jank
+const fadeVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit: { opacity: 0, transition: { duration: 0.28, ease: 'easeIn' } }
 }
 
 // -------------------- Component --------------------
@@ -66,10 +58,21 @@ const Highlights: React.FC<HighlightsProps> = ({
   autoPlayInterval = 6000,
   enableAnimation = true,
 }) => {
+
+  const safeDate = (d?: string | null) => {
+    if (!d) return null
+    try { return parseISO(d) } catch { try { return new Date(d) } catch { return null } }
+  }
+
+  const fmt = (d?: Date | null, f?: string, fallback = '—') => {
+    if (!d || isNaN(d.getTime())) return fallback
+    try { return format(d, f!) } catch { return fallback }
+  }
+
   const shouldReduceMotion = useReducedMotion()
   const allowAnim = enableAnimation && !shouldReduceMotion
   const [activeIndex, setActiveIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
+  // Removed directional sliding to avoid jank; using cross‑fade instead
   const hoverRef = useRef(false)
   const focusWithinRef = useRef(false)
 
@@ -96,19 +99,16 @@ const Highlights: React.FC<HighlightsProps> = ({
 
   const goTo = useCallback((idx: number) => {
     if (!hasEvents) return
-    setDirection(idx > activeIndex ? 1 : -1)
     setActiveIndex((idx + orderedEvents.length) % orderedEvents.length)
-  }, [activeIndex, orderedEvents.length, hasEvents])
+  }, [orderedEvents.length, hasEvents])
 
   const next = useCallback(() => {
     if (!hasEvents) return
-    setDirection(1)
     setActiveIndex(i => (i + 1) % orderedEvents.length)
   }, [orderedEvents.length, hasEvents])
 
   const prev = useCallback(() => {
     if (!hasEvents) return
-    setDirection(-1)
     setActiveIndex(i => (i - 1 + orderedEvents.length) % orderedEvents.length)
   }, [orderedEvents.length, hasEvents])
 
@@ -118,7 +118,9 @@ const Highlights: React.FC<HighlightsProps> = ({
     if (hoverRef.current || focusWithinRef.current) return
     const id = setInterval(() => next(), autoPlayInterval)
     return () => clearInterval(id)
-  }, [autoPlay, autoPlayInterval, allowAnim, next, hasEvents, activeIndex])
+  }, [autoPlay, autoPlayInterval, allowAnim, next, hasEvents])
+
+  // Removed runtime height measurement (was causing collapse). Using a responsive min-height for stability.
 
   // Keyboard navigation
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -243,18 +245,18 @@ const Highlights: React.FC<HighlightsProps> = ({
                 aria-roledescription="carousel"
                 aria-label="Featured events carousel"
               >
-                <AnimatePresence initial={false} custom={direction}>
-                  <motion.div
-                    key={activeIndex}
-                    custom={direction}
-                    variants={allowAnim ? slideVariants : undefined}
-                    initial={allowAnim ? 'incoming' : undefined}
-                    animate={allowAnim ? 'active' : undefined}
-                    exit={allowAnim ? 'outgoing' : undefined}
-                    className="flex flex-col"
-                    role="group"
-                    aria-label={`${current?.title || 'Event'} (${activeIndex + 1} of ${orderedEvents.length})`}
-                  >
+                <div className="relative flex flex-col min-h-[540px] sm:min-h-[560px] md:min-h-[580px] lg:min-h-[600px]">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={current?.id || activeIndex}
+                      variants={allowAnim ? fadeVariants : undefined}
+                      initial={allowAnim ? 'initial' : undefined}
+                      animate={allowAnim ? 'animate' : undefined}
+                      exit={allowAnim ? 'exit' : undefined}
+                      className="flex flex-col absolute inset-0 will-change-opacity"
+                      role="group"
+                      aria-label={`${current?.title || 'Event'} (${activeIndex + 1} of ${orderedEvents.length})`}
+                    >
                     {/* Image */}
                     <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80">
                       <Image
@@ -314,8 +316,9 @@ const Highlights: React.FC<HighlightsProps> = ({
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
                 {/* Dots */}
                 <div className="flex justify-center mt-3 sm:mt-4 space-x-2 pb-4" aria-label="Carousel pagination">
                   {orderedEvents.map((_, idx) => (

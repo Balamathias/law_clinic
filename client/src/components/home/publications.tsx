@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -34,11 +34,13 @@ const Publications: React.FC<PublicationsProps> = ({
 }) => {
   const { data, isPending } = usePublications({ params: { limit } })
   const shouldReduceMotion = useReducedMotion()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
 
-  if (isPending) return <PublicationsSkeleton />
-
+  // Derive publications list before conditional to preserve hook order
   const publications = useMemo(() => data?.data?.slice(0, limit) || [], [data, limit])
   const hasItems = publications.length > 0
+  if (isPending) return <PublicationsSkeleton />
 
   const bgMap = {
     subtle: 'bg-gray-50',
@@ -47,17 +49,17 @@ const Publications: React.FC<PublicationsProps> = ({
   }
 
   return (
-    <section aria-labelledby="publications-heading" className={`relative py-20 ${bgMap[background]} ${className}`}>
+    <section aria-labelledby="publications-heading" suppressHydrationWarning className={`relative py-20 ${bgMap[background]} ${className}`}>  
       {/* Decorative blobs (no randomness) */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl"
-          animate={shouldReduceMotion ? {} : { scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
+          animate={(!shouldReduceMotion && mounted) ? { scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] } : {}}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
           className="absolute -bottom-32 -right-28 w-80 h-80 rounded-full bg-primary/10 blur-3xl"
-          animate={shouldReduceMotion ? {} : { scale: [1.1, 0.95, 1.1], opacity: [0.35, 0.55, 0.35] }}
+          animate={(!shouldReduceMotion && mounted) ? { scale: [1.1, 0.95, 1.1], opacity: [0.35, 0.55, 0.35] } : {}}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         />
       </div>
