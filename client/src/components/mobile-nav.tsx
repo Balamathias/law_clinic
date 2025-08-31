@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, Home, Info, CalendarDays, Users, Landmark, BookOpen, Mail, ExternalLink, LucideHand } from "lucide-react"
+import { Menu, Home, Info, CalendarDays, Users, Landmark, BookOpen, Mail, ExternalLink, LucideHand, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { usePathname } from "next/navigation"
@@ -10,13 +10,13 @@ import { useState } from "react"
 import Image from "next/image"
 
 const navigation = [
-  { name: "Home", href: "/", icon: <Home className="h-5 w-5" /> },
-  { name: "About", href: "/about", icon: <Info className="h-5 w-5" /> },
-  { name: "Events", href: "#events", icon: <CalendarDays className="h-5 w-5" /> },
-  { name: "Excos", href: "/excos", icon: <Users className="h-5 w-5" /> },
-  { name: "Sponsors", href: "/sponsors", icon: <Landmark className="h-5 w-5" /> },
-  { name: "Publications", href: "/publications", icon: <BookOpen className="h-5 w-5" /> },
-  { name: "Contact", href: "/contact", icon: <Mail className="h-5 w-5" /> }
+  { name: "Home", href: "/", icon: Home },
+  { name: "About", href: "/about", icon: Info },
+  { name: "Events", href: "#events", icon: CalendarDays },
+  { name: "Excos", href: "/excos", icon: Users },
+  { name: "Sponsors", href: "/sponsors", icon: Landmark },
+  { name: "Publications", href: "/publications", icon: BookOpen },
+  { name: "Contact", href: "/contact", icon: Mail }
 ]
 
 export function MobileNav() {
@@ -43,62 +43,77 @@ export function MobileNav() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className={`md:hidden relative overflow-hidden group ${useDarkElements ? "text-primary hover:bg-primary/5" : "text-white hover:bg-white/10"}`}
+        <Button
+          variant="ghost"
+            size="icon"
+            aria-label="Open navigation menu"
+          className={`md:hidden relative overflow-hidden group rounded-full backdrop-blur-sm ${useDarkElements ? "text-primary hover:bg-primary/10" : "text-white hover:bg-white/15"}`}
         >
           <Menu className={`h-6 w-6 transition-all duration-300 ${isOpen ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`} />
-          <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent 
         side="right"
-        className="w-[300px] border-l shadow-lg p-0 overflow-hidden"
+        className="w-[300px] sm:w-[340px] border-l shadow-xl p-0 overflow-hidden backdrop-blur-xl bg-background/80 supports-[backdrop-filter]:bg-background/65"
       >
-        <div className="bg-primary/10 p-6">
-          <SheetHeader className="mb-2">
-            <div className="flex items-center space-x-3">
-              <Image
-                src="/images/logo/logo.png"
-                alt="ABU Law Clinic Logo"
-                width={40}
-                height={24}
-                className=""
-              />
-              <SheetTitle className="text-left text-primary text-xl font-bold">ABU Law Clinic</SheetTitle>
-            </div>
-          </SheetHeader>
-          <p className="text-sm text-muted-foreground">Legal assistance and resources</p>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/5" />
+          <div className="relative p-6 pb-4">
+            <SheetHeader className="mb-1 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Image
+                    src="/images/logo/logo.png"
+                    alt="ABU Law Clinic Logo"
+                    width={40}
+                    height={24}
+                  />
+                  <SheetTitle className="text-left text-primary text-xl font-bold tracking-tight">ABU Law Clinic</SheetTitle>
+                </div>
+                <Button variant="ghost" size="icon" aria-label="Close menu" onClick={() => setIsOpen(false)} className="rounded-full hover:bg-primary/10">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <p className="text-[0.78rem] text-muted-foreground/90 leading-relaxed font-medium flex items-center gap-1">
+                Legal assistance • Advocacy • Education
+              </p>
+            </SheetHeader>
+          </div>
         </div>
         
-        <nav className="p-6">
-          <div className="space-y-1 mb-6">
-            {navigation.map((item) => (
-              <Link 
-                key={item.name} 
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 p-3 rounded-md text-base font-medium transition-all hover:bg-muted group ${
-                  pathname === item.href || pathname.startsWith(item.href + "/")
-                    ? "bg-primary/10 text-primary" 
-                    : "text-foreground hover:text-primary"
-                }`}
-              >
-                {item.icon}
-                {item.name}
-                {pathname === item.href && (
-                  <span className="ml-auto h-2 w-2 rounded-full bg-primary"></span>
-                )}
-              </Link>
-            ))}
-          </div>
-          
-          <div className="pt-6 border-t">
-            <Link 
+        <nav className="p-6 pt-5" aria-label="Mobile site navigation">
+          <ul className="space-y-1.5 mb-6">
+            {navigation.map((item) => {
+              const Icon = item.icon
+              const active = pathname === item.href || pathname.startsWith(item.href + '/')
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={[
+                      "group flex items-center gap-3 px-3 py-3 rounded-xl text-[0.9rem] font-medium",
+                      "transition-all duration-300 relative overflow-hidden",
+                      active
+                        ? "text-primary bg-primary/10 ring-1 ring-primary/20"
+                        : "text-foreground/80 hover:text-primary hover:bg-muted/60"
+                    ].join(' ')}
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15 group-hover:shadow-sm">
+                      <Icon className="h-4.5 w-4.5" />
+                    </span>
+                    <span>{item.name}</span>
+                    {active && <span className="ml-auto h-2 w-2 rounded-full bg-primary shadow-sm shadow-primary/40" />}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+          <div className="pt-4 border-t border-border/60">
+            <Link
               href="/get-help"
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 w-full p-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+              className="flex items-center justify-center gap-2 w-full p-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-colors text-sm tracking-wide shadow-lg shadow-primary/25"
             >
               <LucideHand className="h-5 w-5" />
               Get help
@@ -106,17 +121,17 @@ export function MobileNav() {
           </div>
         </nav>
         
-        <div className="absolute bottom-6 left-6 right-6 text-xs text-muted-foreground">
-          <div className="flex items-center justify-between">
-            <span>© {new Date().getFullYear()} ABU Law Clinic</span>
-            <Link 
-              href="https://abu.edu.ng" 
-              target="_blank" 
+        <div className="absolute bottom-5 left-5 right-5 text-[0.65rem] text-muted-foreground/80">
+          <div className="flex items-center justify-between gap-3">
+            <span className="tracking-wide font-medium">© {new Date().getFullYear()} ABU Law Clinic</span>
+            <Link
+              href="https://abu.edu.ng"
+              target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-primary transition-colors"
+              className="flex items-center gap-1 hover:text-primary transition-colors font-medium"
             >
               <ExternalLink className="h-3 w-3" />
-              ABU Website
+              ABU Site
             </Link>
           </div>
         </div>

@@ -26,7 +26,8 @@ const HomeComponent = ({ events, testimonials, sponsors }: Props) => {
       <main>
         <Hero />
         <Features />
-        <Banner />        {events?.length && <Highlights events={events} />}
+        <Banner />        
+        {events?.length && <Highlights events={events} />}
         <Publications />
         <SponsorsShowcase sponsors={sponsors || []} />
         <FAQs />

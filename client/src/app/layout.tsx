@@ -5,17 +5,7 @@ import { TanstackQueryProvider } from "@/lib/tanstack.query";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const inter = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
@@ -36,7 +26,7 @@ export default function RootLayout({
     <TanstackQueryProvider>
       <html lang="en">
           <body
-            className={`${inter.className} ${geistMono.variable} antialiased font-poppins min-h-screen w-full relative`}
+            className={`${inter.className} antialiased min-h-screen w-full relative`}
           >
             <NextTopLoader 
               color="var(--primary)"
