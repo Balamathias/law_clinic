@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Poppins, Lexend } from "next/font/google";
 import "./globals.css";
 import { TanstackQueryProvider } from "@/lib/tanstack.query";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
+
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +33,7 @@ export default function RootLayout({
     <TanstackQueryProvider>
       <html lang="en">
           <body
-            className={`${inter.className} antialiased min-h-screen w-full relative`}
+            className={`${lexend.className} antialiased min-h-screen w-full relative`}
           >
             <NextTopLoader 
               color="var(--primary)"
