@@ -102,20 +102,20 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
           {isOpen ? (
             <motion.div
               key="close"
-              initial={shouldReduceMotion ? false : { rotate: -90, opacity: 0 }}
+              initial={shouldReduceMotion ? { opacity: 1 } : { rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              exit={shouldReduceMotion ? false : { rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={shouldReduceMotion ? { opacity: 1 } : { rotate: 90, opacity: 0 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             >
               <X className="h-5 w-5" />
             </motion.div>
           ) : (
             <motion.div
               key="menu"
-              initial={shouldReduceMotion ? false : { rotate: 90, opacity: 0 }}
+              initial={shouldReduceMotion ? { opacity: 1 } : { rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              exit={shouldReduceMotion ? false : { rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              exit={shouldReduceMotion ? { opacity: 1 } : { rotate: -90, opacity: 0 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             >
               <Menu className="h-5 w-5" />
             </motion.div>
@@ -246,9 +246,9 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
               {/* Footer */}
               <motion.div
                 className="flex-shrink-0 px-4 sm:px-6 py-4 sm:py-6 border-t border-white/10"
-                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: shouldReduceMotion ? 0 : 0.4 }}
               >
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-sm">
                   <a
