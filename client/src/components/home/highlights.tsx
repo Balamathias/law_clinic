@@ -8,7 +8,6 @@ import {
   ArrowRight,
   MapPin,
   Clock,
-  Users,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
@@ -17,20 +16,9 @@ import Link from 'next/link'
 import { format, parseISO, isFuture } from 'date-fns'
 import { Event } from '@/@types/db'
 
-// -------------------- Types --------------------
 interface HighlightsProps {
   events: Event[]
-  heading?: string
-  subheading?: string
-  tagline?: string
-  viewAllHref?: string
-  maxUpcoming?: number
-  autoPlay?: boolean
-  autoPlayInterval?: number // ms
-  enableAnimation?: boolean
 }
-
-// -------------------- Helpers --------------------
 
 const categoryColors: Record<string, string> = {
   Workshop: 'bg-emerald-500',
@@ -39,26 +27,7 @@ const categoryColors: Record<string, string> = {
   Seminar: 'bg-amber-500'
 }
 
-// Simpler fade variants to prevent horizontal layout shifts / jank
-const fadeVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
-  exit: { opacity: 0, transition: { duration: 0.28, ease: 'easeIn' } }
-}
-
-// -------------------- Component --------------------
-const Highlights: React.FC<HighlightsProps> = ({
-  events,
-  heading = 'Highlight Events &',
-  subheading = 'Workshops',
-  tagline = 'Join us at our upcoming events and workshops to learn about important legal topics, receive free consultations, and connect with our community of legal professionals.',
-  viewAllHref = '/events',
-  maxUpcoming = 3,
-  autoPlay = true,
-  autoPlayInterval = 6000,
-  enableAnimation = true,
-}) => {
-
+const Highlights: React.FC<HighlightsProps> = ({ events }) => {
   const safeDate = (d?: string | null) => {
     if (!d) return null
     try { return parseISO(d) } catch { try { return new Date(d) } catch { return null } }
@@ -70,17 +39,11 @@ const Highlights: React.FC<HighlightsProps> = ({
   }
 
   const shouldReduceMotion = useReducedMotion()
-  const allowAnim = enableAnimation && !shouldReduceMotion
   const [activeIndex, setActiveIndex] = useState(0)
-  // Removed directional sliding to avoid jank; using cross‑fade instead
   const hoverRef = useRef(false)
-  const focusWithinRef = useRef(false)
 
   const orderedEvents = useMemo(() => (events || []).filter(Boolean), [events])
-
-  // Guard against empty list
   const hasEvents = orderedEvents.length > 0
-
   const current = hasEvents ? orderedEvents[activeIndex % orderedEvents.length] : undefined
 
   const upcomingEvents = useMemo(() => {
@@ -94,8 +57,8 @@ const Highlights: React.FC<HighlightsProps> = ({
         const db = safeDate(b.start_date)?.getTime() || 0
         return da - db
       })
-      .slice(0, maxUpcoming)
-  }, [orderedEvents, maxUpcoming])
+      .slice(0, 4)
+  }, [orderedEvents])
 
   const goTo = useCallback((idx: number) => {
     if (!hasEvents) return
@@ -112,236 +75,234 @@ const Highlights: React.FC<HighlightsProps> = ({
     setActiveIndex(i => (i - 1 + orderedEvents.length) % orderedEvents.length)
   }, [orderedEvents.length, hasEvents])
 
-  // Autoplay
   useEffect(() => {
-    if (!autoPlay || !allowAnim || !hasEvents) return
-    if (hoverRef.current || focusWithinRef.current) return
-    const id = setInterval(() => next(), autoPlayInterval)
+    if (!hasEvents || hoverRef.current) return
+    const id = setInterval(() => next(), 6000)
     return () => clearInterval(id)
-  }, [autoPlay, autoPlayInterval, allowAnim, next, hasEvents])
-
-  // Removed runtime height measurement (was causing collapse). Using a responsive min-height for stability.
-
-  // Keyboard navigation
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); next() }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev() }
-    }
-    el.addEventListener('keydown', handler)
-    return () => el.removeEventListener('keydown', handler)
-  }, [next, prev])
+  }, [next, hasEvents])
 
   const startDate = safeDate(current?.start_date)
-  const endDate = safeDate(current?.end_date)
+
+  if (!hasEvents) {
+    return (
+      <section className="py-16 md:py-24 bg-[var(--slate-50)]">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Upcoming Events</h2>
+          <p className="text-muted-foreground mb-8">No events scheduled at the moment. Check back soon!</p>
+          <Button asChild variant="outline">
+            <Link href="/events">Browse All Events</Link>
+          </Button>
+        </div>
+      </section>
+    )
+  }
 
   return (
-    <section id="events" className="relative overflow-hidden py-8 sm:py-12 lg:py-20" aria-labelledby="highlights-heading">
-      {/* Background Pattern */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute top-0 w-full h-full opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.25) 1px, transparent 0)', backgroundSize: '30px 30px' }} />
-        <div className="absolute -top-10 -left-10 sm:-top-20 sm:-left-20 w-40 h-40 sm:w-80 sm:h-80 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -right-10 sm:-bottom-20 sm:-right-20 w-40 h-40 sm:w-80 sm:h-80 bg-primary/5 rounded-full blur-3xl" />
-      </div>
+    <section className="py-16 md:py-24 bg-[var(--slate-50)]" aria-labelledby="highlights-heading">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-12"
+        >
+          <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+            Events & Workshops
+          </span>
+          <h2 id="highlights-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            Upcoming Events
+          </h2>
+          <div className="h-1 w-16 bg-primary mt-6 rounded-full" />
+        </motion.div>
 
-      <div className="relative z-10 container mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
-        <div className="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-12 xl:gap-16">
-          {/* Left Column */}
-          <div className="xl:w-5/12 w-full">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Featured Event Carousel */}
+          <div className="lg:col-span-7">
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-10% 0px' }}
-              transition={{ duration: 0.65, ease: 'easeOut' }}
-              className="mb-6 sm:mb-8 lg:mb-10"
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="relative bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+              onMouseEnter={() => { hoverRef.current = true }}
+              onMouseLeave={() => { hoverRef.current = false }}
             >
-              <div className="bg-primary/10 text-primary px-3 py-1.5 rounded-full inline-flex items-center text-xs sm:text-sm font-medium mb-3 sm:mb-4">
-                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                Workshops & Events
-              </div>
-              <h2 id="highlights-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight text-gray-900">
-                {heading}
-                <br className="hidden sm:block" />
-                <span className="text-primary"> {subheading}</span>
-              </h2>
-              <div className="h-1 w-16 sm:w-20 bg-primary mb-4 sm:mb-6" />
-              <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed">
-                {tagline}
-              </p>
-            </motion.div>
+              {/* Image */}
+              <div className="relative h-64 sm:h-72 md:h-80">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={current?.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={current?.image || '/images/highlights/default.jpg'}
+                      alt={current?.title || 'Event'}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  </motion.div>
+                </AnimatePresence>
 
-            {/* Upcoming Events */}
-            <div className="space-y-3 sm:space-y-4 mt-4 sm:mt-6 lg:mt-8">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center">
-                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-primary" />
-                Upcoming Events
+                {/* Category Badge */}
+                <div className={`${categoryColors[current?.category_name as string] || 'bg-primary'} absolute top-4 left-4 text-white px-3 py-1.5 rounded-full font-medium text-sm`}>
+                  {current?.category_name || 'Event'}
+                </div>
+
+                {/* Navigation Arrows */}
+                <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">
+                  <button
+                    onClick={prev}
+                    className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg"
+                    aria-label="Previous event"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={next}
+                    className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg"
+                    aria-label="Next event"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Date Badge */}
+                <div className="absolute bottom-4 left-4 bg-white rounded-xl p-3 shadow-lg">
+                  <div className="text-center">
+                    <span className="block text-2xl font-bold text-foreground">{fmt(startDate, 'd')}</span>
+                    <span className="block text-xs font-medium text-primary uppercase">{fmt(startDate, 'MMM')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 line-clamp-2">
+                  {current?.title}
+                </h3>
+
+                <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span>{fmt(startDate, 'h:mm a')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>{current?.location || 'TBA'}</span>
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-2">
+                  {current?.short_description || current?.description || 'Details coming soon.'}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <Button asChild className="rounded-full">
+                    <Link href={`/events/${current?.slug || current?.id}`}>
+                      Register Now
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
+                  </Button>
+
+                  {/* Pagination Dots */}
+                  <div className="flex gap-2">
+                    {orderedEvents.slice(0, 5).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => goTo(idx)}
+                        className={`h-2 rounded-full transition-all ${idx === activeIndex ? 'bg-primary w-6' : 'bg-gray-300 w-2 hover:bg-gray-400'}`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Upcoming Events List */}
+          <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Coming Up
               </h3>
-              {upcomingEvents.length > 0 ? (
-                <div className="space-y-2 sm:space-y-3">
-                  {upcomingEvents.map((event, idx) => {
+
+              <div className="space-y-4">
+                {upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((event, idx) => {
                     const sDate = safeDate(event.start_date)
                     return (
                       <motion.div
                         key={event.id}
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: idx * 0.08, duration: 0.4 }}
-                        className="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] focus-within:ring-2 focus-within:ring-primary/40 outline-none"
+                        transition={{ delay: idx * 0.1 }}
                       >
-                        <button
-                          onClick={() => goTo(orderedEvents.findIndex(ev => ev.id === event.id))}
-                          className="text-left flex w-full items-start gap-3"
-                          aria-label={`View details for ${event.title}`}
+                        <Link
+                          href={`/events/${event.slug || event.id}`}
+                          className="group flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all"
                         >
-                          <div className="bg-gray-50 h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-lg flex flex-col items-center justify-center border">
-                            <span className="text-xs font-bold text-primary">{fmt(sDate, 'MMM')}</span>
-                            <span className="text-sm sm:text-base font-bold text-gray-900">{fmt(sDate, 'd')}</span>
+                          {/* Date */}
+                          <div className="flex-shrink-0 bg-[var(--slate-100)] rounded-lg p-3 text-center min-w-[60px]">
+                            <span className="block text-xl font-bold text-foreground">{fmt(sDate, 'd')}</span>
+                            <span className="block text-xs font-medium text-muted-foreground uppercase">{fmt(sDate, 'MMM')}</span>
                           </div>
+
+                          {/* Content */}
                           <div className="flex-grow min-w-0">
-                            <h4 className="font-medium text-gray-900 text-sm sm:text-base line-clamp-1 mb-1">{event.title}</h4>
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-gray-500">
-                              <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{fmt(sDate, 'h:mm a')}</span>
-                              <span className="flex items-center"><MapPin className="h-3 w-3 mr-1" />{event.location || 'TBA'}</span>
+                            <h4 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1 mb-1">
+                              {event.title}
+                            </h4>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {fmt(sDate, 'h:mm a')}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {event.location || 'TBA'}
+                              </span>
                             </div>
                           </div>
-                          <div className={`${categoryColors[event?.category_name as string] || 'bg-gray-500'} text-white text-xs px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0`}>{event.category_name}</div>
-                        </button>
+
+                          {/* Arrow */}
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                        </Link>
                       </motion.div>
                     )
-                  })}
-                </div>
-              ) : (
-                <div className="bg-white/60 backdrop-blur-sm border border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <p className="text-gray-500 text-sm sm:text-base">No upcoming events at the moment. Check back soon!</p>
-                </div>
-              )}
-              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="pt-3 sm:pt-4">
-                <Button asChild size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/5 w-full sm:w-auto">
-                  <Link href={viewAllHref} aria-label="View all events" className="flex items-center justify-center">
+                  })
+                ) : (
+                  <div className="bg-white rounded-xl p-6 border border-dashed border-gray-200 text-center">
+                    <p className="text-muted-foreground text-sm">No upcoming events at the moment.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* View All Button */}
+              <div className="mt-6">
+                <Button asChild variant="outline" className="w-full rounded-full">
+                  <Link href="/events" className="flex items-center justify-center gap-2">
                     View All Events
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="xl:w-7/12 w-full mt-6 sm:mt-8 xl:mt-0" aria-live="polite">
-            {hasEvents ? (
-              <div
-                ref={containerRef}
-                tabIndex={0}
-                onMouseEnter={() => { hoverRef.current = true }}
-                onMouseLeave={() => { hoverRef.current = false }}
-                onFocus={() => { focusWithinRef.current = true }}
-                onBlur={() => { focusWithinRef.current = false }}
-                className="relative bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden border border-gray-100 outline-none focus:ring-2 focus:ring-primary/40"
-                role="group"
-                aria-roledescription="carousel"
-                aria-label="Featured events carousel"
-              >
-                <div className="relative flex flex-col min-h-[540px] sm:min-h-[560px] md:min-h-[580px] lg:min-h-[600px]">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={current?.id || activeIndex}
-                      variants={allowAnim ? fadeVariants : undefined}
-                      initial={allowAnim ? 'initial' : undefined}
-                      animate={allowAnim ? 'animate' : undefined}
-                      exit={allowAnim ? 'exit' : undefined}
-                      className="flex flex-col absolute inset-0 will-change-opacity"
-                      role="group"
-                      aria-label={`${current?.title || 'Event'} (${activeIndex + 1} of ${orderedEvents.length})`}
-                    >
-                    {/* Image */}
-                    <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80">
-                      <Image
-                        src={current?.image || '/images/highlights/default.jpg'}
-                        alt={current?.title || 'Event image'}
-                        fill
-                        className="object-cover"
-                        priority={activeIndex === 0}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 42vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/25 to-transparent" />
-                      {/* Controls */}
-                      <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-4 pointer-events-none">
-                        <motion.button
-                          whileHover={{ scale: 1.08 }}
-                          whileTap={{ scale: 0.92 }}
-                          onClick={prev}
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg pointer-events-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                          aria-label="Previous event"
-                        >
-                          <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.08 }}
-                          whileTap={{ scale: 0.92 }}
-                          onClick={next}
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg pointer-events-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                          aria-label="Next event"
-                        >
-                          <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </motion.button>
-                      </div>
-                      <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-black/60 backdrop-blur-sm text-white text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
-                        {activeIndex + 1} / {orderedEvents.length}
-                      </div>
-                      <div className={`${categoryColors[current?.category_name as string] || 'bg-primary'} absolute top-3 sm:top-4 right-3 sm:right-4 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full font-medium text-xs sm:text-sm`}> {current?.category_name || 'Event'} </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-4 sm:p-6 flex-grow">
-                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 text-gray-900 line-clamp-2">{current?.title || 'Untitled Event'}</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mb-4 text-sm text-gray-600">
-                        <div className="flex items-center"><Calendar className="h-4 w-4 mr-2 text-primary" /><span className="truncate">{fmt(startDate, 'MMM d, yyyy')}</span></div>
-                        <div className="flex items-center"><Clock className="h-4 w-4 mr-2 text-primary" /><span>{fmt(startDate, 'h:mm a')}</span></div>
-                        <div className="flex items-center sm:col-span-2 lg:col-span-1"><MapPin className="h-4 w-4 mr-2 text-primary" /><span className="truncate">{current?.location || 'TBA'}</span></div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-5 text-sm">
-                        {endDate && <div className="bg-primary/10 text-primary px-2 sm:px-3 py-1 rounded-md flex items-center"><Clock className="h-3.5 w-3.5 mr-1" />Ends: {fmt(endDate, 'h:mm a')}</div>}
-                        {typeof current?.max_participants === 'number' && (
-                          <div className="bg-primary/10 text-primary px-2 sm:px-3 py-1 rounded-md flex items-center"><Users className="h-3.5 w-3.5 mr-1" />{current.max_participants} attendees</div>
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm sm:text-base mb-6 line-clamp-3 sm:line-clamp-4 leading-relaxed">{current?.description || 'Details coming soon.'}</p>
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                        <Button asChild className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto">
-                          <Link href={`#${current?.id || ''}`} aria-label={`Register for ${current?.title || 'event'}`}>Register Now</Link>
-                        </Button>
-                      </div>
-                    </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-                {/* Dots */}
-                <div className="flex justify-center mt-3 sm:mt-4 space-x-2 pb-4" aria-label="Carousel pagination">
-                  {orderedEvents.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => goTo(idx)}
-                      className={`w-2.5 h-2.5 rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 ${idx === activeIndex ? 'bg-primary scale-110' : 'bg-gray-300 hover:bg-gray-400'}`}
-                      aria-label={`Go to slide ${idx + 1}`}
-                      aria-current={idx === activeIndex}
-                    />
-                  ))}
-                </div>
               </div>
-            ) : (
-              <div className="bg-white rounded-xl p-10 border border-dashed border-gray-300 text-center text-gray-500">
-                <p className="text-base sm:text-lg">No events to display yet. Once events are published they will appear here.</p>
-                <div className="mt-6">
-                  <Button asChild variant="outline" className="border-primary/30 text-primary hover:bg-primary/5">
-                    <Link href={viewAllHref}>Browse All Events</Link>
-                  </Button>
-                </div>
-              </div>
-            )}
+            </motion.div>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import React from 'react'
 
 export const metadata: Metadata = {
     title: 'Publications ~ Ahmadu Bello University Law Clinic',
-    description: 'The official publications of the Ahmadu Bello University Law Clinic',
+    description: 'Explore our collection of articles, research papers, and legal insights from the ABU Law Clinic team.',
 }
 
 interface Props {
@@ -25,8 +25,8 @@ const Page = async ({ searchParams: _searchParams }: Props) => {
     <main className='overflow-hidden'>
         <SiteHeader />
 
-        <div className='flex flex-col gap-4 p-4 md:p-10 max-w-7xl mx-auto mt-16'>
-            <Publications publications={publications} count={count} pageSize={PAGE_SIZE} />
+        <div className='mt-16'>
+            <Publications publications={publications || []} count={count || 0} pageSize={PAGE_SIZE} />
         </div>
     </main>
   )

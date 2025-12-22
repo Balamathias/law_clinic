@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Building2, Users, ArrowRight, Handshake, ExternalLink, Star } from 'lucide-react'
+import { Building2, Users, ArrowRight, Handshake, ExternalLink } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Sponsor } from '@/@types/db'
 import { cn } from '@/lib/utils'
 
@@ -13,299 +14,258 @@ interface SponsorsProps {
 }
 
 const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
-  const [activeTab, setActiveTab] = useState<'organizations' | 'individuals'>('individuals')
+  const [activeTab, setActiveTab] = useState<'organizations' | 'individuals'>('organizations')
 
   const organizationSponsors = sponsors?.filter(sponsor => sponsor.type === 'organization') || []
   const individualSponsors = sponsors?.filter(sponsor => sponsor.type === 'person') || []
+
+  if (organizationSponsors.length === 0 && individualSponsors.length === 0) {
+    return null
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        staggerChildren: 0.08
       }
     }
   }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+      transition: { duration: 0.4 }
     }
   }
 
-  if (organizationSponsors.length === 0 && individualSponsors.length === 0) {
-    return null
-  }
-
   return (
-    <section className="py-20 lg:py-32 relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Enhanced background decorative elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute left-1/4 top-1/3 w-[500px] h-[500px] bg-gradient-to-r from-primary/10 to-primary/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute right-1/3 bottom-1/4 w-[400px] h-[400px] bg-gradient-to-l from-accent/10 to-primary/5 rounded-full blur-3xl animate-pulse delay-1000" />
-        
-        {/* Geometric patterns */}
-        <div className="absolute top-10 left-10 w-20 h-20 border border-primary/20 rounded-lg rotate-45 animate-spin" style={{animationDuration: '20s'}} />
-        <div className="absolute bottom-10 right-10 w-16 h-16 border border-accent/20 rounded-full animate-bounce" style={{animationDuration: '3s'}} />
-        
-        <svg className="absolute inset-0 h-full w-full" aria-hidden="true">
-          <defs>
-            <pattern
-              id="sponsor-grid-pattern"
-              width={40}
-              height={40}
-              patternUnits="userSpaceOnUse"
-            >
-              <path d="M.5 40V.5H40" fill="none" stroke="currentColor" strokeWidth={0.5} className="text-primary/10" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#sponsor-grid-pattern)" />
-        </svg>
-      </div>
-
-      <div className="container px-4 mx-auto max-w-7xl">
-        {/* Enhanced Header Section */}
-        <motion.div 
-          className="text-center mb-20"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.div 
-            className="inline-flex items-center justify-center px-6 py-2.5 mb-8 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary text-sm font-semibold shadow-sm"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Star className="w-4 h-4 mr-2 fill-current" />
-            Our Trusted Partners & Supporters
-          </motion.div>
-          
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight">
-            <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-              Empowered by
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Excellence & Vision
-            </span>
-          </h2>
-          
-          <motion.div 
-            className="h-1.5 w-24 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mb-8"
-            initial={{ width: 0 }}
-            whileInView={{ width: 96 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
-          
-          <p className="max-w-4xl mx-auto text-xl text-muted-foreground leading-relaxed">
-            We collaborate with visionary organizations and distinguished individuals who champion our mission to democratize access to justice and transform legal education.
-          </p>
-        </motion.div>
-
-        {/* Enhanced Tab Navigation */}
-        <motion.div 
-          className="flex justify-center mb-16"
+    <section className="py-16 md:py-24 bg-[var(--slate-50)]" aria-labelledby="sponsors-heading">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
         >
-          <div className="bg-card/50 backdrop-blur-sm p-1.5 rounded-2xl border border-border/50 shadow-lg">
-            <Button
-              variant={activeTab === 'individuals' ? 'default' : 'ghost'}
-              size="lg"
-              onClick={() => setActiveTab('individuals')}
-              className={cn(
-                "rounded-xl px-8 py-3 gap-3 transition-all duration-300 font-semibold",
-                activeTab === 'individuals' 
-                  ? 'shadow-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground' 
-                  : 'hover:bg-secondary/80'
-              )}
-            >
-              <Users className="w-5 h-5" />
-              Individuals
-              <span className="bg-background/20 px-2 py-0.5 rounded-full text-xs">
-                {individualSponsors.length}
-              </span>
-            </Button>
-            <Button
-              variant={activeTab === 'organizations' ? 'default' : 'ghost'}
-              size="lg"
+          <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+            Our Partners
+          </span>
+          <h2 id="sponsors-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            Partners & Supporters
+          </h2>
+          <div className="h-1 w-16 bg-primary mx-auto mt-6 rounded-full" />
+          <p className="mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+            Organizations and individuals who share our vision of accessible justice for all.
+          </p>
+        </motion.div>
+
+        {/* Tab Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex justify-center mb-10"
+        >
+          <div className="inline-flex bg-white rounded-full p-1.5 border border-gray-200 shadow-sm">
+            <button
               onClick={() => setActiveTab('organizations')}
               className={cn(
-                "rounded-xl px-8 py-3 gap-3 transition-all duration-300 font-semibold",
-                activeTab === 'organizations' 
-                  ? 'shadow-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground' 
-                  : 'hover:bg-secondary/80'
+                "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all",
+                activeTab === 'organizations'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <Building2 className="w-5 h-5" />
+              <Building2 className="w-4 h-4" />
               Organizations
-              <span className="bg-background/20 px-2 py-0.5 rounded-full text-xs">
-                {organizationSponsors.length}
-              </span>
-            </Button>
+              {organizationSponsors.length > 0 && (
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-xs",
+                  activeTab === 'organizations' ? 'bg-white/20' : 'bg-gray-100'
+                )}>
+                  {organizationSponsors.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('individuals')}
+              className={cn(
+                "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all",
+                activeTab === 'individuals'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Users className="w-4 h-4" />
+              Individuals
+              {individualSponsors.length > 0 && (
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-xs",
+                  activeTab === 'individuals' ? 'bg-white/20' : 'bg-gray-100'
+                )}>
+                  {individualSponsors.length}
+                </span>
+              )}
+            </button>
           </div>
         </motion.div>
 
-        {/* Enhanced Tab Content */}
+        {/* Content */}
         <AnimatePresence mode="wait">
-          {/* Organizations Tab */}
           {activeTab === 'organizations' && organizationSponsors.length > 0 && (
-            <motion.div 
+            <motion.div
               key="organizations"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="mb-20"
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {organizationSponsors.slice(0, 6).map((org, index) => (
-                  <motion.div
-                    key={org.id}
-                    variants={itemVariants}
-                    className="group bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:border-primary/30"
-                    whileHover={{ y: -8, scale: 1.02 }}
-                  >
-                    <div className="h-56 p-8 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
-                      <motion.img 
-                        src={org.image || '/placeholder-org.jpg'} 
+              {organizationSponsors.slice(0, 6).map((org) => (
+                <motion.div
+                  key={org.id}
+                  variants={itemVariants}
+                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  {/* Logo Area */}
+                  <div className="h-40 p-6 bg-[var(--slate-100)] flex items-center justify-center">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={org.image || '/placeholder-org.jpg'}
                         alt={org.name}
-                        className="max-h-full max-w-full object-contain filter drop-shadow-lg relative z-10" 
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.4 }}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
-                    
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2">
-                          {org.name}
-                        </h3>
-                        {org.url && (
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className="h-10 w-10 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary/10"
-                            asChild
-                          >
-                            <a href={org.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-5 h-5" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                        {org.name}
+                      </h3>
+                      {org.url && (
+                        <a
+                          href={org.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
+                    {org.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2">
                         {org.description}
                       </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           )}
 
-          {/* Individuals Tab */}
           {activeTab === 'individuals' && individualSponsors.length > 0 && (
-            <motion.div 
+            <motion.div
               key="individuals"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-              className="mb-20"
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {individualSponsors.slice(0, 8).map((person, index) => (
-                  <motion.div
-                    key={person.id}
-                    variants={itemVariants}
-                    className="group bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:border-primary/30"
-                    whileHover={{ y: -8, scale: 1.02 }}
-                  >
-                    <div className="aspect-[3/4] overflow-hidden relative">
-                      <motion.img 
-                        src={person.image || '/placeholder-person.jpg'} 
+              {individualSponsors.slice(0, 8).map((person) => (
+                <motion.div
+                  key={person.id}
+                  variants={itemVariants}
+                  className="group"
+                >
+                  <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    {/* Image */}
+                    <div className="aspect-[3/4] relative overflow-hidden">
+                      <Image
+                        src={person.image || '/placeholder-person.jpg'}
                         alt={person.name}
-                        className="w-full h-full object-cover transition-transform duration-700" 
-                        whileHover={{ scale: 1.1 }}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                      
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <motion.span 
-                          className="px-3 py-1 bg-primary/90 backdrop-blur-sm text-primary-foreground text-xs rounded-full mb-3 font-semibold hidden"
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          {person.description}
-                        </motion.span>
-                        <h3 className="text-xl font-bold text-white group-hover:text-primary/90 transition-colors duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                      {/* Name Overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 className="text-white font-semibold text-sm sm:text-base line-clamp-1">
                           {person.name}
                         </h3>
+                        {person.description && (
+                          <p className="text-white/70 text-xs line-clamp-1 mt-0.5">
+                            {person.description}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Empty States */}
+          {activeTab === 'organizations' && organizationSponsors.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200"
+            >
+              <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No organization sponsors yet.</p>
+            </motion.div>
+          )}
+
+          {activeTab === 'individuals' && individualSponsors.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200"
+            >
+              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No individual sponsors yet.</p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Enhanced Call to Action */}
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center mt-12"
         >
-          <div className="inline-flex flex-col sm:flex-row gap-6">
-            <Button 
-              asChild 
-              size="lg" 
-              className="rounded-full px-10 py-4 gap-3 group bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg text-lg font-semibold"
-            >
-              <Link href="/sponsors">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button asChild className="rounded-full" variant="outline">
+              <Link href="/sponsors" className="flex items-center gap-2">
                 View All Partners
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
-            
-            <Button 
-              asChild 
-              size="lg" 
-              variant="outline" 
-              className="rounded-full px-10 py-4 gap-3 border-2 hover:bg-primary/5 text-lg font-semibold"
-            >
-              <Link href="/sponsors#contact-form">
-                <Handshake className="w-5 h-5" />
-                Partner With Us
+            <Button asChild className="rounded-full">
+              <Link href="/contact" className="flex items-center gap-2">
+                <Handshake className="w-4 h-4" />
+                Become a Partner
               </Link>
             </Button>
           </div>
-          
-          <motion.p 
-            className="text-muted-foreground mt-6 text-lg"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            Join our mission to make justice accessible for all
-          </motion.p>
         </motion.div>
       </div>
     </section>

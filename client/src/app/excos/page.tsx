@@ -3,13 +3,12 @@ import React from 'react'
 
 import { Metadata } from 'next'
 
-import Footer from '@/components/footer'
 import { getGalleries } from '@/services/server/app_settings'
-import Gallery from '@/components/gallery'
+import ExecutiveCommittee from '@/components/excos'
 
 export const metadata: Metadata = {
-    title: 'Gallery ~ Law Clinic ~ Ahmadu Bello University',
-    description: 'Gallery from the Law Clinic at Ahmadu Bello University.'
+    title: 'Executive Committee ~ Law Clinic ~ Ahmadu Bello University',
+    description: 'Meet the dedicated student leaders and supervisors who run the ABU Law Clinic. Our executive committee works tirelessly to serve the community through legal aid.'
 }
 
 const Page = async () => {
@@ -17,18 +16,10 @@ const Page = async () => {
   return (
     <main className='overflow-hidden'>
         <SiteHeader />
-        
-        <div className='container max-w-7xl mx-auto px-4 sm:px-6 py-12 mt-16 min-h-[70vh]'>
-            {
-                galleries?.map((gallery) => (
-                    <div key={gallery.id} className="my-10">
-                        <Gallery gallery={gallery} />
-                    </div>
-                ))
-            }
-        </div>
 
-        <Footer />
+        <div className='mt-16'>
+            <ExecutiveCommittee galleries={galleries || []} />
+        </div>
     </main>
   )
 }

@@ -6,34 +6,20 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import PublicationCard from './publication-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { 
-  Search, 
-  X, 
-  Filter, 
-  ChevronLeft, 
+import Link from 'next/link'
+import {
+  Search,
+  X,
+  ChevronLeft,
   ChevronRight,
   FileText,
-  Newspaper,
-  Calendar,
   BookOpen,
-  ArrowDownAZ,
-  ArrowUpAZ,
-  List,
-  Grid3x3 
+  ArrowRight,
+  Newspaper
 } from 'lucide-react'
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
+import Footer from '@/components/footer'
 
 interface Props {
   publications: Publication[],
@@ -41,27 +27,22 @@ interface Props {
   pageSize: number,
 }
 
-type ViewMode = 'grid' | 'list'
-type SortOption = 'newest' | 'oldest' | 'a-z' | 'z-a'
-
 const Publications = ({ publications, count, pageSize }: Props) => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const shouldReduceMotion = useReducedMotion()
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  const [sortOption, setSortOption] = useState<SortOption>('newest')
   const [isLoading, setIsLoading] = useState(false)
-  const [activeFilters, setActiveFilters] = useState<string[]>([])
-  
+
   const currentPage = Number(searchParams.get('page') || '1')
   const totalPages = Math.ceil(count / pageSize)
-  
+
   // Reset to page 1 when search changes
   useEffect(() => {
     setSearchQuery(searchParams.get('q') || '')
   }, [searchParams])
-  
+
   // Handle search submission
   const handleSearch = () => {
     setIsLoading(true)
@@ -71,20 +52,18 @@ const Publications = ({ publications, count, pageSize }: Props) => {
     } else {
       params.delete('q')
     }
-    params.set('page', '1') // Reset to first page on new search
+    params.set('page', '1')
     router.push(`/publications?${params.toString()}`)
-    
-    // Simulate loading state for better UX
     setTimeout(() => setIsLoading(false), 500)
   }
-  
+
   // Handle search key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch()
     }
   }
-  
+
   // Clear search
   const clearSearch = () => {
     setSearchQuery('')
@@ -92,452 +71,318 @@ const Publications = ({ publications, count, pageSize }: Props) => {
     params.delete('q')
     router.push(`/publications?${params.toString()}`)
   }
-  
+
   // Pagination navigation
   const navigateToPage = (page: number) => {
     if (page < 1 || page > totalPages) return
-    
+
     setIsLoading(true)
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', page.toString())
     router.push(`/publications?${params.toString()}`)
-    
-    // Scroll to top on page change
     window.scrollTo({ top: 0, behavior: 'smooth' })
-    
-    // Simulate loading state for better UX
     setTimeout(() => setIsLoading(false), 300)
   }
-  
+
   // Create pagination array with ellipses
   const getPaginationItems = () => {
-    const items = []
-    
+    const items: (number | string)[] = []
+
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) {
         items.push(i)
       }
     } else {
       items.push(1)
-      
+
       if (currentPage > 3) {
         items.push('ellipsis')
       }
-      
+
       const start = Math.max(2, currentPage - 1)
       const end = Math.min(totalPages - 1, currentPage + 1)
-      
+
       for (let i = start; i <= end; i++) {
         items.push(i)
       }
-      
+
       if (currentPage < totalPages - 2) {
         items.push('ellipsis')
       }
-      
+
       items.push(totalPages)
     }
-    
+
     return items
   }
-  
-  // Handle sort change
-  const handleSortChange = (value: SortOption) => {
-    setSortOption(value)
-    // In a full implementation, this would update the URL params and trigger a new fetch
-  }
-  
-  // Handle view mode toggle
-  const toggleViewMode = (mode: ViewMode) => {
-    setViewMode(mode)
-  }
-  
-  // Toggle filter
-  const toggleFilter = (filter: string) => {
-    if (activeFilters.includes(filter)) {
-      setActiveFilters(activeFilters.filter(f => f !== filter))
-    } else {
-      setActiveFilters([...activeFilters, filter])
-    }
-    // In a full implementation, this would update the URL params and trigger a new fetch
-  }
-  
-  // Get sort icon
-  const getSortIcon = () => {
-    switch (sortOption) {
-      case 'newest': return <Calendar className="h-4 w-4 mr-2" />
-      case 'oldest': return <Calendar className="h-4 w-4 mr-2" />
-      case 'a-z': return <ArrowDownAZ className="h-4 w-4 mr-2" />
-      case 'z-a': return <ArrowUpAZ className="h-4 w-4 mr-2" />
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 }
     }
   }
-  
-  if (publications.length === 0) {
-    return (
-      <div className="w-full flex flex-col items-center py-20">
-        <div className="mb-6">
-          <FileText className="h-12 w-12 text-muted-foreground opacity-30" />
-        </div>
-        <h2 className="text-xl font-semibold mb-2">No publications found</h2>
-        <p className="text-muted-foreground mb-6">
-          {searchParams.get('q') 
-            ? `No results for "${searchParams.get('q')}"`
-            : "There are no publications available at the moment."}
-        </p>
-        {searchParams.get('q') && (
-          <Button variant="outline" onClick={clearSearch}>
-            Clear search
-          </Button>
-        )}
-      </div>
-    )
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
+    }
   }
 
   return (
-    <div className="w-full">
+    <div className="relative">
       {/* Hero Section */}
-      <div className="relative mb-8 rounded-xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary p-6 md:p-10">
-        <div className="absolute inset-0 bg-[url(/images/blog-pattern.png)] opacity-10"></div>
-        <div className="relative z-10 max-w-3xl">
-          <Badge className="bg-primary-foreground text-primary mb-4">Publications</Badge>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Latest Publications</h1>
-          <p className="text-primary-foreground/90 text-lg mb-6">
-            Explore our collection of articles, research papers, and legal insights
-          </p>
-          
-          {/* Search bar */}
-          <div className={cn(
-            "relative rounded-full transition-all duration-200 border-2",
-            isSearchFocused
-              ? "border-primary-foreground shadow-lg"
-              : "border-primary-foreground/40"
-          )}>
-            <Input
-              placeholder="Search publications..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              onKeyDown={handleKeyDown}
-              className="rounded-full border-0 pl-5 pr-12 py-6 bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-            {searchQuery ? (
-              <button
-                onClick={clearSearch}
-                className="absolute right-14 top-2.5 text-primary-foreground/60 hover:text-primary-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            ) : null}
-            <Button 
-              onClick={handleSearch}
-              className="absolute right-1.5 top-1.5 rounded-full bg-primary-foreground text-primary hover:bg-primary-foreground/90"
-              size="sm"
-            >
-              <Search className="h-4 w-4 mr-1" />
-              <span>Search</span>
-            </Button>
-          </div>
+      <section className="relative py-16 sm:py-20 md:py-24 overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
         </div>
-      </div>
 
-      {/* Controls & Filters Row */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div>
-          <h2 className="text-xl font-semibold">
-            {searchParams.get('q')
-              ? `Search results for "${searchParams.get('q')}"`
-              : "All Publications"}
-          </h2>
-          <p className="text-muted-foreground text-sm">
-            Showing {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, count)} of {count} publications
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          {/* Sort dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                {getSortIcon()}
-                <span className="hidden sm:inline">Sort by: </span>
-                {sortOption === 'newest' && 'Newest'}
-                {sortOption === 'oldest' && 'Oldest'}
-                {sortOption === 'a-z' && 'A-Z'}
-                {sortOption === 'z-a' && 'Z-A'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[180px]">
-              <DropdownMenuLabel>Sort publications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className={cn("gap-2 cursor-pointer", sortOption === 'newest' && "font-medium")}
-                onClick={() => handleSortChange('newest')}
-              >
-                <Calendar className="h-4 w-4" />
-                Newest first
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={cn("gap-2 cursor-pointer", sortOption === 'oldest' && "font-medium")}
-                onClick={() => handleSortChange('oldest')}
-              >
-                <Calendar className="h-4 w-4" />
-                Oldest first
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={cn("gap-2 cursor-pointer", sortOption === 'a-z' && "font-medium")}
-                onClick={() => handleSortChange('a-z')}
-              >
-                <ArrowDownAZ className="h-4 w-4" />
-                Alphabetical A-Z
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={cn("gap-2 cursor-pointer", sortOption === 'z-a' && "font-medium")}
-                onClick={() => handleSortChange('z-a')}
-              >
-                <ArrowUpAZ className="h-4 w-4" />
-                Alphabetical Z-A
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {/* Filter dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                <Filter className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Filter</span>
-                {activeFilters.length > 0 && (
-                  <Badge className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full">
-                    {activeFilters.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>Filter by category</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {['Legal Research', 'Case Studies', 'Legal Education', 'Human Rights'].map((category) => (
-                <DropdownMenuItem 
-                  key={category}
-                  className="gap-2 cursor-pointer flex items-center"
-                  onClick={() => toggleFilter(category)}
-                >
-                  <div className={cn(
-                    "w-4 h-4 border rounded flex items-center justify-center mr-2",
-                    activeFilters.includes(category) 
-                      ? "bg-primary border-primary text-primary-foreground" 
-                      : "border-muted-foreground"
-                  )}>
-                    {activeFilters.includes(category) && (
-                      <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </div>
-                  {category}
-                </DropdownMenuItem>
-              ))}
-              
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Publication type</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              
-              {['Articles', 'Research Papers', 'Case Notes'].map((type) => (
-                <DropdownMenuItem 
-                  key={type}
-                  className="gap-2 cursor-pointer flex items-center"
-                  onClick={() => toggleFilter(type)}
-                >
-                  <div className={cn(
-                    "w-4 h-4 border rounded flex items-center justify-center mr-2",
-                    activeFilters.includes(type) 
-                      ? "bg-primary border-primary text-primary-foreground" 
-                      : "border-muted-foreground"
-                  )}>
-                    {activeFilters.includes(type) && (
-                      <svg width="10" height="10" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </div>
-                  {type}
-                </DropdownMenuItem>
-              ))}
-              
-              {activeFilters.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-center text-xs h-8 mt-1"
-                    onClick={() => setActiveFilters([])}
-                  >
-                    Clear all filters
-                  </Button>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {/* View mode toggle */}
-          <div className="flex items-center border rounded-md overflow-hidden">
-            <Button 
-              variant={viewMode === 'grid' ? "secondary" : "ghost"}
-              size="sm"
-              className="rounded-none px-2 h-8"
-              onClick={() => toggleViewMode('grid')}
-            >
-              <Grid3x3 className="h-4 w-4" />
-              <span className="sr-only">Grid View</span>
-            </Button>
-            <Button 
-              variant={viewMode === 'list' ? "secondary" : "ghost"}
-              size="sm"
-              className="rounded-none px-2 h-8"
-              onClick={() => toggleViewMode('list')}
-            >
-              <List className="h-4 w-4" />
-              <span className="sr-only">List View</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Active filters display */}
-      {activeFilters.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {activeFilters.map(filter => (
-            <Badge 
-              key={filter} 
-              variant="secondary"
-              className="px-3 py-1 gap-1"
-            >
-              {filter}
-              <button onClick={() => toggleFilter(filter)} className="ml-1">
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
-          ))}
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-xs h-7"
-            onClick={() => setActiveFilters([])}
+        <div className="container px-4 sm:px-6">
+          <motion.div
+            className="max-w-4xl mx-auto text-center"
+            variants={shouldReduceMotion ? {} : containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            Clear all
-          </Button>
-        </div>
-      )}
-
-      {/* Publications grid or list */}
-      <div className="relative min-h-[300px]">
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className={cn(
-                "grid gap-6",
-                viewMode === 'grid' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-              )}
-            >
-              {Array(6).fill(0).map((_, i) => (
-                <div key={i} className="bg-white rounded-xl overflow-hidden shadow-md h-full border border-gray-100">
-                  <Skeleton className="h-48 w-full" />
-                  <div className="p-5">
-                    <Skeleton className="h-6 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-2/3 mb-4" />
-                    <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
-                      <Skeleton className="h-3 w-1/4" />
-                      <Skeleton className="h-3 w-1/3" />
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <motion.div variants={shouldReduceMotion ? {} : itemVariants}>
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+                <Newspaper className="h-4 w-4" />
+                Publications
+              </span>
             </motion.div>
-          ) : viewMode === 'grid' ? (
-            <motion.div
-              key="grid"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+
+            <motion.h1
+              variants={shouldReduceMotion ? {} : itemVariants}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6"
             >
-              {publications.map((publication, index) => (
-                <PublicationCard 
-                  key={publication.id} 
-                  publication={publication} 
-                  index={index} 
+              Legal{' '}
+              <span className="text-primary">Insights & Research</span>
+            </motion.h1>
+
+            <motion.div variants={shouldReduceMotion ? {} : itemVariants}>
+              <div className="h-1 w-20 bg-primary mx-auto rounded-full mb-8" />
+            </motion.div>
+
+            <motion.p
+              variants={shouldReduceMotion ? {} : itemVariants}
+              className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-10 max-w-3xl mx-auto"
+            >
+              Explore our collection of articles, research papers, and legal analysis written by
+              our team of law students and supervisors. Stay informed about legal developments
+              and educational resources.
+            </motion.p>
+
+            {/* Search Bar */}
+            <motion.div
+              variants={shouldReduceMotion ? {} : itemVariants}
+              className="max-w-xl mx-auto"
+            >
+              <div className={cn(
+                "relative rounded-full transition-all duration-200 border-2 bg-white shadow-sm",
+                isSearchFocused
+                  ? "border-primary shadow-lg shadow-primary/10"
+                  : "border-gray-200"
+              )}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Search publications..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  onKeyDown={handleKeyDown}
+                  className="rounded-full border-0 pl-12 pr-28 py-6 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
-              ))}
+                {searchQuery && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-24 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+                <Button
+                  onClick={handleSearch}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full h-10 px-5"
+                >
+                  Search
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Publications Section */}
+      <section className="py-16 sm:py-20 bg-[var(--slate-50)]">
+        <div className="container px-4 sm:px-6">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                {searchParams.get('q')
+                  ? `Results for "${searchParams.get('q')}"`
+                  : "All Publications"}
+              </h2>
+              <p className="text-muted-foreground">
+                {count > 0 ? (
+                  <>Showing {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, count)} of {count} publications</>
+                ) : (
+                  'No publications found'
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Empty State */}
+          {publications.length === 0 ? (
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="py-16 text-center"
+            >
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+                <FileText className="h-10 w-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No publications found</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                {searchParams.get('q')
+                  ? `We couldn't find any publications matching "${searchParams.get('q')}". Try a different search term.`
+                  : "There are no publications available at the moment. Check back later for updates."}
+              </p>
+              {searchParams.get('q') && (
+                <Button variant="outline" onClick={clearSearch} className="rounded-full">
+                  Clear search
+                </Button>
+              )}
             </motion.div>
           ) : (
-            <motion.div
-              key="list"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="space-y-4"
-            >
-              {publications.map((publication, index) => (
+            <>
+              {/* Publications Grid */}
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={publication.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.07 }}
-                  className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                  key={currentPage}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                  variants={shouldReduceMotion ? {} : containerVariants}
+                  initial="hidden"
+                  animate="visible"
                 >
-                  <PublicationCard 
-                    publication={publication} 
-                    index={index} 
-                  />
+                  {publications.map((publication, index) => (
+                    <motion.div
+                      key={publication.id}
+                      variants={shouldReduceMotion ? {} : itemVariants}
+                    >
+                      <PublicationCard
+                        publication={publication}
+                        index={index}
+                      />
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              </AnimatePresence>
 
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mt-8">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          disabled={currentPage === 1}
-          onClick={() => navigateToPage(currentPage - 1)}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous</span>
-        </Button>
-        
-        {getPaginationItems().map((item, index) => (
-          <Button 
-            key={index}
-            variant={item === currentPage ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => typeof item === 'number' && navigateToPage(item)}
-            disabled={item === 'ellipsis'}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full h-10 w-10"
+                    disabled={currentPage === 1}
+                    onClick={() => navigateToPage(currentPage - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Previous</span>
+                  </Button>
+
+                  <div className="flex items-center gap-1">
+                    {getPaginationItems().map((item, index) => (
+                      item === 'ellipsis' ? (
+                        <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">...</span>
+                      ) : (
+                        <Button
+                          key={item}
+                          variant={item === currentPage ? "default" : "ghost"}
+                          size="sm"
+                          className={cn(
+                            "rounded-full h-10 w-10 p-0",
+                            item === currentPage && "shadow-md"
+                          )}
+                          onClick={() => navigateToPage(item as number)}
+                        >
+                          {item}
+                        </Button>
+                      )
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full h-10 w-10"
+                    disabled={currentPage === totalPages}
+                    onClick={() => navigateToPage(currentPage + 1)}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Next</span>
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="container px-4 sm:px-6">
+          <motion.div
+            className="max-w-4xl mx-auto"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            {item === 'ellipsis' ? '...' : item}
-          </Button>
-        ))}
-        
-        <Button 
-          variant="outline" 
-          size="sm" 
-          disabled={currentPage === totalPages}
-          onClick={() => navigateToPage(currentPage + 1)}
-        >
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next</span>
-        </Button>
-      </div>
+            <div className="relative bg-[var(--navy-900)] rounded-3xl p-8 sm:p-12 overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+              <div className="relative text-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary/20 flex items-center justify-center">
+                  <BookOpen className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+                  Have a Legal Research Topic?
+                </h2>
+                <p className="text-white/70 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
+                  Our team of law students and supervisors are always looking for meaningful research
+                  topics. If you have a suggestion or would like to collaborate, we'd love to hear from you.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <Button asChild size="lg" className="rounded-full h-12 px-8 font-semibold shadow-lg shadow-primary/25">
+                    <Link href="/contact" className="flex items-center gap-2">
+                      Get In Touch
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="rounded-full h-12 px-8 font-semibold border-white/20 text-white hover:bg-white/10">
+                    <Link href="/about">Learn About Us</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }
