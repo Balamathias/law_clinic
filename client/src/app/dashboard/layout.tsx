@@ -1,22 +1,39 @@
-import React, { PropsWithChildren } from 'react'
-import DashboardSidebar from '@/components/dashboard/sidebar'
-import { getUser } from '@/services/server/auth'
-import { redirect } from 'next/navigation'
-import Navbar from '@/components/dashboard/navbar'
+import React, { PropsWithChildren } from "react"
+import { redirect } from "next/navigation"
+import { ThemeProvider } from "next-themes"
+import DashboardSidebar from "@/components/dashboard/sidebar"
+import DashboardTopbar from "@/components/dashboard/navbar"
+import { CommandPaletteProvider } from "@/components/dashboard/command-palette"
+import { getUser } from "@/services/server/auth"
 
 const Layout = async ({ children }: PropsWithChildren) => {
   const { data: user } = await getUser()
-  
+
+  if (!user) {
+    redirect("/login?next=/dashboard")
+  }
+  if (!user.is_staff) {
+    redirect("/forbidden")
+  }
+
   return (
-    <div className='bg-background md:bg-secondary md:dark:bg-background min-h-screen'>
-      <DashboardSidebar user={user} />
-      <Navbar user={user} />
-      <main className='lg:pl-[220px]'>
-        <div className="container mx-auto">
-          {children}
-        </div>
-      </main>
-    </div>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      storageKey="dashboard-theme"
+      disableTransitionOnChange
+    >
+      <div className="dashboard min-h-screen bg-background text-foreground">
+        <DashboardSidebar user={user} />
+        <CommandPaletteProvider user={user}>
+          <DashboardTopbar user={user} />
+          <main className="lg:pl-60 pt-14">
+            <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6 lg:py-8">{children}</div>
+          </main>
+        </CommandPaletteProvider>
+      </div>
+    </ThemeProvider>
   )
 }
 
