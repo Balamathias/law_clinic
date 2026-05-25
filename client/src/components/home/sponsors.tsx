@@ -43,7 +43,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-[var(--slate-50)]" aria-labelledby="sponsors-heading">
+    <section className="bg-surface-muted py-20 md:py-28 lg:py-36" aria-labelledby="sponsors-heading">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -53,14 +53,13 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+          <span className="text-eyebrow inline-block">
             Our Partners
           </span>
-          <h2 id="sponsors-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+          <h2 id="sponsors-heading" className="text-h2-editorial mt-4 text-foreground">
             Partners & Supporters
           </h2>
-          <div className="h-1 w-16 bg-primary mx-auto mt-6 rounded-full" />
-          <p className="mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lede mx-auto mt-4 max-w-2xl">
             Organizations and individuals who share our vision of accessible justice for all.
           </p>
         </motion.div>
@@ -73,13 +72,13 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex justify-center mb-10"
         >
-          <div className="inline-flex bg-white rounded-full p-1.5 border border-gray-200 shadow-sm">
+          <div className="inline-flex rounded-lg border border-border bg-card p-1.5">
             <button
               onClick={() => setActiveTab('organizations')}
               className={cn(
                 "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all",
                 activeTab === 'organizations'
-                  ? 'bg-primary text-white shadow-sm'
+                  ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -88,7 +87,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
               {organizationSponsors.length > 0 && (
                 <span className={cn(
                   "px-2 py-0.5 rounded-full text-xs",
-                  activeTab === 'organizations' ? 'bg-white/20' : 'bg-gray-100'
+                  activeTab === 'organizations' ? 'bg-white/20' : 'bg-muted'
                 )}>
                   {organizationSponsors.length}
                 </span>
@@ -99,7 +98,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
               className={cn(
                 "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all",
                 activeTab === 'individuals'
-                  ? 'bg-primary text-white shadow-sm'
+                  ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -108,7 +107,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
               {individualSponsors.length > 0 && (
                 <span className={cn(
                   "px-2 py-0.5 rounded-full text-xs",
-                  activeTab === 'individuals' ? 'bg-white/20' : 'bg-gray-100'
+                  activeTab === 'individuals' ? 'bg-white/20' : 'bg-muted'
                 )}>
                   {individualSponsors.length}
                 </span>
@@ -132,16 +131,16 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                 <motion.div
                   key={org.id}
                   variants={itemVariants}
-                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                  className="group overflow-hidden rounded-xl border border-border bg-card transition-colors duration-200 hover:border-border-strong"
                 >
                   {/* Logo Area */}
-                  <div className="h-40 p-6 bg-[var(--slate-100)] flex items-center justify-center">
+                  <div className="flex h-40 items-center justify-center bg-muted p-6">
                     <div className="relative w-full h-full">
                       <Image
                         src={org.image || '/placeholder-org.jpg'}
                         alt={org.name}
                         fill
-                        className="object-contain"
+                        className="object-contain grayscale transition duration-200 group-hover:grayscale-0"
                         sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
@@ -190,7 +189,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
                   variants={itemVariants}
                   className="group"
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <div className="overflow-hidden rounded-xl border border-border bg-card transition-colors duration-200 hover:border-border-strong">
                     {/* Image */}
                     <div className="aspect-[3/4] relative overflow-hidden">
                       <Image
@@ -225,7 +224,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200"
+              className="rounded-xl border border-dashed border-border bg-card py-12 text-center"
             >
               <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">No organization sponsors yet.</p>
@@ -236,7 +235,7 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200"
+              className="rounded-xl border border-dashed border-border bg-card py-12 text-center"
             >
               <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">No individual sponsors yet.</p>
@@ -253,13 +252,13 @@ const SponsorsShowcase: React.FC<SponsorsProps> = ({ sponsors }) => {
           className="text-center mt-12"
         >
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild className="rounded-full" variant="outline">
+            <Button asChild variant="outline">
               <Link href="/sponsors" className="flex items-center gap-2">
                 View All Partners
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
-            <Button asChild className="rounded-full">
+            <Button asChild>
               <Link href="/contact" className="flex items-center gap-2">
                 <Handshake className="w-4 h-4" />
                 Become a Partner

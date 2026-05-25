@@ -29,9 +29,9 @@ const PublicationCard = ({ publication, index = 0 }: PublicationCardProps) => {
       transition={{ duration: 0.4, delay: index * 0.1 }}
     >
       <Link href={`/publications/${publication.slug}`} className="block h-full">
-        <div className="bg-white rounded-2xl overflow-hidden h-full flex flex-col border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-200 hover:border-border-strong">
           {/* Image Container */}
-          <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
+          <div className="relative aspect-video overflow-hidden bg-muted">
             {publication.featured_image ? (
               <Image
                 src={publication.featured_image}
@@ -53,14 +53,14 @@ const PublicationCard = ({ publication, index = 0 }: PublicationCardProps) => {
 
             {/* Category Badge */}
             <div className="absolute top-4 left-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/95 backdrop-blur-sm text-foreground shadow-sm">
+              <span className="inline-flex items-center rounded-full bg-card/95 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
                 {categoryName}
               </span>
             </div>
 
             {/* Arrow indicator on hover */}
             <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card">
                 <ArrowUpRight className="h-5 w-5 text-primary" />
               </div>
             </div>
@@ -69,7 +69,7 @@ const PublicationCard = ({ publication, index = 0 }: PublicationCardProps) => {
           {/* Content */}
           <div className="p-5 sm:p-6 flex-grow flex flex-col">
             {/* Title */}
-            <h3 className="text-lg font-semibold text-foreground leading-snug mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-200">
+            <h3 className="mb-3 line-clamp-2 font-serif text-xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-primary">
               {publication.title}
             </h3>
 
@@ -81,7 +81,7 @@ const PublicationCard = ({ publication, index = 0 }: PublicationCardProps) => {
             )}
 
             {/* Meta Footer */}
-            <div className="mt-auto pt-4 border-t border-gray-100">
+            <div className="mt-auto border-t border-border pt-4">
               <div className="flex items-center justify-between">
                 {/* Author */}
                 <div className="flex items-center gap-2">

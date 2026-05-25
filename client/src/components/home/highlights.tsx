@@ -21,10 +21,10 @@ interface HighlightsProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Workshop: 'bg-emerald-500',
-  Conference: 'bg-blue-500',
-  Event: 'bg-purple-500',
-  Seminar: 'bg-amber-500'
+  Workshop: 'bg-primary',
+  Conference: 'bg-info',
+  Event: 'bg-brand-700',
+  Seminar: 'bg-gold text-foreground'
 }
 
 const Highlights: React.FC<HighlightsProps> = ({ events }) => {
@@ -85,7 +85,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
 
   if (!hasEvents) {
     return (
-      <section className="py-16 md:py-24 bg-[var(--slate-50)]">
+      <section className="bg-surface-muted py-20 md:py-28 lg:py-36">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-foreground mb-4">Upcoming Events</h2>
           <p className="text-muted-foreground mb-8">No events scheduled at the moment. Check back soon!</p>
@@ -98,7 +98,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-[var(--slate-50)]" aria-labelledby="highlights-heading">
+    <section id="events" className="bg-surface-muted py-20 md:py-28 lg:py-36" aria-labelledby="highlights-heading">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -108,13 +108,12 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+          <span className="text-eyebrow inline-block">
             Events & Workshops
           </span>
-          <h2 id="highlights-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+          <h2 id="highlights-heading" className="text-h2-editorial mt-4 text-foreground">
             Upcoming Events
           </h2>
-          <div className="h-1 w-16 bg-primary mt-6 rounded-full" />
         </motion.div>
 
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
@@ -125,7 +124,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="relative bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+              className="relative overflow-hidden rounded-xl border border-border bg-card"
               onMouseEnter={() => { hoverRef.current = true }}
               onMouseLeave={() => { hoverRef.current = false }}
             >
@@ -160,14 +159,14 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">
                   <button
                     onClick={prev}
-                    className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card/90 text-foreground backdrop-blur-sm transition-colors hover:bg-card"
                     aria-label="Previous event"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={next}
-                    className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-colors shadow-lg"
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card/90 text-foreground backdrop-blur-sm transition-colors hover:bg-card"
                     aria-label="Next event"
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -175,7 +174,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 </div>
 
                 {/* Date Badge */}
-                <div className="absolute bottom-4 left-4 bg-white rounded-xl p-3 shadow-lg">
+                <div className="absolute bottom-4 left-4 rounded-xl border border-border bg-card p-3">
                   <div className="text-center">
                     <span className="block text-2xl font-bold text-foreground">{fmt(startDate, 'd')}</span>
                     <span className="block text-xs font-medium text-primary uppercase">{fmt(startDate, 'MMM')}</span>
@@ -205,7 +204,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <Button asChild className="rounded-full">
+                  <Button asChild>
                     <Link href={`/events/${current?.slug || current?.id}`}>
                       Register Now
                       <ArrowRight className="h-4 w-4 ml-2" />
@@ -218,7 +217,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                       <button
                         key={idx}
                         onClick={() => goTo(idx)}
-                        className={`h-2 rounded-full transition-all ${idx === activeIndex ? 'bg-primary w-6' : 'bg-gray-300 w-2 hover:bg-gray-400'}`}
+                        className={`h-2 rounded-full transition-all ${idx === activeIndex ? 'bg-primary w-6' : 'bg-muted-foreground/30 w-2 hover:bg-muted-foreground/50'}`}
                         aria-label={`Go to slide ${idx + 1}`}
                       />
                     ))}
@@ -255,10 +254,10 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                       >
                         <Link
                           href={`/events/${event.slug || event.id}`}
-                          className="group flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all"
+                          className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-border-strong"
                         >
                           {/* Date */}
-                          <div className="flex-shrink-0 bg-[var(--slate-100)] rounded-lg p-3 text-center min-w-[60px]">
+                          <div className="min-w-[60px] flex-shrink-0 rounded-lg bg-muted p-3 text-center">
                             <span className="block text-xl font-bold text-foreground">{fmt(sDate, 'd')}</span>
                             <span className="block text-xs font-medium text-muted-foreground uppercase">{fmt(sDate, 'MMM')}</span>
                           </div>
@@ -287,7 +286,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                     )
                   })
                 ) : (
-                  <div className="bg-white rounded-xl p-6 border border-dashed border-gray-200 text-center">
+                  <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center">
                     <p className="text-muted-foreground text-sm">No upcoming events at the moment.</p>
                   </div>
                 )}
@@ -295,7 +294,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
 
               {/* View All Button */}
               <div className="mt-6">
-                <Button asChild variant="outline" className="w-full rounded-full">
+                <Button asChild variant="outline" className="w-full">
                   <Link href="/events" className="flex items-center justify-center gap-2">
                     View All Events
                     <ArrowRight className="h-4 w-4" />

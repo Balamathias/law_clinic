@@ -12,7 +12,7 @@ import { ArrowRight } from "lucide-react"
 const navItems = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
-  { name: "Events", href: "#events" },
+  { name: "Events", href: "/#events" },
   { name: "Publications", href: "/publications" },
   { name: "Team", href: "/excos" },
   { name: "Contact", href: "/contact" }
@@ -35,7 +35,7 @@ export function SiteHeader() {
   const useDarkText = isLightBgPage || isScrolled
 
   const isActive = (href: string) => {
-    if (href.startsWith('#')) return false
+    if (href.startsWith('/#')) return pathname === "/"
     return pathname === href || pathname.startsWith(href + '/')
   }
 
@@ -46,9 +46,9 @@ export function SiteHeader() {
       className={[
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm"
+          ? "bg-card/95 backdrop-blur-md border-b border-border"
           : isLightBgPage
-            ? "bg-white/80 backdrop-blur-sm"
+            ? "bg-card/85 backdrop-blur-sm"
             : "bg-transparent"
       ].join(' ')}
       initial={prefersReduced ? false : { y: -60, opacity: 0 }}
@@ -76,7 +76,7 @@ export function SiteHeader() {
               className="group flex items-center gap-3"
               aria-label="ABU Law Clinic - Go to homepage"
             >
-              <div className="relative h-10 w-10 overflow-hidden rounded-xl ring-2 ring-white/20 group-hover:ring-primary/40 transition-all shadow-sm">
+              <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-border/40 bg-card/90 transition-colors group-hover:border-primary/40">
                 <Image
                   src="/images/logo/logo.png"
                   alt=""
@@ -88,7 +88,7 @@ export function SiteHeader() {
               </div>
               <div className="hidden sm:block">
                 <span className={[
-                  "block font-bold text-lg tracking-tight transition-colors",
+                  "block font-serif text-lg font-semibold tracking-tight transition-colors",
                   useDarkText ? "text-foreground" : "text-white"
                 ].join(' ')}>
                   ABU Law Clinic
@@ -125,7 +125,7 @@ export function SiteHeader() {
                           ? "text-primary bg-primary/10"
                           : "text-white bg-white/15"
                         : useDarkText
-                          ? "text-foreground/70 hover:text-primary hover:bg-gray-100"
+                          ? "text-muted-foreground hover:text-primary hover:bg-muted"
                           : "text-white/80 hover:text-white hover:bg-white/10"
                     ].join(' ')}
                   >
@@ -144,7 +144,7 @@ export function SiteHeader() {
             >
               <Button
                 asChild
-                className="rounded-full h-10 px-6 font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all"
+                className="h-10 px-6 font-semibold"
               >
                 <Link href="/get-help" className="flex items-center gap-2">
                   Get Help

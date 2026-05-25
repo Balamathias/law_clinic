@@ -19,7 +19,6 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import Footer from '@/components/footer'
 
 interface Props {
   publications: Publication[],
@@ -136,13 +135,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
   return (
     <div className="relative">
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-20 md:py-24 overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-        </div>
-
+      <section className="relative overflow-hidden bg-background py-20 md:py-28 lg:py-36">
         <div className="container px-4 sm:px-6">
           <motion.div
             className="max-w-4xl mx-auto text-center"
@@ -151,7 +144,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
             animate="visible"
           >
             <motion.div variants={shouldReduceMotion ? {} : itemVariants}>
-              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+              <span className="text-eyebrow inline-flex items-center gap-2">
                 <Newspaper className="h-4 w-4" />
                 Publications
               </span>
@@ -159,19 +152,15 @@ const Publications = ({ publications, count, pageSize }: Props) => {
 
             <motion.h1
               variants={shouldReduceMotion ? {} : itemVariants}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6"
+              className="text-h1-editorial mb-6 mt-5 text-foreground"
             >
               Legal{' '}
               <span className="text-primary">Insights & Research</span>
             </motion.h1>
 
-            <motion.div variants={shouldReduceMotion ? {} : itemVariants}>
-              <div className="h-1 w-20 bg-primary mx-auto rounded-full mb-8" />
-            </motion.div>
-
             <motion.p
               variants={shouldReduceMotion ? {} : itemVariants}
-              className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-10 max-w-3xl mx-auto"
+              className="text-lede mx-auto mb-10 max-w-3xl"
             >
               Explore our collection of articles, research papers, and legal analysis written by
               our team of law students and supervisors. Stay informed about legal developments
@@ -184,10 +173,10 @@ const Publications = ({ publications, count, pageSize }: Props) => {
               className="max-w-xl mx-auto"
             >
               <div className={cn(
-                "relative rounded-full transition-all duration-200 border-2 bg-white shadow-sm",
+                "relative rounded-lg border bg-card transition-colors duration-200",
                 isSearchFocused
-                  ? "border-primary shadow-lg shadow-primary/10"
-                  : "border-gray-200"
+                  ? "border-primary"
+                  : "border-border"
               )}>
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
@@ -197,7 +186,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   onKeyDown={handleKeyDown}
-                  className="rounded-full border-0 pl-12 pr-28 py-6 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="border-0 bg-transparent py-6 pl-12 pr-28 focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
                 {searchQuery && (
                   <button
@@ -209,7 +198,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                 )}
                 <Button
                   onClick={handleSearch}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full h-10 px-5"
+                  className="absolute right-1.5 top-1/2 h-10 -translate-y-1/2 px-5"
                 >
                   Search
                 </Button>
@@ -220,7 +209,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
       </section>
 
       {/* Publications Section */}
-      <section className="py-16 sm:py-20 bg-[var(--slate-50)]">
+      <section className="bg-surface-muted py-20 md:py-28 lg:py-36">
         <div className="container px-4 sm:px-6">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
@@ -247,8 +236,8 @@ const Publications = ({ publications, count, pageSize }: Props) => {
               animate={{ opacity: 1, y: 0 }}
               className="py-16 text-center"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
-                <FileText className="h-10 w-10 text-gray-400" />
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-muted">
+                <FileText className="h-10 w-10 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">No publications found</h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
@@ -257,7 +246,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                   : "There are no publications available at the moment. Check back later for updates."}
               </p>
               {searchParams.get('q') && (
-                <Button variant="outline" onClick={clearSearch} className="rounded-full">
+                <Button variant="outline" onClick={clearSearch}>
                   Clear search
                 </Button>
               )}
@@ -311,8 +300,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                           variant={item === currentPage ? "default" : "ghost"}
                           size="sm"
                           className={cn(
-                            "rounded-full h-10 w-10 p-0",
-                            item === currentPage && "shadow-md"
+                            "h-10 w-10 p-0",
                           )}
                           onClick={() => navigateToPage(item as number)}
                         >
@@ -325,7 +313,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full h-10 w-10"
+                    className="h-10 w-10"
                     disabled={currentPage === totalPages}
                     onClick={() => navigateToPage(currentPage + 1)}
                   >
@@ -340,7 +328,7 @@ const Publications = ({ publications, count, pageSize }: Props) => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 bg-white">
+      <section className="bg-background py-20 md:py-28 lg:py-36">
         <div className="container px-4 sm:px-6">
           <motion.div
             className="max-w-4xl mx-auto"
@@ -349,16 +337,12 @@ const Publications = ({ publications, count, pageSize }: Props) => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="relative bg-[var(--navy-900)] rounded-3xl p-8 sm:p-12 overflow-hidden">
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-
+            <div className="relative overflow-hidden rounded-xl border border-border bg-brand-900 p-8 sm:p-12">
               <div className="relative text-center">
                 <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary/20 flex items-center justify-center">
                   <BookOpen className="h-8 w-8 text-primary" />
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+                <h2 className="mb-4 font-serif text-3xl font-semibold text-white md:text-4xl">
                   Have a Legal Research Topic?
                 </h2>
                 <p className="text-white/70 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
@@ -366,13 +350,13 @@ const Publications = ({ publications, count, pageSize }: Props) => {
                   topics. If you have a suggestion or would like to collaborate, we'd love to hear from you.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <Button asChild size="lg" className="rounded-full h-12 px-8 font-semibold shadow-lg shadow-primary/25">
+                  <Button asChild size="lg" className="h-12 px-8 font-semibold">
                     <Link href="/contact" className="flex items-center gap-2">
                       Get In Touch
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="rounded-full h-12 px-8 font-semibold border-white/20 text-white hover:bg-white/10">
+                  <Button asChild size="lg" variant="outline" className="h-12 border-white/20 px-8 font-semibold text-white hover:bg-white/10">
                     <Link href="/about">Learn About Us</Link>
                   </Button>
                 </div>
@@ -381,8 +365,6 @@ const Publications = ({ publications, count, pageSize }: Props) => {
           </motion.div>
         </div>
       </section>
-
-      <Footer />
     </div>
   )
 }

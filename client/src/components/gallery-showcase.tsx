@@ -88,13 +88,7 @@ export const GalleryShowcase: React.FC<GalleryShowcaseProps> = ({
   }
   
   return (
-    <div className={cn("relative py-8", className)} ref={ref}>
-      {/* Background decorations */}
-      <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 w-64 h-64 bg-primary/5 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
-      </div>
-      
+    <div className={cn("group relative py-8", className)} ref={ref}>
       {/* Header */}
       <motion.div
         variants={headerVariants}
@@ -103,7 +97,7 @@ export const GalleryShowcase: React.FC<GalleryShowcaseProps> = ({
         className="flex justify-between items-end mb-8"
       >
         <div>
-          <h2 className="text-2xl font-bold tracking-tight mb-2">{gallery.title}</h2>
+          <h2 className="mb-2 font-serif text-3xl font-semibold tracking-tight">{gallery.title}</h2>
           {gallery.year && (
             <div className="flex items-center text-sm text-muted-foreground">
               <span className="capitalize">{gallery.department}</span>
@@ -137,7 +131,7 @@ export const GalleryShowcase: React.FC<GalleryShowcaseProps> = ({
               variants={itemVariants}
               className="flex-shrink-0 w-[280px] md:w-[300px] snap-start"
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/40 shadow-sm">
+              <div className="relative overflow-hidden rounded-xl border border-border">
                 <GalleryImageCard 
                   image={image} 
                   showSocialLinks={false} 
@@ -154,7 +148,7 @@ export const GalleryShowcase: React.FC<GalleryShowcaseProps> = ({
             <Button 
               size="icon" 
               variant="outline" 
-              className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-background/80 backdrop-blur-sm"
+              className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-background/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
               onClick={handlePrev}
               disabled={activeIndex === 0}
             >
@@ -164,7 +158,7 @@ export const GalleryShowcase: React.FC<GalleryShowcaseProps> = ({
             <Button 
               size="icon" 
               variant="outline" 
-              className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-background/80 backdrop-blur-sm"
+              className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-background/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
               onClick={handleNext}
               disabled={activeIndex >= gallery.images.length - maxVisibleImages}
             >

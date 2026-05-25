@@ -4,9 +4,30 @@ import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { Publication, PublicationCategory, PublicationsOverview, PublicationStats } from '@/@types/db'
 import { stackbase } from '../server.entry'
 
+export interface PublicationsStats {
+    total: number
+    published: number
+    draft: number
+    archived: number
+    featured: number
+}
+
 // Publication functions
 interface PublicationPayload {
     params?: Record<string, string | number | boolean>
+}
+
+export const getPublicationsStats = async (): Promise<{ data: PublicationsStats }> => {
+    // TODO(wave-2): wire to real endpoint
+    return Promise.resolve({
+        data: {
+            total: 0,
+            published: 0,
+            draft: 0,
+            archived: 0,
+            featured: 0,
+        },
+    })
 }
 
 export const getPublications = async (payload?: PublicationPayload): Promise<PaginatedStackResponse<Publication[]>> => {

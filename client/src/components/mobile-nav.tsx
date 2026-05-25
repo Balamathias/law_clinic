@@ -64,11 +64,11 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
 
   const menuVariants = {
     closed: {
-      opacity: 0,
+      x: "100%",
       transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
     },
     open: {
-      opacity: 1,
+      x: 0,
       transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
     }
   }
@@ -98,19 +98,19 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
           animate="open"
           exit="closed"
         >
-          {/* Background */}
-          <div className="absolute inset-0 bg-[var(--navy-950)]">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-72 h-72 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-64 sm:h-64 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-          </div>
+          <button
+            type="button"
+            aria-label="Close menu overlay"
+            className="absolute inset-0 bg-foreground/40"
+            onClick={() => setIsOpen(false)}
+          />
 
           {/* Content */}
-          <div className="relative h-full flex flex-col overflow-y-auto">
+          <div className="relative ml-auto flex h-full w-full max-w-md flex-col overflow-y-auto bg-brand-900 text-primary-foreground">
             {/* Header */}
             <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-4 border-b border-white/10">
               <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
-                <div className="relative h-10 w-10 overflow-hidden rounded-xl">
+                <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-white/10 bg-white/90">
                   <Image
                     src="/images/logo/logo.png"
                     alt=""
@@ -120,7 +120,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
                   />
                 </div>
                 <div>
-                  <span className="block text-white font-bold text-lg">ABU Law Clinic</span>
+                  <span className="block font-serif text-lg font-semibold text-white">ABU Law Clinic</span>
                   <span className="block text-white/50 text-xs">Ahmadu Bello University</span>
                 </div>
               </Link>
@@ -131,7 +131,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
                 size="icon"
                 aria-label="Close menu"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/10 rounded-full h-10 w-10"
+                className="min-h-12 min-w-12 rounded-md text-white hover:bg-white/10"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -139,7 +139,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
 
             {/* Main Navigation */}
             <motion.nav
-              className="flex-1 px-4 sm:px-6 py-6 sm:py-8"
+              className="flex-1 px-4 py-8 sm:px-6"
               variants={shouldReduceMotion ? {} : containerVariants}
               initial="closed"
               animate="open"
@@ -161,10 +161,10 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="group flex items-center justify-between py-3 sm:py-4 border-b border-white/5 transition-colors duration-200"
+                      className="group flex min-h-14 items-center justify-between border-b border-white/10 py-3 transition-colors duration-200"
                       >
                         <span className={[
-                          "text-xl sm:text-2xl font-semibold transition-colors",
+                          "font-serif text-3xl font-semibold leading-tight transition-colors sm:text-4xl",
                           active ? "text-primary" : "text-white/80 group-hover:text-white"
                         ].join(' ')}>
                           {item.name}
@@ -186,7 +186,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
               <motion.div variants={shouldReduceMotion ? {} : itemVariants} className="mt-6 sm:mt-8">
                 <Button
                   asChild
-                  className="w-full rounded-full h-12 sm:h-14 text-sm sm:text-base font-semibold shadow-lg shadow-primary/25"
+                  className="min-h-12 w-full text-sm font-semibold sm:text-base"
                 >
                   <Link
                     href="/get-help"
@@ -210,7 +210,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
                       key={link.name}
                       href={link.href}
                       onClick={() => setIsOpen(false)}
-                      className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/60 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 hover:text-white transition-colors"
+                      className="inline-flex min-h-12 items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:text-sm"
                     >
                       {link.name}
                     </Link>
@@ -229,7 +229,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-sm">
                 <a
                   href="tel:+2341234567890"
-                  className="flex items-center gap-3 text-white/60 hover:text-white transition-colors"
+                  className="flex min-h-12 items-center gap-3 text-white/70 transition-colors hover:text-white"
                 >
                   <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
                     <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
@@ -238,7 +238,7 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
                 </a>
                 <a
                   href="mailto:contact@abulawclinic.org"
-                  className="flex items-center gap-3 text-white/60 hover:text-white transition-colors"
+                  className="flex min-h-12 items-center gap-3 text-white/70 transition-colors hover:text-white"
                 >
                   <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
                     <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
@@ -271,11 +271,11 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
         aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
         className={[
-          "lg:hidden relative z-[101] rounded-full h-10 w-10 transition-colors",
+          "lg:hidden relative z-[101] min-h-12 min-w-12 rounded-md transition-colors",
           isOpen
             ? "text-white hover:bg-white/10"
             : useDarkElements
-              ? "text-foreground hover:bg-gray-100"
+              ? "text-foreground hover:bg-muted"
               : "text-white hover:bg-white/10"
         ].join(' ')}
       >

@@ -141,7 +141,7 @@ const Hero = () => {
               
               {/* Badge */}
               <motion.div
-                className="inline-flex items-center gap-2.5 rounded-full bg-white/8 backdrop-blur-xl px-4 py-2 ring-1 ring-white/20 shadow-lg"
+                className="inline-flex items-center gap-2.5 rounded-full bg-white/8 px-4 py-2 ring-1 ring-white/20 backdrop-blur-xl"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -158,7 +158,7 @@ const Hero = () => {
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[0.95] text-white"
                   variants={itemVariants}
                 >
-                  <span className="block bg-gradient-to-br from-white via-white to-white/90 bg-clip-text text-transparent drop-shadow-sm">
+                  <span className="block bg-gradient-to-br from-white via-white to-white/90 bg-clip-text text-transparent">
                     Empowering
                   </span>
                   <span className="block bg-gradient-to-br from-primary-200 via-primary to-primary-600 bg-clip-text text-transparent">
@@ -193,7 +193,7 @@ const Hero = () => {
                 className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2"
               >
                 <Button
-                  className="group bg-primary hover:bg-primary/90 text-white rounded-full h-12 sm:h-14 px-8 shadow-2xl shadow-primary/30 hover:shadow-primary/40 focus-visible:ring-2 focus-visible:ring-primary/60 transition-all duration-300 font-semibold text-base sm:text-lg"
+                  className="group h-12 bg-primary px-8 text-base font-semibold text-white transition-all duration-300 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary/60 sm:h-14 sm:text-lg"
                   size="lg"
                   asChild
                 >
@@ -238,7 +238,7 @@ const Hero = () => {
                     className="group relative"
                   >
                     {/* Glassmorphic card */}
-                    <div className="relative rounded-2xl bg-white/10 backdrop-blur-2xl ring-1 ring-white/20 p-6 shadow-xl hover:ring-primary/40 transition-all duration-300">
+                    <div className="relative rounded-2xl bg-white/10 p-6 ring-1 ring-white/20 backdrop-blur-2xl transition-all duration-300 hover:ring-primary/40">
                       <div className="flex items-start justify-between mb-4">
                         <div className="p-3 rounded-xl bg-primary/20 backdrop-blur-sm ring-1 ring-primary/30">
                           <IconComponent className="h-6 w-6 text-primary" />

@@ -79,15 +79,8 @@ export function Footer({ className }: FooterProps) {
   }
 
   return (
-    <footer className={cn("relative bg-[var(--navy-950)] text-white overflow-hidden", className)}>
-      {/* Background decorations */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
-      </div>
-
-      {/* Top accent line */}
-      <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+    <footer className={cn("relative overflow-hidden bg-brand-900 text-primary-foreground", className)}>
+      <div className="h-px bg-gold" />
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Main Footer Content */}
@@ -113,7 +106,7 @@ export function Footer({ className }: FooterProps) {
                   />
                 </div>
                 <div>
-                  <span className="block text-xl font-bold text-white">ABU Law Clinic</span>
+                  <span className="block font-serif text-xl font-semibold text-white">ABU Law Clinic</span>
                   <span className="block text-xs text-white/50 font-medium">Ahmadu Bello University</span>
                 </div>
               </Link>
@@ -160,7 +153,7 @@ export function Footer({ className }: FooterProps) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 * (groupIndex + 1) }}
                 >
-                  <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-white">
                     {group.title}
                   </h3>
                   <ul className="space-y-3">
@@ -187,7 +180,7 @@ export function Footer({ className }: FooterProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-white">
                 Stay Updated
               </h3>
               <p className="text-sm text-white/60 mb-4">

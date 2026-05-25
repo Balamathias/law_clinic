@@ -1,26 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { z } from "zod"
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import Link from 'next/link'
 import {
+  ArrowLeft,
   ArrowRight,
   CalendarClock,
-  HelpCircle,
+  Check,
+  Clock,
+  FileText,
   Loader2,
   Mail,
   MapPin,
   Phone,
   Scale,
+  Shield,
   User,
-  CheckCircle2,
-  Info,
-  Clock,
-  Shield
 } from 'lucide-react'
 
 import {
@@ -30,328 +30,275 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
-import { Textarea } from '../ui/textarea'
+} from '@/components/ui/form'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { useCreateHelpRequest } from '@/services/client/help-requests'
-import { CreateHelpRequestPayload } from '@/services/server/help-requests'
+import type { CreateHelpRequestPayload } from '@/services/server/help-requests'
+import { cn } from '@/lib/utils'
 
-const helpFormSchema = z.object({
-  full_name: z.string().min(2, { message: 'Please enter your full name' }),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  phone_number: z.string().min(10, { message: 'Please enter a valid phone number' }),
-  legal_issue_type: z.string({ required_error: 'Please select a legal issue type' }),
-  had_previous_help: z.string({ required_error: 'Please select an option' }),
-  description: z.string().min(20, { message: 'Please provide a brief description of at least 20 characters' })
+const personalDetailsSchema = z.object({
+  full_name: z.string().min(2, { message: 'Please enter your full name.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  phone_number: z.string().min(10, { message: 'Please enter a valid phone number.' }),
 })
 
+const legalIssueSchema = z.object({
+  legal_issue_type: z.string().min(1, { message: 'Please select a legal issue type.' }),
+  had_previous_help: z.enum(['yes', 'no'], {
+    required_error: 'Please select an option.',
+  }),
+})
+
+const descriptionSchema = z.object({
+  description: z
+    .string()
+    .min(20, { message: 'Please describe the issue in at least 20 characters.' }),
+})
+
+const helpFormSchema = personalDetailsSchema.merge(legalIssueSchema).merge(descriptionSchema)
+
 type HelpFormValues = z.infer<typeof helpFormSchema>
+type HelpFormField = keyof HelpFormValues
+
+const steps: {
+  title: string
+  description: string
+  fields: HelpFormField[]
+}[] = [
+  {
+    title: 'Personal details',
+    description: 'Tell us who to contact after the intake review.',
+    fields: ['full_name', 'email', 'phone_number'],
+  },
+  {
+    title: 'Legal issue',
+    description: 'Help us route your request to the right clinic team.',
+    fields: ['legal_issue_type', 'had_previous_help'],
+  },
+  {
+    title: 'Description',
+    description: 'Share the facts, dates, people involved, and any urgent deadlines.',
+    fields: ['description'],
+  },
+]
 
 const legalIssueTypes = [
-  "Family Law",
-  "Housing & Tenancy",
-  "Employment Law",
-  "Consumer Protection",
-  "Human Rights",
-  "Criminal Law",
-  "Civil Litigation",
-  "Administrative Law",
-  "Property Law",
-  "Other"
+  'Family Law',
+  'Housing & Tenancy',
+  'Employment Law',
+  'Consumer Protection',
+  'Human Rights',
+  'Criminal Law',
+  'Civil Litigation',
+  'Administrative Law',
+  'Property Law',
+  'Other',
 ]
 
 const benefits = [
   {
     icon: Shield,
-    title: "100% Confidential",
-    description: "Your information is protected and kept strictly confidential"
+    title: 'Confidential review',
+    description: 'Your information is handled carefully by the clinic intake team.',
   },
   {
     icon: Scale,
-    title: "Free Legal Aid",
-    description: "All our services are provided at no cost to eligible clients"
+    title: 'Free legal aid',
+    description: 'Eligible matters are reviewed and supported at no legal fee.',
   },
   {
     icon: Clock,
-    title: "Quick Response",
-    description: "We aim to respond to all requests within 24-48 hours"
-  }
+    title: 'Clear next step',
+    description: 'The team will contact you after reviewing your submission.',
+  },
 ]
 
-const GetHelp = () => {
-  const [submitted, setSubmitted] = useState(false)
+export default function GetHelp() {
+  const router = useRouter()
   const shouldReduceMotion = useReducedMotion()
-
+  const [step, setStep] = useState(0)
   const { mutate: createRequest, isPending: isSubmitting } = useCreateHelpRequest()
 
   const form = useForm<HelpFormValues>({
     resolver: zodResolver(helpFormSchema),
     defaultValues: {
-      full_name: "",
-      email: "",
-      phone_number: "",
-      legal_issue_type: "",
-      had_previous_help: "",
-      description: ""
+      full_name: '',
+      email: '',
+      phone_number: '',
+      legal_issue_type: '',
+      had_previous_help: 'no',
+      description: '',
     },
+    mode: 'onTouched',
   })
 
-  const onSubmit = async (data: HelpFormValues) => {
-    const _data = { ...data, had_previous_help: data.had_previous_help.toLowerCase() } as CreateHelpRequestPayload
+  const currentStep = steps[step]
+  const progress = useMemo(() => ((step + 1) / steps.length) * 100, [step])
 
-    createRequest(_data, {
+  const nextStep = async () => {
+    const valid = await form.trigger(currentStep.fields, { shouldFocus: true })
+    if (valid) setStep((value) => Math.min(value + 1, steps.length - 1))
+  }
+
+  const previousStep = () => {
+    setStep((value) => Math.max(value - 1, 0))
+  }
+
+  const onSubmit = (data: HelpFormValues) => {
+    const payload: CreateHelpRequestPayload = {
+      full_name: data.full_name,
+      email: data.email,
+      phone_number: data.phone_number,
+      legal_issue_type: data.legal_issue_type,
+      had_previous_help: data.had_previous_help,
+      description: data.description,
+    }
+
+    createRequest(payload, {
       onSuccess: (response) => {
         if (response?.data) {
-          setSubmitted(true)
-          toast.success("Request submitted successfully!")
+          toast.success('Request submitted successfully.')
           form.reset()
-        } else {
-          toast.error(response?.message || "Failed to submit request")
+          router.push('/get-help/submitted')
+          return
         }
+
+        toast.error(response?.message || 'Failed to submit request.')
       },
       onError: (error) => {
-        toast.error(error?.message || "An error occurred while submitting the request")
-      }
+        toast.error(error?.message || 'An error occurred while submitting the request.')
+      },
     })
   }
 
-  const resetForm = () => {
-    setSubmitted(false)
-    form.reset()
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
-    }
-  }
-
-  // Success State
-  if (submitted) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center py-12 px-4">
-        <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-lg w-full"
-        >
-          <div className="relative bg-white rounded-3xl p-8 sm:p-10 border border-gray-100 shadow-xl overflow-hidden text-center">
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
-
-            <div className="relative">
-              <motion.div
-                initial={shouldReduceMotion ? false : { scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6"
-              >
-                <CheckCircle2 className="w-10 h-10 text-primary" />
-              </motion.div>
-
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
-                Request Submitted!
-              </h2>
-
-              <p className="text-muted-foreground mb-8">
-                Thank you for reaching out to ABU Law Clinic. Our team will review your request
-                and contact you within 24-48 business hours.
-              </p>
-
-              <div className="flex flex-col sm:flex-row justify-center gap-3">
-                <Button onClick={resetForm} variant="outline" className="rounded-full h-11 px-6">
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  Submit Another Request
-                </Button>
-
-                <Button asChild className="rounded-full h-11 px-6">
-                  <Link href="/faq">
-                    <Info className="w-4 h-4 mr-2" />
-                    Visit Our FAQ
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    )
-  }
-
   return (
-    <div className="relative py-8 sm:py-12">
-      {/* Background decorations */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="bg-background py-20 md:py-28 lg:py-36">
+      <div className="container-editorial">
         <motion.div
-          className="grid lg:grid-cols-5 gap-8 lg:gap-12"
-          variants={shouldReduceMotion ? {} : containerVariants}
-          initial="hidden"
-          animate="visible"
+          className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
         >
-          {/* Left Column - Info */}
-          <motion.div variants={shouldReduceMotion ? {} : itemVariants} className="lg:col-span-2">
-            <div className="sticky top-24">
-              {/* Badge */}
-              <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
-                <Scale className="h-4 w-4" />
-                Free Legal Assistance
-              </span>
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <span className="text-eyebrow inline-flex items-center gap-2">
+              <Scale className="size-4 text-primary" />
+              Free Legal Assistance
+            </span>
+            <h1 className="text-h1-editorial mt-5 text-foreground">Get Legal Help</h1>
+            <p className="text-lede mt-5">
+              Complete the intake in three short steps. The clinic team will review your request
+              and contact you with the next available pathway.
+            </p>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
-                Get Legal Help
-              </h1>
-
-              <div className="h-1 w-16 bg-primary rounded-full mb-6" />
-
-              <p className="text-muted-foreground text-base sm:text-lg mb-8 leading-relaxed">
-                At ABU Law Clinic, we provide free legal assistance to those who cannot afford legal
-                representation. Fill out the form and our team will review your case.
-              </p>
-
-              {/* Benefits */}
-              <div className="space-y-4 mb-8">
-                {benefits.map((benefit, index) => {
-                  const Icon = benefit.icon
-                  return (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">{benefit.title}</h3>
-                        <p className="text-sm text-muted-foreground">{benefit.description}</p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {/* Contact Info */}
-              <div className="bg-[var(--slate-50)] rounded-2xl p-6 space-y-4">
-                <h3 className="font-semibold text-foreground mb-4">Contact Information</h3>
-
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <MapPin className="h-4 w-4 text-primary" />
+            <div className="mt-8 space-y-4">
+              {benefits.map(({ icon: Icon, title, description }) => (
+                <div key={title} className="flex gap-4">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="size-5" aria-hidden />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">Office Address</p>
-                    <address className="text-sm text-muted-foreground not-italic">
-                      2nd Floor, Faculty of Law,<br />
-                      Ahmadu Bello University,<br />
-                      Kongo Campus, Zaria
-                    </address>
+                    <h2 className="font-serif text-lg font-semibold text-foreground">{title}</h2>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
                   </div>
                 </div>
+              ))}
+            </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Mail className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Email</p>
-                    <a href="mailto:hello@abulawclinic.com" className="text-sm text-primary hover:underline">
-                      hello@abulawclinic.com
-                    </a>
-                  </div>
+            <div className="mt-8 rounded-xl border border-border bg-card p-6">
+              <h2 className="font-serif text-xl font-semibold text-foreground">Contact Information</h2>
+              <div className="mt-5 space-y-4 text-sm text-muted-foreground">
+                <div className="flex gap-3">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <address className="not-italic">
+                    2nd Floor, Faculty of Law, Ahmadu Bello University, Kongo Campus, Zaria
+                  </address>
                 </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <CalendarClock className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Office Hours</p>
-                    <p className="text-sm text-muted-foreground">
-                      Mon - Fri: 9:00 AM - 4:00 PM
-                    </p>
-                  </div>
+                <a href="mailto:hello@abulawclinic.com" className="flex gap-3 text-primary hover:underline">
+                  <Mail className="mt-0.5 size-4 shrink-0" />
+                  hello@abulawclinic.com
+                </a>
+                <div className="flex gap-3">
+                  <CalendarClock className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <span>Monday to Friday, 9:00 AM - 4:00 PM</span>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </aside>
 
-          {/* Right Column - Form */}
-          <motion.div variants={shouldReduceMotion ? {} : itemVariants} className="lg:col-span-3">
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 sm:p-8">
-              {/* Form header */}
-              <div className="mb-8">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Request Legal Assistance</h2>
-                <p className="text-muted-foreground text-sm">
-                  Fields marked with <span className="text-destructive">*</span> are required
-                </p>
+          <div className="rounded-xl border border-border bg-card p-6 md:p-8">
+            <div className="mb-8">
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="font-medium text-primary">Step {step + 1} of {steps.length}</span>
+                <span className="text-muted-foreground">{currentStep.title}</span>
               </div>
-
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Full Name */}
-                  <FormField
-                    control={form.control}
-                    name="full_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium">
-                          Full Name <span className="text-destructive">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <User className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                              placeholder="Enter your full name"
-                              className="h-12 pl-11 rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-200"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <ol className="mt-6 grid gap-3 sm:grid-cols-3">
+                {steps.map((item, index) => (
+                  <li
+                    key={item.title}
+                    className={cn(
+                      'rounded-lg border p-3',
+                      index === step
+                        ? 'border-primary bg-primary/5'
+                        : index < step
+                          ? 'border-primary/30 bg-primary/5'
+                          : 'border-border bg-background',
                     )}
-                  />
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          'flex size-6 items-center justify-center rounded-full text-xs font-semibold',
+                          index <= step
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground',
+                        )}
+                      >
+                        {index < step ? <Check className="size-3.5" /> : index + 1}
+                      </span>
+                      <span className="text-sm font-medium text-foreground">{item.title}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-                  {/* Email and Phone */}
-                  <div className="grid sm:grid-cols-2 gap-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground">
+                    {currentStep.title}
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">{currentStep.description}</p>
+                </div>
+
+                {step === 0 && (
+                  <div className="space-y-5">
                     <FormField
                       control={form.control}
-                      name="email"
+                      name="full_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Email Address <span className="text-destructive">*</span>
-                          </FormLabel>
+                          <FormLabel>Full Name <span className="text-destructive">*</span></FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Mail className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                              <Input
-                                placeholder="you@example.com"
-                                type="email"
-                                className="h-12 pl-11 rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary"
-                                {...field}
-                              />
+                              <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                              <Input placeholder="Enter your full name" className="pl-10" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -359,43 +306,55 @@ const GetHelp = () => {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="phone_number"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Phone Number <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Phone className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                              <Input
-                                placeholder="09012345678"
-                                className="h-12 pl-11 rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary"
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address <span className="text-destructive">*</span></FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                <Input placeholder="you@example.com" type="email" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="phone_number"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone Number <span className="text-destructive">*</span></FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                <Input placeholder="09012345678" className="pl-10" {...field} />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
+                )}
 
-                  {/* Legal Issue Type and Previous Help */}
-                  <div className="grid sm:grid-cols-2 gap-4">
+                {step === 1 && (
+                  <div className="grid gap-5 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="legal_issue_type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Legal Issue Type <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel>Legal Issue Type <span className="text-destructive">*</span></FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger className="h-12 rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary">
+                              <SelectTrigger>
                                 <SelectValue placeholder="Select issue type" />
                               </SelectTrigger>
                             </FormControl>
@@ -417,18 +376,16 @@ const GetHelp = () => {
                       name="had_previous_help"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium">
-                            Had pro bono help before? <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel>Had pro bono help before? <span className="text-destructive">*</span></FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger className="h-12 rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary">
+                              <SelectTrigger>
                                 <SelectValue placeholder="Select option" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Yes">Yes</SelectItem>
-                              <SelectItem value="No">No</SelectItem>
+                              <SelectItem value="yes">Yes</SelectItem>
+                              <SelectItem value="no">No</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -436,20 +393,19 @@ const GetHelp = () => {
                       )}
                     />
                   </div>
+                )}
 
-                  {/* Description */}
+                {step === 2 && (
                   <FormField
                     control={form.control}
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium">
-                          Brief Description <span className="text-destructive">*</span>
-                        </FormLabel>
+                        <FormLabel>Brief Description <span className="text-destructive">*</span></FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Please describe your legal issue in detail. Include relevant dates, parties involved, and any previous legal actions taken..."
-                            className="min-h-32 resize-none rounded-xl bg-[var(--slate-50)] border-gray-200 focus:border-primary focus:ring-primary"
+                            placeholder="Describe your legal issue. Include relevant dates, parties involved, urgent deadlines, and any previous action taken."
+                            className="min-h-44 resize-none"
                             {...field}
                           />
                         </FormControl>
@@ -457,43 +413,45 @@ const GetHelp = () => {
                       </FormItem>
                     )}
                   />
+                )}
 
-                  {/* Submit Button */}
+                <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-between">
                   <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-12 rounded-full font-semibold text-base shadow-lg shadow-primary/25"
+                    type="button"
+                    variant="outline"
+                    onClick={previousStep}
+                    disabled={step === 0 || isSubmitting}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Request
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
+                    <ArrowLeft className="size-4" />
+                    Back
                   </Button>
-                </form>
-              </Form>
 
-              {/* FAQ Link */}
-              <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Have questions?{' '}
-                  <Link href="/faq" className="text-primary font-medium hover:underline">
-                    Visit our FAQ
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </motion.div>
+                  {step < steps.length - 1 ? (
+                    <Button type="button" onClick={nextStep}>
+                      Continue
+                      <ArrowRight className="size-4" />
+                    </Button>
+                  ) : (
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="size-4 animate-spin" />
+                          Submitting
+                        </>
+                      ) : (
+                        <>
+                          Submit request
+                          <FileText className="size-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </Form>
+          </div>
         </motion.div>
       </div>
-    </div>
+    </section>
   )
 }
-
-export default GetHelp

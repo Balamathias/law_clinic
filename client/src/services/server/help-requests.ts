@@ -5,9 +5,27 @@ import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { HelpRequest } from '@/@types/db'
 import { stackbase } from '../server.entry'
 
+export interface HelpRequestsStats {
+    total: number
+    new: number
+    in_review: number
+    resolved: number
+}
 
 interface HelpRequestPayload {
     params?: Record<string, string | number | boolean>
+}
+
+export const getHelpRequestsStats = async (): Promise<{ data: HelpRequestsStats }> => {
+    // TODO(wave-2): wire to real endpoint
+    return Promise.resolve({
+        data: {
+            total: 0,
+            new: 0,
+            in_review: 0,
+            resolved: 0,
+        },
+    })
 }
 
 export const getHelpRequests = async (payload?: HelpRequestPayload): Promise<PaginatedStackResponse<HelpRequest[]>> => {

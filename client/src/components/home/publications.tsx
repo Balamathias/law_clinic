@@ -21,7 +21,7 @@ const Publications = () => {
   if (isPending) return <PublicationsSkeleton />
 
   return (
-    <section aria-labelledby="publications-heading" className="relative py-16 md:py-24 bg-white">
+    <section aria-labelledby="publications-heading" className="relative bg-background py-20 md:py-28 lg:py-36">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -32,19 +32,18 @@ const Publications = () => {
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
         >
           <div>
-            <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+            <span className="text-eyebrow inline-block">
               Latest Articles
             </span>
-            <h2 id="publications-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            <h2 id="publications-heading" className="text-h2-editorial mt-4 text-foreground">
               Publications
             </h2>
-            <div className="h-1 w-16 bg-primary mt-6 rounded-full" />
-            <p className="mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed max-w-lg">
+            <p className="text-lede mt-4 max-w-lg">
               Explore articles, insights, and research from our team and contributors.
             </p>
           </div>
 
-          <Button asChild className="hidden md:flex rounded-full" variant="outline">
+          <Button asChild className="hidden md:flex" variant="outline">
             <Link href="/publications" className="flex items-center gap-2">
               Browse All
               <ArrowRight className="h-4 w-4" />
@@ -70,7 +69,7 @@ const Publications = () => {
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 className="group"
               >
-                <div className="h-full transition-transform duration-300 group-hover:-translate-y-1">
+                <div className="h-full">
                   <PublicationCard publication={pub} index={idx} />
                 </div>
               </motion.div>
@@ -81,7 +80,7 @@ const Publications = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-2xl border border-dashed border-gray-200 bg-[var(--slate-50)] p-12 text-center"
+            className="rounded-xl border border-dashed border-border bg-surface-muted p-12 text-center"
           >
             <p className="text-muted-foreground text-base">No publications available yet. Check back soon.</p>
             <div className="mt-6">
@@ -117,7 +116,7 @@ const Publications = () => {
 export default Publications
 
 export const PublicationsSkeleton = () => (
-  <section className="relative py-16 md:py-24 bg-white">
+  <section className="relative bg-background py-20 md:py-28 lg:py-36">
     <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-8">
         <div className="space-y-4 max-w-xl">
