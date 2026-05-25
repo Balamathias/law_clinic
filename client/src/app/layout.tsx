@@ -39,9 +39,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <TanstackQueryProvider>
-      <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
-        <body className="font-sans antialiased min-h-screen w-full relative bg-background text-foreground">
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased min-h-screen w-full relative bg-background text-foreground">
+        <TanstackQueryProvider>
           <NextTopLoader
             color="var(--primary)"
             showSpinner={false}
@@ -50,8 +50,8 @@ export default function RootLayout({
           />
           <Toaster richColors />
           {children}
-        </body>
-      </html>
-    </TanstackQueryProvider>
+        </TanstackQueryProvider>
+      </body>
+    </html>
   );
 }

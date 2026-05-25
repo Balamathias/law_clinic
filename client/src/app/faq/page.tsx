@@ -17,7 +17,7 @@ const Page = () => {
         <SiteHeader />
         
         <div className=''>
-            <FAQs />
+            <FAQs headingLevel={1} />
         </div>
 
         <Footer />

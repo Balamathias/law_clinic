@@ -29,8 +29,13 @@ const faqData = [
   }
 ]
 
-const FAQs = () => {
+interface FAQsProps {
+  headingLevel?: 1 | 2
+}
+
+const FAQs = ({ headingLevel = 2 }: FAQsProps) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const Heading = headingLevel === 1 ? 'h1' : 'h2'
 
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
@@ -52,9 +57,9 @@ const FAQs = () => {
               <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.14em] text-gold">
                 FAQ
               </span>
-              <h2 id="faq-heading" className="font-serif text-4xl font-semibold leading-tight text-white md:text-5xl">
+              <Heading id="faq-heading" className="font-serif text-4xl font-semibold leading-tight text-white md:text-5xl">
                 Frequently Asked Questions
-              </h2>
+              </Heading>
               <p className="mt-6 text-white/60 text-base leading-relaxed">
                 Find answers to common questions about our legal services and how we can help you.
               </p>
