@@ -13,7 +13,7 @@ const Banner = () => {
   return (
     <section
       aria-labelledby="banner-heading"
-      className="relative py-16 sm:py-20 md:py-24 bg-white"
+      className="relative bg-background py-20 md:py-28 lg:py-36"
     >
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Card Container - QUAD Style */}
@@ -22,7 +22,7 @@ const Banner = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl bg-[var(--navy-900)] shadow-2xl"
+          className="relative overflow-hidden rounded-xl border border-border bg-brand-900"
         >
           <div className="grid lg:grid-cols-2">
             {/* Left Content */}
@@ -32,7 +32,7 @@ const Banner = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-6"
+                className="mb-6 inline-block text-xs font-semibold uppercase tracking-[0.14em] text-gold"
               >
                 Partner With Us
               </motion.span>
@@ -43,7 +43,7 @@ const Banner = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6"
+                className="text-h2-editorial mb-6 text-white"
               >
                 Ready to get the help you deserve?
               </motion.h2>
@@ -53,7 +53,7 @@ const Banner = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
-                className="text-white/70 text-base sm:text-lg leading-relaxed mb-8 max-w-lg"
+                className="mb-8 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg"
               >
                 Our team of dedicated law students and supervisors is ready to help you
                 navigate your legal challenges with tailored solutions for your unique situation.
@@ -69,7 +69,7 @@ const Banner = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="group bg-white text-[var(--navy-900)] hover:bg-white/90 rounded-full h-12 px-8 font-semibold"
+                  className="group h-12 bg-white px-8 font-semibold text-brand-900 hover:bg-white/90"
                 >
                   <Link href="/get-help" className="flex items-center gap-2">
                     <span>Get in touch</span>
@@ -81,10 +81,10 @@ const Banner = () => {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="rounded-full h-12 px-8 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 font-semibold"
+                  className="h-12 border-white/20 bg-white/5 px-8 font-semibold text-white hover:border-white/30 hover:bg-white/10"
                 >
-                  <Link href="/services">
-                    Explore services
+                  <Link href="/contact">
+                    Contact us
                   </Link>
                 </Button>
               </motion.div>
@@ -101,12 +101,12 @@ const Banner = () => {
                   sizes="50vw"
                 />
                 {/* Gradient overlay for text contrast on left */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--navy-900)] via-[var(--navy-900)]/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-900 via-brand-900/50 to-transparent" />
               </div>
 
               {/* Decorative elements */}
               <motion.div
-                className="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20"
+                className="absolute bottom-8 right-8 rounded-xl border border-white/20 bg-white/10 p-5 backdrop-blur-md"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -125,11 +125,7 @@ const Banner = () => {
             </div>
           </div>
 
-          {/* Decorative background elements */}
-          <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-          </div>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gold/70" />
         </motion.div>
       </div>
     </section>

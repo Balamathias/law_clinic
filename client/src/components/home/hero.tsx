@@ -82,20 +82,13 @@ const Hero = () => {
           />
         </AnimatePresence>
 
-        {/* Navy gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--navy-950)]/95 via-[var(--navy-900)]/90 to-[var(--navy-900)]/80" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy-950)] via-transparent to-[var(--navy-950)]/30" />
-      </div>
-
-      {/* Decorative elements */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-32 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-1/3 -right-32 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-900/95 via-brand-900/88 to-brand-900/62" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-900/90 via-transparent to-brand-900/30" />
       </div>
 
       {/* Main Content */}
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="py-24 sm:py-28 md:py-32 lg:py-0 lg:min-h-screen lg:flex lg:items-center">
+        <div className="py-28 md:py-36 lg:flex lg:min-h-screen lg:items-center">
           <motion.div
             className="grid lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center w-full"
             variants={containerVariants}
@@ -120,11 +113,10 @@ const Hero = () => {
                 <motion.div variants={itemVariants}>
                   <h1
                     id="hero-heading"
-                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] text-white"
+                    className="text-display text-white"
                   >
-                    <span className="block">Empowering</span>
-                    <span className="block text-primary">Communities</span>
-                    <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-white/70 mt-3 sm:mt-4">
+                    <span className="block">Empowering communities</span>
+                    <span className="mt-3 block text-2xl font-medium leading-snug tracking-normal text-white/75 md:text-3xl">
                       Through Legal Aid & Education
                     </span>
                   </h1>
@@ -138,7 +130,7 @@ const Hero = () => {
                 {/* Description */}
                 <motion.p
                   variants={itemVariants}
-                  className="text-sm sm:text-base md:text-lg text-white/60 leading-relaxed max-w-xl"
+                  className="text-lede max-w-xl text-white/70"
                 >
                   Justice for the poor and less privileged. We provide timely legal assistance,
                   structured advocacy, and experiential learning that shapes tomorrow's legal professionals.
@@ -150,7 +142,6 @@ const Hero = () => {
                   className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2"
                 >
                   <Button
-                    className="group bg-primary hover:bg-primary/90 text-white rounded-full h-11 sm:h-12 px-6 sm:px-8 font-semibold text-sm sm:text-base shadow-lg shadow-primary/25"
                     size="lg"
                     asChild
                   >
@@ -162,7 +153,7 @@ const Hero = () => {
 
                   <Button
                     variant="outline"
-                    className="group rounded-full h-11 sm:h-12 px-6 sm:px-8 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 font-semibold text-sm sm:text-base"
+                    className="border-white/25 bg-white/5 text-white hover:border-white/40 hover:bg-white/10"
                     size="lg"
                     asChild
                   >
@@ -183,7 +174,7 @@ const Hero = () => {
                       return (
                         <div
                           key={stat.label}
-                          className="text-center p-3 sm:p-4 rounded-xl bg-white/5 border border-white/10"
+                          className="rounded-xl border border-white/10 bg-white/5 p-3 text-center sm:p-4"
                         >
                           <div className="flex justify-center mb-2">
                             <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20">
@@ -208,7 +199,7 @@ const Hero = () => {
             <div className="hidden lg:block lg:col-span-5 xl:col-span-6">
               <motion.div
                 variants={containerVariants}
-                className="space-y-1 pl-8 xl:pl-16 border-l border-white/10"
+                    className="space-y-1 border-l border-white/10 pl-8 xl:pl-16"
               >
                 {serviceItems.map((item, index) => (
                   <motion.div

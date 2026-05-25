@@ -37,13 +37,7 @@ const FAQs = () => {
   }
 
   return (
-    <section className="relative py-16 md:py-24 bg-[var(--navy-900)]" aria-labelledby="faq-heading">
-      {/* Background decoration */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-1/3 h-1/3 bg-primary/5 rounded-full blur-3xl translate-x-1/4 translate-y-1/4" />
-      </div>
-
+    <section className="relative bg-brand-900 py-20 md:py-28 lg:py-36" aria-labelledby="faq-heading">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left Column - Title */}
@@ -55,13 +49,12 @@ const FAQs = () => {
               transition={{ duration: 0.5 }}
               className="lg:sticky lg:top-32"
             >
-              <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
+              <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.14em] text-gold">
                 FAQ
               </span>
-              <h2 id="faq-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">
+              <h2 id="faq-heading" className="font-serif text-4xl font-semibold leading-tight text-white md:text-5xl">
                 Frequently Asked Questions
               </h2>
-              <div className="h-1 w-16 bg-primary mt-6 rounded-full" />
               <p className="mt-6 text-white/60 text-base leading-relaxed">
                 Find answers to common questions about our legal services and how we can help you.
               </p>
@@ -70,7 +63,7 @@ const FAQs = () => {
                 <p className="text-white/50 text-sm mb-4">
                   Can't find what you're looking for?
                 </p>
-                <Button asChild className="rounded-full bg-white text-[var(--navy-900)] hover:bg-white/90">
+                <Button asChild className="bg-white text-brand-900 hover:bg-white/90">
                   <Link href="/contact" className="flex items-center gap-2">
                     Contact Us
                     <ArrowRight className="h-4 w-4" />
@@ -96,7 +89,7 @@ const FAQs = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden"
+                  className="overflow-hidden rounded-xl border border-white/10 bg-white/5"
                 >
                   <button
                     onClick={() => toggleFaq(index)}

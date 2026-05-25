@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, MessageSquare, GraduationCap, Scale } from "lucide-react"
+import { ArrowRight, BookOpenCheck, GraduationCap, Scale } from "lucide-react"
 import Link from "next/link"
 import React from "react"
 
@@ -15,22 +15,22 @@ interface FeatureItem {
 
 const features: FeatureItem[] = [
   {
-    icon: MessageSquare,
-    title: "Legal Consultation",
-    description: "Free guidance to understand your rights, obligations, and available pathways before critical decisions are made.",
-    href: "/services#consultation"
+    icon: Scale,
+    title: "Access To Justice",
+    description: "We provide careful, free legal support for people who need help understanding and defending their rights.",
+    href: "/get-help"
   },
   {
     icon: GraduationCap,
-    title: "Legal Education",
-    description: "Workshops & awareness programs that empower communities with practical knowledge of core legal protections.",
-    href: "/services#education"
+    title: "Student Formation",
+    description: "Students learn by serving real communities under supervision, building discipline, empathy, and professional judgment.",
+    href: "/excos"
   },
   {
-    icon: Scale,
-    title: "Legal Representation",
-    description: "Guided advocacy & supervised student participation ensuring ethical, client-centered outcomes.",
-    href: "/services#representation"
+    icon: BookOpenCheck,
+    title: "Public Legal Education",
+    description: "Workshops, publications, and outreach help communities make informed decisions before problems become crises.",
+    href: "/publications"
   }
 ]
 
@@ -63,7 +63,7 @@ export default function Features() {
   return (
     <section
       aria-labelledby="features-heading"
-      className="relative py-20 md:py-28 bg-[var(--slate-50)]"
+      className="relative bg-surface-muted py-20 md:py-28 lg:py-36"
     >
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -72,21 +72,20 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-2xl mx-auto mb-16"
+          className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <span className="inline-block text-primary font-semibold text-sm tracking-wider uppercase mb-4">
-            Our Services
+          <span className="text-eyebrow inline-block">
+            Our Mission
           </span>
           <h2
             id="features-heading"
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight"
+            className="text-h2-editorial mt-4 text-foreground"
           >
-            How We Can Help
+            Law in service of people
           </h2>
-          <div className="h-1 w-16 bg-primary mx-auto mt-6 rounded-full" />
-          <p className="mt-6 text-muted-foreground text-base sm:text-lg leading-relaxed">
-            Comprehensive legal support for those who need it most. We provide accessible services
-            to empower individuals and communities.
+          <p className="text-lede mt-5">
+            The clinic brings legal education, supervised practice, and community service into one
+            careful institutional rhythm.
           </p>
         </motion.div>
 
@@ -107,23 +106,20 @@ export default function Features() {
                 className="group relative"
               >
                 <Link href={feature.href} className="block h-full">
-                  <div className="h-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 hover:-translate-y-1">
-                    {/* Icon */}
-                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <div className="h-full rounded-xl border border-border bg-card p-6 transition-colors duration-200 hover:border-border-strong">
+                    <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground">
                       <IconComponent className="h-7 w-7" />
                     </div>
 
-                    {/* Content */}
-                    <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
+                    <h3 className="mb-3 font-serif text-2xl font-semibold text-foreground transition-colors group-hover:text-primary">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                    <p className="mb-6 text-sm leading-6 text-muted-foreground">
                       {feature.description}
                     </p>
 
-                    {/* Link */}
-                    <div className="flex items-center text-primary font-medium text-sm">
-                      <span>Learn more</span>
+                    <div className="flex items-center text-sm font-medium text-primary">
+                      <span>Explore</span>
                       <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -144,10 +140,10 @@ export default function Features() {
           <Button
             asChild
             size="lg"
-            className="rounded-full h-12 px-8 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30"
+            className="h-12 px-8 font-semibold"
           >
-            <Link href="/services">
-              Explore All Services
+            <Link href="/about">
+              Read about the clinic
               <ArrowRight className="h-4 w-4 ml-2" />
             </Link>
           </Button>
