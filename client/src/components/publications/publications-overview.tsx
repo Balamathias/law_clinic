@@ -6,13 +6,10 @@ import {
   FileText, 
   PenSquare,
   BookOpenCheck,
-  FileStack,
-  BarChart,
   Sparkles,
   Layers
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
 
@@ -42,134 +39,104 @@ const PublicationsOverview = ({ stats }: Props) => {
   return (
     <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
       {/* Total Publications Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card/85 to-card/50 p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-md"
-      >
-        <div className="absolute -right-10 -top-10 -z-10 size-28 rounded-full bg-blue-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Publications</span>
-          <div className="flex size-8 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-            <FileText className="h-4 w-4" />
-          </div>
+      <div className="group relative flex min-h-[130px] flex-col justify-between rounded-xl border border-zinc-200/80 bg-white p-5 text-foreground transition-all duration-200 dark:border-zinc-800/80 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-700">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Total Publications
+          </span>
+          <FileText className="size-4.5 text-zinc-400 dark:text-zinc-500 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300" aria-hidden />
         </div>
-        <div className="mt-4 flex items-baseline gap-2">
-          <span className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <div className="mt-3 flex flex-col gap-1">
+          <span className="font-sans text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             {totalCount.toLocaleString()}
           </span>
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+            Articles in database
+          </span>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground font-medium">Articles in system database</p>
-        <div className="mt-4 h-1.5 w-full bg-muted/60 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-500 rounded-full" style={{ width: '100%' }} />
-        </div>
-      </motion.div>
+      </div>
 
       {/* Published Articles Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card/85 to-card/50 p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-green-500/20 hover:shadow-md"
-      >
-        <div className="absolute -right-10 -top-10 -z-10 size-28 rounded-full bg-green-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Published Articles</span>
-          <div className="flex size-8 items-center justify-center rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
-            <BookOpenCheck className="h-4 w-4" />
+      <div className="group relative flex min-h-[130px] flex-col justify-between rounded-xl border border-zinc-200/80 bg-white p-5 text-foreground transition-all duration-200 dark:border-zinc-800/80 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-700">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Published Articles
+          </span>
+          <BookOpenCheck className="size-4.5 text-zinc-400 dark:text-zinc-500 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300" aria-hidden />
+        </div>
+        <div className="mt-3 flex flex-col gap-1">
+          <div className="flex items-baseline gap-2">
+            <span className="font-sans text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+              {publishedCount.toLocaleString()}
+            </span>
+            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              {publishedPercentage}% of total
+            </span>
           </div>
-        </div>
-        <div className="mt-4 flex items-baseline gap-2">
-          <span className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            {publishedCount.toLocaleString()}
-          </span>
-          <span className="text-xs font-semibold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">
-            {publishedPercentage}%
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+            Publicly active articles
           </span>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground font-medium">Publicly active articles</p>
-        <div className="mt-4 h-1.5 w-full bg-muted/60 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-green-500 rounded-full transition-all duration-500" 
-            style={{ width: `${publishedPercentage}%` }} 
-          />
-        </div>
-      </motion.div>
+      </div>
 
       {/* Draft Articles Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card/85 to-card/50 p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/20 hover:shadow-md"
-      >
-        <div className="absolute -right-10 -top-10 -z-10 size-28 rounded-full bg-amber-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Draft Articles</span>
-          <div className="flex size-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-            <PenSquare className="h-4 w-4" />
+      <div className="group relative flex min-h-[130px] flex-col justify-between rounded-xl border border-zinc-200/80 bg-white p-5 text-foreground transition-all duration-200 dark:border-zinc-800/80 dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-700">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Draft Articles
+          </span>
+          <PenSquare className="size-4.5 text-zinc-400 dark:text-zinc-500 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300" aria-hidden />
+        </div>
+        <div className="mt-3 flex flex-col gap-1">
+          <div className="flex items-baseline gap-2">
+            <span className="font-sans text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+              {draftCount.toLocaleString()}
+            </span>
+            <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+              {draftPercentage}% of total
+            </span>
           </div>
-        </div>
-        <div className="mt-4 flex items-baseline gap-2">
-          <span className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            {draftCount.toLocaleString()}
-          </span>
-          <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
-            {draftPercentage}%
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+            In review or composition
           </span>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground font-medium">In review or composition</p>
-        <div className="mt-4 h-1.5 w-full bg-muted/60 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-amber-500 rounded-full transition-all duration-500" 
-            style={{ width: `${draftPercentage}%` }} 
-          />
-        </div>
-      </motion.div>
+      </div>
 
       {/* Publication Management Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
-      >
-        <div className="overflow-hidden h-full rounded-2xl border border-dashed border-border/80 bg-muted/20 p-5 flex flex-col justify-between hover:border-primary/45 transition-colors duration-300">
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
-              <Sparkles className="size-3.5" />
-              Content Operations
-            </div>
-            <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
-              Create a new public post or manage existing categories and tags.
-            </p>
+      <div className="flex flex-col justify-between rounded-xl border border-dashed border-zinc-300 bg-zinc-50/50 p-5 text-foreground dark:border-zinc-800 dark:bg-zinc-900/25">
+        <div>
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            <Sparkles className="size-3.5" />
+            Operations
           </div>
+          <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
+            Create new posts or manage existing content tags.
+          </p>
+        </div>
+        
+        <div className="mt-4 flex flex-col gap-2.5">
+          <Button 
+            onClick={() => router.push('/dashboard/publications/new')}
+            className="w-full flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 text-zinc-50 dark:bg-zinc-50 dark:hover:bg-zinc-200 dark:text-zinc-950 font-medium text-xs h-8 rounded-lg shadow-sm"
+          >
+            <FilePenLine className="mr-2 size-3.5" />
+            New Publication
+          </Button>
           
-          <div className="mt-5 space-y-3">
-            <Button 
-              onClick={() => router.push('/dashboard/publications/new')}
-              className="w-full flex items-center justify-center group relative overflow-hidden bg-primary text-primary-foreground shadow-sm hover:shadow transition-all duration-200 py-1.5 h-9 rounded-xl"
+          <div className="flex items-center justify-between text-[10px] text-zinc-400 dark:text-zinc-500 font-semibold uppercase tracking-wider px-0.5">
+            <span className="flex items-center gap-1">
+              <Layers className="size-3" />
+              {featuredCount} Featured
+            </span>
+            <button 
+              className="hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
+              onClick={() => router.push('/dashboard/publications/categories')}
             >
-              <FilePenLine className="mr-2 size-4 transition-transform group-hover:rotate-6" />
-              <span className="font-semibold text-xs">New Publication</span>
-            </Button>
-            
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1 font-medium">
-              <span className="flex items-center gap-1">
-                <Layers className="size-3" />
-                {featuredCount} Featured
-              </span>
-              <button 
-                className="hover:text-primary transition-colors hover:underline"
-                onClick={() => router.push('/dashboard/publications/categories')}
-              >
-                Categories →
-              </button>
-            </div>
+              Categories →
+            </button>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
@@ -182,14 +149,14 @@ export const PublicationsOverviewSkeleton = () => {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="min-h-[148px] rounded-2xl border border-border/50 bg-card p-6 animate-pulse space-y-4"
+          className="min-h-[130px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 animate-pulse space-y-4"
         >
           <div className="flex items-center justify-between">
-            <div className="h-3.5 w-24 rounded bg-muted" />
-            <div className="size-8 rounded-xl bg-muted" />
+            <div className="h-3 w-24 rounded bg-zinc-100 dark:bg-zinc-800" />
+            <div className="size-4.5 rounded bg-zinc-100 dark:bg-zinc-800" />
           </div>
-          <div className="h-8 w-16 rounded bg-muted" />
-          <div className="h-2 w-full rounded bg-muted" />
+          <div className="h-8 w-16 rounded bg-zinc-100 dark:bg-zinc-800" />
+          <div className="h-3 w-32 rounded bg-zinc-100 dark:bg-zinc-800" />
         </div>
       ))}
     </div>

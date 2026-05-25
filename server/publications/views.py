@@ -38,7 +38,6 @@ class PublicationViewSet(viewsets.ModelViewSet, ClinicView):
     ordering_fields = ['published_at', 'created_at', 'title', 'views_count']
     ordering = ['-published_at']
     lookup_field = 'slug'
-    authentication_classes = []
     
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -53,6 +52,22 @@ class PublicationViewSet(viewsets.ModelViewSet, ClinicView):
         else:
             # Only published posts for anonymous users
             return Publication.objects.filter(status='published')
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup_value = self.kwargs.get(self.lookup_field)
+        
+        import uuid
+        try:
+            uuid.UUID(str(lookup_value))
+            # Valid UUID, look up by id
+            obj = get_object_or_404(queryset, id=lookup_value)
+        except ValueError:
+            # Not a valid UUID, look up by slug
+            obj = get_object_or_404(queryset, slug=lookup_value)
+            
+        self.check_object_permissions(self.request, obj)
+        return obj
     
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:

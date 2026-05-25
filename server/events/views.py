@@ -23,7 +23,6 @@ class EventCategoryViewSet(viewsets.ModelViewSet, ClinicView):
     queryset = EventCategory.objects.all()
     serializer_class = EventCategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    authentication_classes = ()
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'description']
     
@@ -109,7 +108,6 @@ class EventViewSet(viewsets.ModelViewSet, ClinicView):
     """ViewSet for viewing and editing Events"""
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOrganizerOrReadOnly]
-    authentication_classes = ()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'status', 'featured']
     search_fields = ['title', 'description', 'location']
@@ -138,6 +136,22 @@ class EventViewSet(viewsets.ModelViewSet, ClinicView):
             )
             
         return queryset
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup_value = self.kwargs.get(self.lookup_field)
+        
+        import uuid
+        try:
+            uuid.UUID(str(lookup_value))
+            # Valid UUID, look up by id
+            obj = get_object_or_404(queryset, id=lookup_value)
+        except ValueError:
+            # Not a valid UUID, look up by slug
+            obj = get_object_or_404(queryset, slug=lookup_value)
+            
+        self.check_object_permissions(self.request, obj)
+        return obj
     
     def get_serializer_class(self):
         """Return different serializers based on action"""

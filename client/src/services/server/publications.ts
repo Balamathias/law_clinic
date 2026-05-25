@@ -19,9 +19,18 @@ interface PublicationPayload {
 
 export const getPublicationsStats = async (): Promise<{ data: PublicationsStats }> => {
     try {
+        console.log("getPublicationsStats: Requesting '/publications/stats/' from baseURL:", stackbase.defaults.baseURL);
         const { data } = await stackbase.get('/publications/stats/')
+        console.log("getPublicationsStats: Success!", data);
         return data
-    } catch {
+    } catch (error: any) {
+        console.error("getPublicationsStats: ERROR!", {
+            message: error?.message,
+            status: error?.response?.status,
+            data: error?.response?.data,
+            url: error?.config?.url,
+            headers: error?.config?.headers
+        });
         return {
             data: { total: 0, published: 0, draft: 0, archived: 0, featured: 0 },
         }

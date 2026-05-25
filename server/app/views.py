@@ -674,7 +674,6 @@ class HelpRequestViewSet(ModelViewSet, ClinicView):
     queryset = HelpRequest.objects.all()
     serializer_class = HelpRequestSerializer
     permission_classes = [AllowAny]
-    authentication_classes = []
     lookup_field = "id"
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
