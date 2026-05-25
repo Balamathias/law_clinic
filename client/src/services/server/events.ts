@@ -6,9 +6,29 @@ import { Event, EventCategory, EventRegistration } from '@/@types/db'
 import { stackbase } from '../server.entry'
 
 
+export interface EventsStats {
+    total: number
+    upcoming: number
+    ongoing: number
+    completed: number
+    cancelled: number
+}
 
 interface EventPayload {
     params?: Record<string, string | number | boolean>
+}
+
+export const getEventsStats = async (): Promise<{ data: EventsStats }> => {
+    // TODO(wave-2): wire to real endpoint
+    return Promise.resolve({
+        data: {
+            total: 0,
+            upcoming: 0,
+            ongoing: 0,
+            completed: 0,
+            cancelled: 0,
+        },
+    })
 }
 
 export const getEvents = async (payload?: EventPayload): Promise<PaginatedStackResponse<Event[]>> => {

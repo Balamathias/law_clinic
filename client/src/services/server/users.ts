@@ -4,8 +4,27 @@ import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { User, UsersOverview } from '@/@types/db'
 import { stackbase } from '../server.entry'
 
+export interface UsersStats {
+    total: number
+    active: number
+    staff: number
+    admins: number
+}
+
 interface UserPayload {
     params?: Record<string, string | number | boolean>
+}
+
+export const getUsersStats = async (): Promise<{ data: UsersStats }> => {
+    // TODO(wave-2): wire to real endpoint
+    return Promise.resolve({
+        data: {
+            total: 0,
+            active: 0,
+            staff: 0,
+            admins: 0,
+        },
+    })
 }
 
 export const getUsers = async (payload?: UserPayload): Promise<PaginatedStackResponse<User[]>> => {
