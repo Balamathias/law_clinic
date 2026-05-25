@@ -284,6 +284,28 @@ class EventViewSet(viewsets.ModelViewSet, ClinicView):
                 status_code=status.HTTP_400_BAD_REQUEST
             )
 
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def cancel_registration(self, request, slug=None):
+        """Cancel the current user's registration for the event (alias of unregister)"""
+        EventRegistration.objects.filter(event_id=self.get_object().pk, user=request.user).delete()
+        return Response({'registered': False})
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    def stats(self, request):
+        """Return aggregate event statistics for the dashboard overview."""
+        now = timezone.now()
+        qs = Event.objects.all()
+        return Response({
+            'data': {
+                'total': qs.count(),
+                'upcoming': qs.filter(start_date__gt=now).count(),
+                'ongoing': qs.filter(start_date__lte=now, end_date__gte=now).count(),
+                'completed': qs.filter(status='completed').count(),
+                'cancelled': qs.filter(status='cancelled').count(),
+            },
+            'message': 'Event statistics retrieved successfully',
+        })
+
 
 class EventRegistrationViewSet(viewsets.ModelViewSet, ClinicView):
     """ViewSet for managing event registrations"""

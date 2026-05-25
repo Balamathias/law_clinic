@@ -17,7 +17,8 @@ import {
   groupNavItems,
 } from "./nav-items"
 
-const STORAGE_KEY = "dashboard:sidebar:collapsed"
+import { useSidebar } from "./sidebar-context"
+
 const GROUP_ORDER: NavGroup[] = ["main", "content", "operations", "cms", "account"]
 
 interface Props {
@@ -26,19 +27,7 @@ interface Props {
 
 const DashboardSidebar = ({ user }: Props) => {
   const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    setCollapsed(localStorage.getItem(STORAGE_KEY) === "1")
-  }, [])
-
-  const toggle = () => {
-    const next = !collapsed
-    setCollapsed(next)
-    localStorage.setItem(STORAGE_KEY, next ? "1" : "0")
-  }
+  const { collapsed, toggle, mounted } = useSidebar()
 
   const visible = filterNavForUser(NAV_ITEMS, user)
   const byGroup = groupNavItems(visible)

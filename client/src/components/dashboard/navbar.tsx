@@ -16,7 +16,7 @@ export default function DashboardTopbar({ user }: Props) {
   const palette = useCommandPalette()
 
   return (
-    <header className="fixed inset-x-0 top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-card/90 backdrop-blur lg:left-60">
+    <header className="fixed inset-x-0 top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-card/90 backdrop-blur transition-[left] duration-200 ease-in-out lg:left-[var(--sidebar-width)]">
       <div className="flex flex-1 items-center gap-3 px-4 lg:px-6">
         <MobileDrawer user={user} />
 

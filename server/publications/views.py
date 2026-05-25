@@ -182,38 +182,14 @@ class PublicationViewSet(viewsets.ModelViewSet, ClinicView):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
     def stats(self, request):
-        total_count = Publication.objects.count()
-        published_count = Publication.objects.filter(status='published').count()
-        draft_count = Publication.objects.filter(status='draft').count()
-        featured_count = Publication.objects.filter(is_featured=True).count()
-        
-        most_viewed = Publication.objects.order_by('-views_count')[:5]
-        most_viewed_data = PublicationListSerializer(most_viewed, many=True).data
-        
-        recent = Publication.objects.order_by('-created_at')[:5]
-        recent_data = PublicationListSerializer(recent, many=True).data
-        
-        categories = Category.objects.all()
-        category_stats = []
-        for category in categories:
-            count = Publication.objects.filter(categories=category).count()
-            category_stats.append({
-                'name': category.name,
-                'slug': category.slug,
-                'count': count
-            })
-        
-        stats_data = {
-            'total_count': total_count,
-            'published_count': published_count,
-            'draft_count': draft_count,
-            'featured_count': featured_count,
-            'most_viewed': most_viewed_data,
-            'recent': recent_data,
-            'by_category': category_stats
-        }
-        
-        return self.clinic_response(
-            data=stats_data,
-            message="Publication statistics retrieved successfully"
-        )
+        qs = Publication.objects.all()
+        return Response({
+            'data': {
+                'total': qs.count(),
+                'published': qs.filter(status='published').count(),
+                'draft': qs.filter(status='draft').count(),
+                'archived': qs.filter(status='archived').count(),
+                'featured': qs.filter(is_featured=True).count(),
+            },
+            'message': 'Publication statistics retrieved successfully',
+        })

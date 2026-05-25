@@ -1,8 +1,21 @@
+import bleach
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Publication, Category, Comment
 
 User = get_user_model()
+
+ALLOWED_TAGS = [
+    "p", "br", "strong", "em", "u", "a", "ul", "ol", "li", "blockquote",
+    "h2", "h3", "h4", "pre", "code", "img", "figure", "figcaption",
+    "table", "thead", "tbody", "tr", "th", "td", "hr",
+]
+ALLOWED_ATTRS = {
+    "a": ["href", "title", "rel", "target"],
+    "img": ["src", "alt", "title", "class"],
+    "*": ["class"],
+}
+
 
 class UserBriefSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,9 +38,20 @@ class PublicationSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'content', 'excerpt', 'author', 'categories',
             'featured_image', 'created_at', 'updated_at', 'published_at', 'status',
             'views_count', 'is_featured', 'allow_comments', 'meta_title',
-            'meta_description', 'keywords', 'additional_metadata'
+            'meta_description', 'keywords', 'additional_metadata', 'content_format'
         )
         read_only_fields = ('id', 'slug', 'created_at', 'updated_at', 'published_at', 'views_count')
+
+    def validate(self, attrs):
+        if attrs.get('content_format') == 'html' and attrs.get('content'):
+            attrs['content'] = bleach.clean(
+                attrs['content'],
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRS,
+                strip=True,
+            )
+        return attrs
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -76,7 +100,8 @@ class PublicationListSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'excerpt', 'author', 'categories',
             'featured_image', 'created_at', 'published_at', 'status',
             'views_count', 'is_featured', 'comments_count', 'content',
-            'author_name', 'categories_names', 'category_name', 'mins_read'
+            'author_name', 'categories_names', 'category_name', 'mins_read',
+            'content_format'
         )
         read_only_fields = ('id', 'slug', 'created_at', 'published_at', 'views_count')
 
@@ -100,7 +125,8 @@ class PublicationDetailSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'content', 'excerpt', 'author', 'categories',
             'featured_image', 'created_at', 'updated_at', 'published_at', 'status',
             'views_count', 'is_featured', 'allow_comments', 'meta_title',
-            'meta_description', 'keywords', 'additional_metadata', 'comments', 'mins_read'
+            'meta_description', 'keywords', 'additional_metadata', 'comments',
+            'mins_read', 'content_format'
         )
         read_only_fields = ('id', 'slug', 'created_at', 'updated_at', 'published_at', 'views_count')
     
@@ -124,8 +150,18 @@ class PublicationCreateUpdateSerializer(serializers.ModelSerializer):
         fields = (
             'title', 'content', 'excerpt', 'categories', 'featured_image', 'status',
             'is_featured', 'allow_comments', 'meta_title', 'meta_description', 'keywords',
-            'additional_metadata', 'mins_read'
+            'additional_metadata', 'mins_read', 'content_format'
         )
+
+    def validate(self, attrs):
+        if attrs.get('content_format', 'html') == 'html' and attrs.get('content'):
+            attrs['content'] = bleach.clean(
+                attrs['content'],
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRS,
+                strip=True,
+            )
+        return attrs
     
     def create(self, validated_data):
         categories_data = validated_data.pop('categories', [])
@@ -136,3 +172,12 @@ class PublicationCreateUpdateSerializer(serializers.ModelSerializer):
         if categories_data:
             publication.categories.set(categories_data)
         return publication
+
+    def update(self, instance, validated_data):
+        categories_data = validated_data.pop('categories', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if categories_data is not None:
+            instance.categories.set(categories_data)
+        return instance

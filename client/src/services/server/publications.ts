@@ -18,16 +18,14 @@ interface PublicationPayload {
 }
 
 export const getPublicationsStats = async (): Promise<{ data: PublicationsStats }> => {
-    // TODO(wave-2): wire to real endpoint
-    return Promise.resolve({
-        data: {
-            total: 0,
-            published: 0,
-            draft: 0,
-            archived: 0,
-            featured: 0,
-        },
-    })
+    try {
+        const { data } = await stackbase.get('/publications/stats/')
+        return data
+    } catch {
+        return {
+            data: { total: 0, published: 0, draft: 0, archived: 0, featured: 0 },
+        }
+    }
 }
 
 export const getPublications = async (payload?: PublicationPayload): Promise<PaginatedStackResponse<Publication[]>> => {

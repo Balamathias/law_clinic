@@ -9,7 +9,9 @@ export interface HelpRequestsStats {
     total: number
     new: number
     in_review: number
+    assigned: number
     resolved: number
+    closed: number
 }
 
 interface HelpRequestPayload {
@@ -17,15 +19,14 @@ interface HelpRequestPayload {
 }
 
 export const getHelpRequestsStats = async (): Promise<{ data: HelpRequestsStats }> => {
-    // TODO(wave-2): wire to real endpoint
-    return Promise.resolve({
-        data: {
-            total: 0,
-            new: 0,
-            in_review: 0,
-            resolved: 0,
-        },
-    })
+    try {
+        const { data } = await stackbase.get('/help-requests/statistics/')
+        return data
+    } catch {
+        return {
+            data: { total: 0, new: 0, in_review: 0, assigned: 0, resolved: 0, closed: 0 },
+        }
+    }
 }
 
 export const getHelpRequests = async (payload?: HelpRequestPayload): Promise<PaginatedStackResponse<HelpRequest[]>> => {

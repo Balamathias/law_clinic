@@ -34,6 +34,7 @@ class Publication(models.Model):
         ('published', 'Published'),
         ('archived', 'Archived'),
     )
+    CONTENT_FORMAT_CHOICES = (('markdown', 'Markdown'), ('html', 'HTML'))
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
@@ -59,6 +60,11 @@ class Publication(models.Model):
     is_featured = models.BooleanField(default=False)
     allow_comments = models.BooleanField(default=True)
     additional_metadata = models.JSONField(default=dict, blank=True, null=True)
+    content_format = models.CharField(
+        max_length=10,
+        choices=CONTENT_FORMAT_CHOICES,
+        default='html',
+    )
 
     class Meta:
         ordering = ["-published_at", "-created_at"]

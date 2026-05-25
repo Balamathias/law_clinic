@@ -54,10 +54,10 @@ CORS_ALLOW_CREDENTIALS = True
 load_dotenv()
 
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-dummy-secret-key-123456789')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -129,7 +129,7 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
+DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL', 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')))
 
 AUTH_USER_MODEL = 'app.User'
 

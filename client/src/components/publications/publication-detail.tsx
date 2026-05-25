@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 import MarkdownPreview from '@/components/markdown-preview'
+import { SanitizedHtml } from './sanitized-html'
+
 
 interface PublicationDetailProps {
   publication: Publication | null
@@ -132,7 +134,11 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         transition={{ duration: 0.5, delay: 0.3 }}
         className="prose-editorial"
       >
-        <MarkdownPreview content={publication?.content!} className="prose-editorial" />
+        {publication.content_format === "html" ? (
+          <SanitizedHtml html={publication.content} className="prose-editorial max-w-none text-ink" />
+        ) : (
+          <MarkdownPreview content={publication?.content!} className="prose-editorial" />
+        )}
       </motion.div>
 
       {/* Author box */}

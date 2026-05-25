@@ -656,6 +656,19 @@ class UserViewSet(ModelViewSet, ClinicView):
             message="User overview statistics retrieved successfully"
         )
 
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    def stats(self, request):
+        """Flat stats shape for the dashboard overview card."""
+        return Response({
+            'data': {
+                'total': User.objects.count(),
+                'active': User.objects.filter(is_active=True).count(),
+                'staff': User.objects.filter(is_staff=True).count(),
+                'admins': User.objects.filter(is_superuser=True).count(),
+            },
+            'message': 'User statistics retrieved successfully',
+        })
+
 
 class HelpRequestViewSet(ModelViewSet, ClinicView):
     queryset = HelpRequest.objects.all()
@@ -676,11 +689,11 @@ class HelpRequestViewSet(ModelViewSet, ClinicView):
         """
         Override permissions:
         - Anyone can create a help request
-        - Only authenticated users can view, update or delete requests
+        - Only admin users can view, update or delete requests
         """
         if self.action == 'create':
             return [AllowAny()]
-        return [IsAuthenticated()]
+        return [IsAdminUser()]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -755,28 +768,29 @@ class HelpRequestViewSet(ModelViewSet, ClinicView):
         Returns statistics about help requests in the system.
         Only accessible to admin users.
         """
-        total_requests = HelpRequest.objects.count()
-        by_issue_type = HelpRequest.objects.values('legal_issue_type').annotate(
+        qs = HelpRequest.objects.all()
+        total_requests = qs.count()
+        new_count = qs.filter(status='new').count()
+        in_review_count = qs.filter(status='in_review').count()
+        assigned_count = qs.filter(status='assigned').count()
+        resolved_count = qs.filter(status='resolved').count()
+        closed_count = qs.filter(status='closed').count()
+
+        by_issue_type = qs.values('legal_issue_type').annotate(
             count=Count('id')
         ).order_by('-count')
         
-        had_previous_help_count = HelpRequest.objects.filter(had_previous_help='yes').count()
-        
-        # Get requests by month for the current year
-        current_year = timezone.now().year
-        requests_by_month = HelpRequest.objects.filter(
-            created_at__year=current_year
-        ).annotate(
-            month=models.functions.ExtractMonth('created_at')
-        ).values('month').annotate(
-            count=Count('id')
-        ).order_by('month')
-        
+        had_previous_help_count = qs.filter(had_previous_help='yes').count()
+
         stats = {
-            'totalRequests': total_requests,
+            'total': total_requests,
+            'new': new_count,
+            'in_review': in_review_count,
+            'assigned': assigned_count,
+            'resolved': resolved_count,
+            'closed': closed_count,
             'byIssueType': list(by_issue_type),
             'hadPreviousHelpCount': had_previous_help_count,
-            'requestsByMonth': list(requests_by_month)
         }
         
         return self.clinic_response(

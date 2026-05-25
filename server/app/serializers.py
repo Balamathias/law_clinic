@@ -106,8 +106,18 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class HelpRequestSerializer(serializers.ModelSerializer):
+    assigned_to_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = HelpRequest
-        fields = ['id', 'full_name', 'email', 'phone_number', 'legal_issue_type', 
-                    'had_previous_help', 'description', 'created_at', 'updated_at']
+        fields = [
+            'id', 'full_name', 'email', 'phone_number', 'legal_issue_type',
+            'had_previous_help', 'description', 'status', 'assigned_to',
+            'assigned_to_name', 'internal_notes', 'created_at', 'updated_at'
+        ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_assigned_to_name(self, obj):
+        if obj.assigned_to:
+            return obj.assigned_to.get_full_name() or obj.assigned_to.email
+        return None

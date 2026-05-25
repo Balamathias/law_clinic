@@ -91,6 +91,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class HelpRequest(models.Model):
+    STATUS_CHOICES = (
+        ('new', 'New'),
+        ('in_review', 'In review'),
+        ('assigned', 'Assigned'),
+        ('resolved', 'Resolved'),
+        ('closed', 'Closed'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
@@ -98,6 +106,15 @@ class HelpRequest(models.Model):
     legal_issue_type = models.CharField(max_length=100)
     had_previous_help = models.CharField(max_length=50, choices=(('yes', 'Yes'), ('no', 'No')))
     description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    assigned_to = models.ForeignKey(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_help_requests'
+    )
+    internal_notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

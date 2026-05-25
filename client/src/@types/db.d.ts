@@ -94,7 +94,14 @@ export interface Publication {
     updated_at: string,
     published_at: string | null,
     status: 'draft' | 'published' | 'archived',
-    mins_read: number
+    mins_read: number,
+    content_format: 'markdown' | 'html',
+    is_featured: boolean,
+    allow_comments: boolean,
+    meta_title: string | null,
+    meta_description: string | null,
+    keywords: string | null,
+    views_count?: number,
 }
 
 // API Response types for handling server responses
@@ -241,6 +248,10 @@ export interface HelpRequest {
     legal_issue_type: string;
     had_previous_help: 'yes' | 'no';
     description: string;
+    status: 'new' | 'in_review' | 'assigned' | 'resolved' | 'closed';
+    assigned_to: string | null;
+    assigned_to_name: string | null;
+    internal_notes: string | null;
     created_at: string;
     updated_at: string;
 }

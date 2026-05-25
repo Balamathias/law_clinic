@@ -16,15 +16,14 @@ interface UserPayload {
 }
 
 export const getUsersStats = async (): Promise<{ data: UsersStats }> => {
-    // TODO(wave-2): wire to real endpoint
-    return Promise.resolve({
-        data: {
-            total: 0,
-            active: 0,
-            staff: 0,
-            admins: 0,
-        },
-    })
+    try {
+        const { data } = await stackbase.get('/users/stats/')
+        return data
+    } catch {
+        return {
+            data: { total: 0, active: 0, staff: 0, admins: 0 },
+        }
+    }
 }
 
 export const getUsers = async (payload?: UserPayload): Promise<PaginatedStackResponse<User[]>> => {
