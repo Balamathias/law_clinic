@@ -14,7 +14,7 @@ const Page = () => {
     <main className='overflow-hidden'>
         <SiteHeader />
         
-        <div className='container max-w-7xl mx-auto px-4 sm:px-6 py-12 mt-16 min-h-[70vh]'>
+        <div className='mt-16 min-h-[70vh]'>
             <About />
         </div>
 

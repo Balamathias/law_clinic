@@ -5,16 +5,11 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
-import { Merriweather } from 'next/font/google'
-
-const merriweather = Merriweather({ subsets: ['latin'], weight: ['300', '400', '700', '900'] })
-
 import MarkdownPreview from '@/components/markdown-preview'
-import { cn } from '@/lib/utils'
 
 interface PublicationDetailProps {
   publication: Publication | null
@@ -28,7 +23,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         animate={{ opacity: 1 }}
         className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center"
       >
-        <h2 className="text-2xl font-bold mb-4">Publication not found</h2>
+        <h2 className="mb-4 font-serif text-2xl font-semibold">Publication not found</h2>
         <p className="text-muted-foreground mb-6">The publication you're looking for doesn't exist or has been removed.</p>
         <Button asChild>
           <Link href="/publications">View all publications</Link>
@@ -48,7 +43,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
   const publishedDate = publication.published_at ? formatDate(publication.published_at) : formatDate(publication.created_at)
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="container-prose py-12">
       {/* Back button */}
       <motion.div 
         initial={{ opacity: 0, x: -20 }}
@@ -71,24 +66,24 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         transition={{ duration: 0.5 }}
       >
         {/* Categories */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="mb-4 flex flex-wrap gap-2">
           {publication.categories?.map(category => (
             <span 
               key={category.id} 
-              className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full"
+              className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
             >
               {category.name}
             </span>
           ))}
           {!publication.categories?.length && publication.category_name && (
-            <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               {publication.category_name}
             </span>
           )}
         </div>
         
         {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">{publication.title}</h1>
+        <h1 className="text-h1-editorial mb-5 text-foreground">{publication.title}</h1>
 
         {/* Meta information */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground mb-8">
@@ -120,7 +115,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-10 overflow-hidden rounded-xl"
+          className="mb-10 overflow-hidden rounded-xl border border-border"
         >
           <img 
             src={publication.featured_image}
@@ -135,9 +130,9 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="dark:prose-invert max-w-none"
+        className="prose-editorial"
       >
-        <MarkdownPreview content={publication?.content!} className={cn(merriweather.className, '')} />
+        <MarkdownPreview content={publication?.content!} className="prose-editorial" />
       </motion.div>
 
       {/* Author box */}
@@ -146,7 +141,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-16 p-6 border rounded-xl bg-card"
+          className="mt-16 rounded-xl border border-border bg-card p-6"
         >
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16">
@@ -174,7 +169,7 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="mt-10 pt-4 border-t text-sm text-muted-foreground"
+        className="mt-10 border-t border-border pt-4 text-sm text-muted-foreground"
       >
         <p>
           {publication.status === 'published' 

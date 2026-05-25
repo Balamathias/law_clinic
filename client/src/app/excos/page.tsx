@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 
 import { getGalleries } from '@/services/server/app_settings'
 import ExecutiveCommittee from '@/components/excos'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
     title: 'Executive Committee ~ Law Clinic ~ Ahmadu Bello University',
@@ -20,6 +21,7 @@ const Page = async () => {
         <div className='mt-16'>
             <ExecutiveCommittee galleries={galleries || []} />
         </div>
+        <Footer />
     </main>
   )
 }

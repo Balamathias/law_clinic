@@ -3,7 +3,6 @@ import { getPublication } from '@/services/server/publications'
 import { Metadata, ResolvingMetadata } from 'next'
 import React from 'react'
 import PublicationDetail from '@/components/publications/publication-detail'
-import { motion } from 'framer-motion'
 
 interface Props {
     params: Promise<{id: string}>,
@@ -18,7 +17,7 @@ export async function generateMetadata(
 
   const { data: publication } = await getPublication(id)
 
-  const previousImages = (await parent).openGraph?.images || []
+  await parent
 
   if (!publication) {
     return {
@@ -50,7 +49,7 @@ const Page = async ({ searchParams: _searchParams, params }: Props) => {
     <main className='overflow-hidden'>
         <SiteHeader />
         
-        <div className='container max-w-7xl mx-auto px-4 sm:px-6 py-12 mt-16'>
+        <div className='mt-16'>
             <PublicationDetail publication={publication} />
         </div>
     </main>
