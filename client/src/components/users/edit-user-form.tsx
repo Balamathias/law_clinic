@@ -27,7 +27,9 @@ import {
   Eye,
   EyeOff,
   Save,
-  X
+  X,
+  UserCheck,
+  Lock
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -40,7 +42,6 @@ interface EditUserFormProps {
   user: User
 }
 
-// Create a schema for updating user information
 const UpdateUserSchema = z.object({
   username: z.string().min(3, { message: 'Username must be at least 3 characters' }).optional(),
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -65,15 +66,15 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
     return `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`.toUpperCase() || user.email[0].toUpperCase()
   }
 
-  const form = useForm<z.infer<typeof UpdateUserSchema>>({
+  const form = useForm({
     resolver: zodResolver(UpdateUserSchema),
     defaultValues: {
       username: user.username,
       email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      phone: user.phone,
-      avatar: user.avatar,
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
+      phone: user.phone || '',
+      avatar: user.avatar || '',
       is_active: user.is_active,
       is_staff: user.is_staff,
       is_superuser: user.is_superuser,
@@ -81,15 +82,14 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof UpdateUserSchema>) => {
-    // If not changing password, remove it from the payload
+  const onSubmit = (values: any) => {
+    const submitValues = { ...values }
     if (!changePassword) {
-      delete values.password
+      delete submitValues.password
     }
 
-    // Remove any undefined or empty string values to avoid unnecessary updates
     const payload = Object.fromEntries(
-      Object.entries(values).filter(([_, v]) => v !== undefined && v !== '')
+      Object.entries(submitValues).filter(([_, v]) => v !== undefined && v !== '')
     )
 
     updateUser(
@@ -106,171 +106,169 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {isPending && <LoadingOverlay />}
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* User Profile Section */}
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            <div className="flex-shrink-0">
-              <Avatar className="h-24 w-24 border-2 border-border">
-                <AvatarImage src={user.avatar || ''} alt={user.username} className="object-cover"/>
-                <AvatarFallback className="text-xl bg-primary/10 text-primary">
-                  {getInitials(user)}
-                </AvatarFallback>
-              </Avatar>
-            </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          
+          {/* Section 1: Profile Details */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <UserIcon className="h-4 w-4 text-zinc-400" />
+              Profile Information
+            </h3>
             
-            <div className="flex-grow space-y-6 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <UserIcon className="h-4 w-4 text-muted-foreground" />
-                        Username
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Username" 
-                          className="h-10"
-                          {...field} 
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        Email Address
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Email address" 
-                          className="h-10"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <div className="flex flex-col md:flex-row gap-6 items-start pt-2">
+              <div className="flex-shrink-0">
+                <Avatar className="h-24 w-24 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                  <AvatarImage src={user.avatar || ''} alt={user.username} className="object-cover"/>
+                  <AvatarFallback className="text-xl bg-primary/10 text-primary font-medium">
+                    {getInitials(user)}
+                  </AvatarFallback>
+                </Avatar>
               </div>
+              
+              <div className="flex-grow space-y-5 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">Username</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="username" 
+                            className="h-10 rounded-lg"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">Email Address</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="email@example.com" 
+                            className="h-10 rounded-lg"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="first_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="First name" 
-                          className="h-10" 
-                          {...field} 
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="last_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Last name" 
-                          className="h-10"
-                          {...field} 
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <FormField
+                    control={form.control}
+                    name="first_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">First Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="First Name" 
+                            className="h-10 rounded-lg" 
+                            {...field} 
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="last_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">Last Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Last Name" 
+                            className="h-10 rounded-lg"
+                            {...field} 
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        Phone Number
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Phone number (optional)" 
-                          className="h-10"
-                          {...field} 
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="avatar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Avatar URL</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="https://example.com/avatar.jpg" 
-                          className="h-10"
-                          {...field} 
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Enter a URL for the user's profile image
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">Phone Number</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Phone Number (optional)" 
+                            className="h-10 rounded-lg"
+                            {...field} 
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-zinc-500">Avatar URL</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="https://example.com/avatar.jpg" 
+                            className="h-10 rounded-lg"
+                            {...field} 
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-[11px] font-medium text-muted-foreground">
+                          Enter a direct URL for the user's profile image.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <Separator className="my-6" />
+          <Separator className="bg-zinc-200/60 dark:bg-zinc-800/60" />
           
-          {/* User Status Section */}
+          {/* Section 2: Permissions */}
           <div className="space-y-4">
-            <h3 className="text-md font-medium flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              User Permissions
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+              <Shield className="h-4 w-4 text-zinc-400" />
+              Role & Permissions
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
               <FormField
                 control={form.control}
                 name="is_active"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormItem className={`flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 transition-colors ${field.value ? 'border-emerald-200 bg-emerald-500/5 dark:border-emerald-800/40' : 'border-zinc-200 dark:border-zinc-800'}`}>
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -278,9 +276,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Active Account</FormLabel>
-                      <FormDescription className="text-xs">
-                        User can log in and access the system
+                      <FormLabel className="text-sm font-semibold">Active Account</FormLabel>
+                      <FormDescription className="text-xs font-medium">
+                        User can log in and access the system.
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -291,7 +289,7 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                 control={form.control}
                 name="is_staff"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormItem className={`flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 transition-colors ${field.value ? 'border-blue-200 bg-blue-500/5 dark:border-blue-800/40' : 'border-zinc-200 dark:border-zinc-800'}`}>
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -299,9 +297,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Staff Member</FormLabel>
-                      <FormDescription className="text-xs">
-                        User has access to the admin dashboard
+                      <FormLabel className="text-sm font-semibold">Staff Member</FormLabel>
+                      <FormDescription className="text-xs font-medium">
+                        User has access to the admin dashboard.
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -312,7 +310,7 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                 control={form.control}
                 name="is_superuser"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-primary/20 bg-primary/5">
+                  <FormItem className={`flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 transition-colors ${field.value ? 'border-primary/30 bg-primary/5' : 'border-zinc-200 dark:border-zinc-800'}`}>
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -320,9 +318,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Administrator</FormLabel>
-                      <FormDescription className="text-xs">
-                        Full system access and all permissions
+                      <FormLabel className="text-sm font-semibold">Administrator</FormLabel>
+                      <FormDescription className="text-xs font-medium">
+                        Full system access and all permissions.
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -331,18 +329,21 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
             </div>
           </div>
 
-          <Separator className="my-6" />
+          <Separator className="bg-zinc-200/60 dark:bg-zinc-800/60" />
           
-          {/* Password Section */}
+          {/* Section 3: Password Update */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <h3 className="text-md font-medium">Change Password</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+                <Lock className="h-4 w-4 text-zinc-400" />
+                Security Credentials
+              </h3>
               <Button 
                 type="button" 
                 variant="outline" 
                 size="sm" 
                 onClick={() => setChangePassword(!changePassword)}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-3 text-xs rounded-lg"
               >
                 {changePassword ? (
                   <>
@@ -356,9 +357,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
             </div>
             
             {changePassword && (
-              <div className="max-w-lg">
-                <Alert className="mb-4 bg-muted/50 text-foreground">
-                  <AlertDescription className="text-sm">
+              <div className="max-w-lg pt-1">
+                <Alert className="mb-4 bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-xl">
+                  <AlertDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                     Enter a new password for this user. They will need to use this password the next time they log in.
                   </AlertDescription>
                 </Alert>
@@ -368,26 +369,26 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>New Password</FormLabel>
+                      <FormLabel className="text-xs font-semibold text-zinc-500">New Password</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input 
                             type={showPassword ? "text" : "password"}
                             placeholder="New password" 
-                            className="h-10 pr-10"
+                            className="h-10 pr-10 rounded-lg"
                             {...field} 
                           />
                           <button 
                             type="button" 
-                            className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
+                            className="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-600 transition-colors"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
                         </div>
                       </FormControl>
-                      <FormDescription>
-                        Password must be at least 8 characters long
+                      <FormDescription className="text-[11px] font-medium text-muted-foreground">
+                        Password must be at least 8 characters long.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -402,6 +403,7 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
             <Button 
               type="button" 
               variant="outline" 
+              className="h-10 rounded-lg px-5"
               onClick={() => router.push('/dashboard/users')}
               disabled={isPending}
             >
@@ -410,7 +412,7 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
             <Button 
               type="submit" 
               disabled={isPending || !form.formState.isDirty}
-              className="gap-2"
+              className="h-10 rounded-lg px-5 gap-2"
             >
               {isPending ? (
                 <>

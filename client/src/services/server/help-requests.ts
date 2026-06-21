@@ -89,6 +89,9 @@ export interface UpdateHelpRequestPayload {
     legal_issue_type?: string
     had_previous_help?: 'yes' | 'no'
     description?: string
+    status?: HelpRequest['status']
+    assigned_to?: string | null
+    internal_notes?: string | null
 }
 
 export const updateHelpRequest = async (id: string, payload: UpdateHelpRequestPayload): Promise<StackResponse<HelpRequest | null>> => {

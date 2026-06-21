@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Circle, UserPlus, FileText, CheckCircle } from "lucide-react";
+import { Circle, UserPlus, FileText, CheckCircle, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { HelpRequest, User } from "@/@types/db";
-import { partialUpdateHelpRequest } from "@/services/server/help-requests";
+import { useUpdateHelpRequest } from "@/services/client/help-requests";
 
 interface HelpRequestTriageProps {
   helpRequest: HelpRequest;
@@ -34,81 +32,70 @@ export function HelpRequestTriage({
   helpRequest,
   users,
 }: HelpRequestTriageProps) {
-  const router = useRouter();
   const [status, setStatus] = useState<HelpRequest["status"]>(helpRequest.status);
   const [assignedTo, setAssignedTo] = useState<string | null>(helpRequest.assigned_to);
   const [internalNotes, setInternalNotes] = useState(helpRequest.internal_notes ?? "");
-  const [saving, setSaving] = useState(false);
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const res = await partialUpdateHelpRequest(helpRequest.id, {
+  const { mutate: updateRequest, isPending: saving } = useUpdateHelpRequest();
+
+  const handleSave = () => {
+    updateRequest({
+      id: helpRequest.id,
+      payload: {
         status,
         assigned_to: assignedTo || null,
         internal_notes: internalNotes || null,
-      } as any);
-
-      if (res?.data) {
-        toast.success("Help request updated successfully");
-        router.refresh();
-      } else {
-        toast.error(res?.message || "Failed to update help request");
-      }
-    } catch (err) {
-      toast.error((err as Error).message);
-    } finally {
-      setSaving(false);
-    }
+      },
+      partial: true
+    });
   };
 
-  // Only show active staff/superusers for assignment
   const staffUsers = users.filter((u) => u.is_active && (u.is_staff || u.is_superuser));
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
       {/* Help Request details */}
       <div className="space-y-6">
-        <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+        <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 p-6 space-y-6 shadow-sm">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
               Contact Information
             </span>
-            <div className="mt-2 grid gap-4 sm:grid-cols-3">
+            <div className="mt-3 grid gap-6 sm:grid-cols-3">
               <div>
-                <p className="text-xs text-muted-foreground">Full name</p>
-                <p className="font-medium text-foreground mt-0.5">{helpRequest.full_name}</p>
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Full name</p>
+                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.full_name}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="font-medium text-foreground mt-0.5">{helpRequest.email}</p>
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.email}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Phone number</p>
-                <p className="font-medium text-foreground mt-0.5">{helpRequest.phone_number}</p>
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Phone number</p>
+                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.phone_number}</p>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-border pt-6">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="border-t border-zinc-200/60 dark:border-zinc-800/60 pt-6">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
               Case Details
             </span>
-            <div className="mt-2 grid gap-4 sm:grid-cols-2">
+            <div className="mt-3 grid gap-6 sm:grid-cols-2">
               <div>
-                <p className="text-xs text-muted-foreground">Legal issue type</p>
-                <p className="font-medium text-foreground mt-0.5">{helpRequest.legal_issue_type}</p>
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Legal issue type</p>
+                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.legal_issue_type}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Had previous legal help?</p>
-                <p className="font-medium text-foreground mt-0.5 capitalize">
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Had previous legal help?</p>
+                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1 capitalize">
                   {helpRequest.had_previous_help}
                 </p>
               </div>
             </div>
-            <div className="mt-4">
-              <p className="text-xs text-muted-foreground font-medium">Description of issue</p>
-              <div className="mt-1.5 rounded-lg border border-border/60 bg-muted/20 px-4 py-3 text-small text-ink whitespace-pre-wrap leading-relaxed">
+            <div className="mt-5">
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description of issue</p>
+              <div className="mt-2 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-900/10 px-5 py-4 text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed">
                 {helpRequest.description}
               </div>
             </div>
@@ -118,26 +105,25 @@ export function HelpRequestTriage({
 
       {/* Triage side panel */}
       <div className="space-y-6">
-        <div className="rounded-xl border border-border bg-card p-6 space-y-5">
-          <h2 className="font-semibold text-foreground flex items-center gap-2 text-base">
+        <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 p-6 space-y-5 shadow-sm">
+          <h2 className="font-semibold text-zinc-900 dark:text-zinc-50 flex items-center gap-2 text-base">
             <CheckCircle className="size-4.5 text-primary" />
             Triage & Workflow
           </h2>
 
           {/* Status Select */}
           <div className="space-y-2">
-            <Label htmlFor="triage-status">Status</Label>
+            <Label htmlFor="triage-status" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Status</Label>
             <Select
               value={status}
               onValueChange={(v) => {
                 setStatus(v as HelpRequest["status"]);
-                // If moving to assigned, auto set assigned if none selected yet
                 if (v === "assigned" && !assignedTo && staffUsers.length > 0) {
                   setAssignedTo(staffUsers[0].id);
                 }
               }}
             >
-              <SelectTrigger id="triage-status">
+              <SelectTrigger id="triage-status" className="h-10 rounded-lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -167,7 +153,7 @@ export function HelpRequestTriage({
 
           {/* Assignee Select */}
           <div className="space-y-2">
-            <Label htmlFor="triage-assignee">Assigned Staff</Label>
+            <Label htmlFor="triage-assignee" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Assigned Staff</Label>
             <Select
               value={assignedTo ?? "unassigned"}
               onValueChange={(v) => {
@@ -180,7 +166,7 @@ export function HelpRequestTriage({
                 }
               }}
             >
-              <SelectTrigger id="triage-assignee">
+              <SelectTrigger id="triage-assignee" className="h-10 rounded-lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -196,17 +182,17 @@ export function HelpRequestTriage({
 
           {/* Internal Notes */}
           <div className="space-y-2">
-            <Label htmlFor="triage-notes" className="flex items-center gap-1.5">
-              <FileText className="size-3.5" />
+            <Label htmlFor="triage-notes" className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              <FileText className="size-3.5 text-zinc-400" />
               Internal Notes
             </Label>
             <Textarea
               id="triage-notes"
-              placeholder="Case updates, internal assignments, contact log..."
+              placeholder="Case updates, contact logs..."
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
-              rows={6}
-              className="text-small"
+              rows={5}
+              className="text-sm rounded-lg"
             />
           </div>
 
@@ -214,9 +200,10 @@ export function HelpRequestTriage({
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="w-full mt-2"
+            className="w-full mt-2 h-10 rounded-lg gap-2"
           >
-            {saving ? "Saving changes..." : "Save details"}
+            <Save className="size-4" />
+            {saving ? "Saving changes..." : "Save Details"}
           </Button>
         </div>
       </div>

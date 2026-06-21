@@ -34,13 +34,13 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 import { Card } from '@/components/ui/card'
+import { useDeleteUser } from '@/services/client/users'
 
 interface Props {
   users: User[],
@@ -54,6 +54,7 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
   const currentPage = Number(searchParams.get('page') || '1')
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
   
+  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser()
   const totalPages = Math.ceil(count / pageSize)
 
   const navigateToPage = (page: number) => {
@@ -76,19 +77,13 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
     }
   }
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!userToDelete) return
-    
-    try {
-      // API call to delete user would go here
-      // await deleteUser(userToDelete.id)
-      console.log(`Deleting user: ${userToDelete.id}`)
-      setUserToDelete(null)
-      // Refresh data or show success message
-    } catch (error) {
-      console.error('Failed to delete user:', error)
-      // Show error message
-    }
+    deleteUser(userToDelete.id, {
+      onSuccess: () => {
+        setUserToDelete(null)
+      }
+    })
   }
 
   const getInitials = (user: User) => {
@@ -96,23 +91,39 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
   }
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Never'
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return '—'
+    return new Date(dateString).toLocaleDateString('en-NG', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     })
   }
 
-  const getRoleColor = (user: User) => {
-    if (user.is_superuser) return "bg-primary/20 text-primary border-primary/30"
-    if (user.is_staff) return "bg-blue-500/10 text-blue-600 border-blue-300/30 dark:text-blue-400"
-    return "bg-secondary/50"
+  const getRoleBadge = (user: User) => {
+    if (user.is_superuser) {
+      return (
+        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5">
+          Admin
+        </Badge>
+      )
+    }
+    if (user.is_staff) {
+      return (
+        <Badge variant="outline" className="bg-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5">
+          Staff
+        </Badge>
+      )
+    }
+    return (
+      <Badge variant="outline" className="bg-zinc-100 dark:bg-zinc-800 text-muted-foreground border-zinc-200 dark:border-zinc-700 text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5">
+        User
+      </Badge>
+    )
   }
 
   if (users.length === 0) {
     return (
-      <Card className="w-full p-12 text-center bg-background/50">
+      <Card className="w-full p-12 text-center bg-zinc-50/40 dark:bg-zinc-900/10 border-border">
         <div className="flex flex-col items-center justify-center gap-2">
           <AlertCircle className="w-10 h-10 text-muted-foreground" />
           <h3 className="text-lg font-semibold">No users found</h3>
@@ -125,94 +136,92 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
   }
 
   return (
-    <Card className="w-full overflow-hidden shadow-sm">
+    <Card className="w-full overflow-hidden border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 shadow-sm rounded-xl">
       <Table>
-        <TableCaption>List of registered users in the system</TableCaption>
         <TableHeader>
-          <TableRow className="bg-secondary/20 hover:bg-secondary/30 dark:bg-muted/50 dark:hover:bg-muted/60">
-            <TableHead className="w-[280px]">User</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="hidden md:table-cell">Role</TableHead>
-            <TableHead className="hidden lg:table-cell">Joined</TableHead>
-            <TableHead className="hidden lg:table-cell">Last Active</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
+          <TableRow className="bg-zinc-50/70 hover:bg-zinc-50/70 dark:bg-zinc-900/30 dark:hover:bg-zinc-900/30 border-b border-zinc-200/60 dark:border-zinc-800/60">
+            <TableHead className="w-[280px] text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">User</TableHead>
+            <TableHead className="text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Email</TableHead>
+            <TableHead className="text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Status</TableHead>
+            <TableHead className="hidden md:table-cell text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Role</TableHead>
+            <TableHead className="hidden lg:table-cell text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Joined</TableHead>
+            <TableHead className="hidden lg:table-cell text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Last Active</TableHead>
+            <TableHead className="text-center text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.id} className="hover:bg-muted/30 transition-all duration-150">
-              <TableCell className="py-4 font-medium">
+            <TableRow key={user.id} className="hover:bg-zinc-50/40 dark:hover:bg-zinc-900/10 border-b border-zinc-200/40 dark:border-zinc-800/40 transition-colors">
+              <TableCell className="py-3.5 font-medium">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9 border shadow-sm">
+                  <Avatar className="h-9 w-9 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
                     <AvatarImage className='object-cover' src={user.avatar || ''} alt={`${user.first_name || ''} ${user.last_name || ''}`} />
-                    <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                    <AvatarFallback className="bg-primary/10 text-primary font-medium text-xs">
                       {getInitials(user)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-medium leading-none mb-1">{user.first_name && user.last_name 
-                      ? `${user.first_name} ${user.last_name}` 
-                      : user.username || user.email.split('@')[0]}
+                    <div className="font-semibold text-zinc-900 dark:text-zinc-50 leading-none mb-1">
+                      {user.first_name && user.last_name 
+                        ? `${user.first_name} ${user.last_name}` 
+                        : user.username || user.email.split('@')[0]}
                     </div>
-                    <div className="text-xs text-muted-foreground hidden sm:block">
-                      {user.username || '—'}
+                    <div className="text-[11px] text-muted-foreground hidden sm:block font-medium">
+                      @{user.username || '—'}
                     </div>
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
-                <span className="text-sm font-medium text-foreground/80">{user.email}</span>
+              <TableCell className="py-3.5 text-zinc-600 dark:text-zinc-300 text-sm font-medium">
+                {user.email}
               </TableCell>
-              <TableCell>
-                <Badge variant={user.is_active ? "default" : "destructive"} 
-                  className={`${user.is_active 
-                    ? 'bg-green-500/10 text-green-600 hover:bg-green-500/20 dark:text-green-400 border border-green-300/30' 
-                    : 'border border-destructive/30'}`}
+              <TableCell className="py-3.5">
+                <Badge variant="outline" 
+                  className={user.is_active 
+                    ? 'bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-emerald-200/50 dark:border-emerald-800/50 text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5' 
+                    : 'bg-rose-500/5 text-rose-600 border-rose-200/50 dark:border-rose-800/50 text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5'}
                 >
                   {user.is_active ? 'Active' : 'Inactive'}
                 </Badge>
               </TableCell>
-              <TableCell className="hidden md:table-cell">
-                <Badge variant="outline" className={`${getRoleColor(user)}`}>
-                  {user.is_superuser ? 'Admin' : user.is_staff ? 'Staff' : 'User'}
-                </Badge>
+              <TableCell className="hidden md:table-cell py-3.5">
+                {getRoleBadge(user)}
               </TableCell>
-              <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
+              <TableCell className="hidden lg:table-cell text-muted-foreground text-xs py-3.5 font-medium">
                 {formatDate(user.date_joined)}
               </TableCell>
-              <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
+              <TableCell className="hidden lg:table-cell text-muted-foreground text-xs py-3.5 font-medium">
                 {formatDate(user.last_login)}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center py-3.5">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                      <MoreHorizontal className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+                      <MoreHorizontal className="h-4 w-4 text-zinc-500" />
                       <span className="sr-only">Actions</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[160px] animate-in zoom-in-50 duration-200">
-                    <DropdownMenuLabel>User Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                  <DropdownMenuContent align="end" className="w-[160px] border border-zinc-200/80 dark:border-zinc-800/80 shadow-md">
+                    <DropdownMenuLabel className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">User Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-zinc-100 dark:bg-zinc-800" />
                     <DropdownMenuItem onClick={() => handleUserAction(user, 'view')}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-xs font-medium"
                     >
-                      <Eye className="mr-2 h-4 w-4" />
+                      <Eye className="mr-2 h-3.5 w-3.5 text-zinc-400" />
                       <span>View User</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleUserAction(user, 'edit')}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-xs font-medium"
                     >
-                      <Edit className="mr-2 h-4 w-4" />
+                      <Edit className="mr-2 h-3.5 w-3.5 text-zinc-400" />
                       <span>Edit User</span>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="bg-zinc-100 dark:bg-zinc-800" />
                     <DropdownMenuItem 
                       onClick={() => handleUserAction(user, 'delete')}
-                      className="text-destructive focus:text-destructive cursor-pointer"
+                      className="text-rose-600 focus:text-rose-600 focus:bg-rose-500/5 cursor-pointer text-xs font-medium"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <Trash2 className="mr-2 h-3.5 w-3.5 text-rose-400" />
                       <span>Delete User</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -225,24 +234,24 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-4 border-t">
-          <div className="text-sm text-muted-foreground">
-            Showing <span className="font-medium">{((currentPage - 1) * pageSize) + 1}</span> to{' '}
-            <span className="font-medium">{Math.min(currentPage * pageSize, count)}</span> of{' '}
-            <span className="font-medium">{count}</span> users
+        <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-900/10">
+          <div className="text-xs text-muted-foreground font-medium">
+            Showing <span className="font-semibold text-zinc-700 dark:text-zinc-300">{((currentPage - 1) * pageSize) + 1}</span> to{' '}
+            <span className="font-semibold text-zinc-700 dark:text-zinc-300">{Math.min(currentPage * pageSize, count)}</span> of{' '}
+            <span className="font-semibold text-zinc-700 dark:text-zinc-300">{count}</span> users
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigateToPage(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="h-8 w-8 p-0 rounded-full"
+              className="h-8 px-2.5 rounded-lg border-zinc-200/80 dark:border-zinc-800/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
             >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Previous page</span>
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
             </Button>
-            <div className="flex items-center text-sm font-medium">
+            <div className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
               Page {currentPage} of {totalPages}
             </div>
             <Button
@@ -250,10 +259,10 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
               size="sm"
               onClick={() => navigateToPage(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              className="h-8 w-8 p-0 rounded-full"
+              className="h-8 px-2.5 rounded-lg border-zinc-200/80 dark:border-zinc-800/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
             >
-              <ChevronRight className="h-4 w-4" />
-              <span className="sr-only">Next page</span>
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>
@@ -261,25 +270,25 @@ const UsersTable = ({ users, count, pageSize = 10 }: Props) => {
 
       {/* Delete confirmation dialog */}
       <Dialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] border border-zinc-200/80 dark:border-zinc-800/80 shadow-lg rounded-xl">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg font-semibold">Confirm Deletion</DialogTitle>
+            <DialogDescription className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
               Are you sure you want to delete the user{' '}
-              <span className="font-medium">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                 {userToDelete?.first_name && userToDelete?.last_name 
                   ? `${userToDelete.first_name} ${userToDelete.last_name}` 
                   : userToDelete?.email}
               </span>?
-              This action cannot be undone.
+              This action cannot be undone and will permanently remove this user account.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setUserToDelete(null)}>
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+            <Button variant="outline" onClick={() => setUserToDelete(null)} disabled={isDeleting}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>
-              Delete
+            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
+              {isDeleting ? "Deleting..." : "Delete User"}
             </Button>
           </DialogFooter>
         </DialogContent>
