@@ -103,10 +103,10 @@ class HelpRequest(models.Model):
     full_name = models.CharField(max_length=255)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
-    legal_issue_type = models.CharField(max_length=100)
+    legal_issue_type = models.CharField(max_length=100, db_index=True)
     had_previous_help = models.CharField(max_length=50, choices=(('yes', 'Yes'), ('no', 'No')))
     description = models.TextField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', db_index=True)
     assigned_to = models.ForeignKey(
         'User',
         on_delete=models.SET_NULL,

@@ -49,6 +49,9 @@ from app.views import (
     VerifyOTPView,
     ResendOTPView,
     HelpRequestViewSet,
+    RequestPasswordResetView,
+    ValidateResetTokenView,
+    ConfirmPasswordResetView,
 )
 
 router = DefaultRouter()
@@ -72,4 +75,9 @@ urlpatterns += [
 
     path('auth/verify-otp/', VerifyOTPView.as_view(), name='verify-otp'),
     path('auth/resend-otp/', ResendOTPView.as_view(), name='resend-otp'),
+
+    # Password Reset
+    path('auth/password-reset/', RequestPasswordResetView.as_view(), name='password_reset'),
+    path('auth/password-reset/validate-token/<str:uid>/<str:token>/', ValidateResetTokenView.as_view(), name='password_reset_validate'),
+    path('auth/password-reset/confirm/<str:uid>/<str:token>/', ConfirmPasswordResetView.as_view(), name='password_reset_confirm'),
 ]

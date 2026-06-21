@@ -230,3 +230,15 @@ class ClinicView:
             response_data["previous"] = previous
             
         return Response(data=response_data, status=status_code)
+
+
+from concurrent.futures import ThreadPoolExecutor
+
+# Create a global thread pool for non-blocking asynchronous email delivery
+_email_executor = ThreadPoolExecutor(max_workers=4)
+
+def send_email_async(email_message, fail_silently=False):
+    """
+    Asynchronously delivers a Django EmailMessage via a global thread pool executor.
+    """
+    _email_executor.submit(email_message.send, fail_silently=fail_silently)

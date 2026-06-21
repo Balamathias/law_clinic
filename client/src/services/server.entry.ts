@@ -57,18 +57,30 @@ serverClient.interceptors.response.use(
 
         const newToken = response.data.access;
 
-        const res = NextResponse.next();
-        res.cookies.set('token', newToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' }); 
-        // Set new token as a cookie
+        const cookieStore = await cookies();
+        try {
+          cookieStore.set('token', newToken, { 
+            path: '/',
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+          });
+        } catch (cookieError) {
+          console.warn('Could not set cookie during server render:', cookieError);
+        }
 
         // Retry original request with new access token
         originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
         return serverClient(originalRequest);
       } catch (err) {
         // Refresh token failed, clear tokens from cookies
-        const res = NextResponse.next();
-        res.cookies.delete('token');
-        res.cookies.delete('refresh_token');
+        try {
+          const cookieStore = await cookies();
+          cookieStore.delete('token');
+          cookieStore.delete('refresh_token');
+        } catch (cookieError) {
+          console.warn('Could not delete cookies during server render:', cookieError);
+        }
         return Promise.reject(err);
       }
     }
