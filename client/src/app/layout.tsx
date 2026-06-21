@@ -3,7 +3,6 @@ import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TanstackQueryProvider } from "@/lib/tanstack.query";
 import { Toaster } from "@/components/ui/sonner";
-import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,12 +41,6 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased min-h-screen w-full relative bg-background text-foreground">
         <TanstackQueryProvider>
-          <NextTopLoader
-            color="var(--primary)"
-            showSpinner={false}
-            height={3}
-            shadow="0 0 10px rgba(0, 0, 0, 0.5)"
-          />
           <Toaster richColors />
           {children}
         </TanstackQueryProvider>

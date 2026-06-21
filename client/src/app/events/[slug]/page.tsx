@@ -1,52 +1,66 @@
-import type { Metadata } from "next";
+'use client'
+
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Calendar, MapPin, Users, ChevronLeft, ArrowRight, Share2, Globe, Clock } from "lucide-react";
+import { useParams } from "next/navigation";
+import { Calendar, MapPin, Users, ChevronLeft, Globe, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getEvent, checkEventRegistration } from "@/services/server/events";
-import { getUser } from "@/services/server/auth";
+import { useUser } from "@/services/client/auth";
 import { EventRegisterButton } from "@/components/dashboard/events/event-register-button";
+import Loader from "@/components/loader";
 
-interface Props {
-  params: Promise<{ slug: string }>;
-}
+export default function EventDetailPage() {
+  const { slug } = useParams() as { slug: string };
+  const { data: userResponse } = useUser();
+  const currentUser = userResponse?.data ?? null;
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const res = await getEvent(slug);
-  return {
-    title: res.data
-      ? `${res.data.title} | Events | ABU Law Clinic`
-      : "Event Details | ABU Law Clinic",
-    description: res.data?.short_description || res.data?.description?.slice(0, 150),
-  };
-}
+  const { data: eventRes, isLoading: isEventLoading } = useQuery({
+    queryKey: ['event', slug],
+    queryFn: () => getEvent(slug),
+    enabled: !!slug,
+  });
 
-export default async function EventDetailPage({ params }: Props) {
-  const { slug } = await params;
+  const { data: regCheck } = useQuery({
+    queryKey: ['event-registration-check', slug, currentUser?.id],
+    queryFn: () => checkEventRegistration(slug),
+    enabled: !!slug && !!currentUser,
+  });
 
-  const [eventRes, userRes] = await Promise.all([
-    getEvent(slug),
-    getUser(),
-  ]);
-
-  if (!eventRes.data) notFound();
-
-  const event = eventRes.data;
-  const currentUser = userRes.data;
-
-  // Check if current user is registered
-  let isRegistered = false;
-  if (currentUser) {
-    const regCheck = await checkEventRegistration(event.slug);
-    isRegistered = !!regCheck.data?.is_registered;
+  if (isEventLoading) {
+    return (
+      <main className="min-h-screen bg-background">
+        <SiteHeader />
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader variant="dots" size={48} text="Loading event details..." />
+        </div>
+        <Footer />
+      </main>
+    );
   }
+
+  const event = eventRes?.data;
+  if (!event) {
+    return (
+      <main className="min-h-screen bg-background">
+        <SiteHeader />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <h1 className="text-2xl font-semibold">Event Not Found</h1>
+          <p className="text-muted-foreground">The event you are looking for does not exist or has been removed.</p>
+          <Link href="/events" className="text-primary hover:underline">Return to events</Link>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  const isRegistered = !!regCheck?.data?.is_registered;
 
   const startDate = event.start_date ? new Date(event.start_date) : null;
   const endDate = event.end_date ? new Date(event.end_date) : null;

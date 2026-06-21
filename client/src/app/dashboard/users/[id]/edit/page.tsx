@@ -1,20 +1,19 @@
+'use client'
+
 import React from 'react'
+import { useParams } from 'next/navigation'
 import EditUserForm from '@/components/users/edit-user-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getUser } from '@/services/server/users'
+import { useUser as useUserById } from '@/services/client/users'
 
-interface Props {
-    params: Promise<{id: string}>,
-    searchParams: Promise<Record<string, any>>,
-}
-
-const EditUserPage = async ({ params: _params, searchParams }: Props) => {
-  const { id } = await _params
-  const { data: user } = await getUser(id)
+const EditUserPage = () => {
+  const { id } = useParams() as { id: string }
+  const { data: userRes, isLoading } = useUserById(id)
+  const user = userRes?.data
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-10 max-w-5xl mx-auto">
@@ -40,7 +39,7 @@ const EditUserPage = async ({ params: _params, searchParams }: Props) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
-          {!user ? (
+          {isLoading || !user ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Skeleton className="h-12 w-full" />

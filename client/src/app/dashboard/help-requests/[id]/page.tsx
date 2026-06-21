@@ -1,37 +1,42 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+'use client'
+
+import React from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { HelpRequestTriage } from "@/components/dashboard/help-requests/help-request-triage";
-import { getHelpRequest } from "@/services/server/help-requests";
-import { getUsers } from "@/services/server/users";
+import { useHelpRequest } from "@/services/client/help-requests";
+import { useUsers } from "@/services/client/users";
+import Loader from "@/components/loader";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default function HelpRequestDetailPage() {
+  const { id } = useParams() as { id: string };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const res = await getHelpRequest(id);
-  return {
-    title: res.data
-      ? `Triage: ${res.data.full_name} | ABU Law Clinic`
-      : "Help Request Details | ABU Law Clinic",
-  };
-}
+  const { data: reqRes, isLoading: isRequestLoading } = useHelpRequest(id);
+  const { data: usersRes, isLoading: isUsersLoading } = useUsers({
+    params: { is_staff: true, is_active: true }
+  });
 
-export default async function HelpRequestDetailPage({ params }: Props) {
-  const { id } = await params;
+  if (isRequestLoading || isUsersLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader variant="dots" size={48} text="Loading request details..." />
+      </div>
+    );
+  }
 
-  const [reqRes, usersRes] = await Promise.all([
-    getHelpRequest(id),
-    getUsers({ params: { is_staff: true, is_active: true } }),
-  ]);
+  const helpRequest = reqRes?.data;
+  if (!helpRequest) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
+        <h1 className="text-2xl font-semibold">Help Request Not Found</h1>
+        <p className="text-muted-foreground">The requested help request could not be found.</p>
+        <Link href="/dashboard/help-requests" className="text-primary hover:underline">Return to inbox</Link>
+      </div>
+    );
+  }
 
-  if (!reqRes.data) notFound();
-
-  const helpRequest = reqRes.data;
-  const users = usersRes.data ?? [];
+  const users = usersRes?.data ?? [];
 
   return (
     <div className="space-y-6">

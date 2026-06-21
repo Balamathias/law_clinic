@@ -1,4 +1,3 @@
-'use server'
 
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'

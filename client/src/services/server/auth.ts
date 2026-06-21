@@ -1,15 +1,11 @@
-'use server'
-
 import { LoginResponse, OTPResponse, RefreshResponse, RegisterResponse, ResendOTPResponse, ResetPasswordConfirmResponse, ResetPasswordResponse } from "@/@types/auth"
 import { User } from "@/@types/db"
-import { cookies } from "next/headers"
-import { setCookies, status as STATUS } from "@/lib/utils"
+import { status as STATUS } from "@/lib/utils"
 import { stackbase } from "../server.entry"
 import { StackResponse } from "@/@types/generics"
-// import { redis } from "@/lib/redis"
 
 /**
- * `await getUser()` - Get the currently logged in user based on the cookie session.
+ * `await getUser()` - Get the currently logged in user based on the local storage token.
  */
 export async function getUser(): Promise<StackResponse<User | null>> {
   try {
@@ -32,9 +28,6 @@ export async function getUser(): Promise<StackResponse<User | null>> {
  */
 export async function getProfile(username: string) {
   try {
-
-    // const profile = await redis.get(`profile:${username}`)
-
     const { data } = await stackbase.get(`/profile/${username}/`)
     return data as User
   } catch (error: any) {
@@ -55,8 +48,10 @@ export async function login(email: string, password: string): Promise<StackRespo
     const response = data as LoginResponse
 
     if (status === STATUS.HTTP_200_SUCCESSFUL) {
-      (await cookies()).set("token", response.access);
-      (await cookies()).set("refresh_token", response.refresh);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("token", response.access);
+        localStorage.setItem("refresh_token", response.refresh);
+      }
       return {
         data: response,
         message: "Log in successful",
@@ -87,15 +82,18 @@ export async function login(email: string, password: string): Promise<StackRespo
  * @returns status response
  */
 export async function logout(): Promise<StackResponse<{ message: string } | null>> {
-
-  const cookie = await cookies()
-
   try {
-    const { data, status } = await stackbase.post("/auth/logout/", { refresh: cookie.get("refresh_token")?.value })
+    let refresh = "";
+    if (typeof window !== 'undefined') {
+      refresh = localStorage.getItem("refresh_token") || "";
+    }
+    const { data, status } = await stackbase.post("/auth/logout/", { refresh })
 
-    if (status === STATUS.HTTP_205_RESET_CONTENT) {
-      cookie.delete("token")
-      cookie.delete("refresh_token")
+    if (status === STATUS.HTTP_205_RESET_CONTENT || status === STATUS.HTTP_200_SUCCESSFUL) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refresh_token");
+      }
       return {
         data: { message: "Logged out successfully" },
         status: STATUS.HTTP_205_RESET_CONTENT,
@@ -112,6 +110,10 @@ export async function logout(): Promise<StackResponse<{ message: string } | null
     }
 
   } catch (error: any) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh_token");
+    }
     return {
       data: null,
       message: error?.response?.data?.detail,
@@ -125,12 +127,15 @@ export async function logout(): Promise<StackResponse<{ message: string } | null
  * @description get a user's refreshToken
  */
 export async function refreshToken() {
-
-  const cookie = await cookies()
-
   try {
-    const { data } = await stackbase.post("/auth/refresh/", { refresh: cookie.get("refreshToken")?.value })
-    cookie.set("token", data?.access)
+    let refresh = "";
+    if (typeof window !== 'undefined') {
+      refresh = localStorage.getItem("refresh_token") || "";
+    }
+    const { data } = await stackbase.post("/auth/refresh/", { refresh })
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("token", data?.access);
+    }
 
     return data as RefreshResponse
 
@@ -146,16 +151,16 @@ export async function refreshToken() {
  * @returns 
  */
 export async function register({email, password, username}: { email: string; password: string, username?: string }): Promise<StackResponse<RegisterResponse | null>> {
-
-  const cookie = await cookies()
   try {
     const { data, status } = await stackbase.post("/auth/register/", { email, password, username })
     
     const res = data as RegisterResponse
 
     if (status === STATUS.HTTP_201_CREATED || status === STATUS.HTTP_200_SUCCESSFUL) {
-      cookie.set("token", res.data?.access_token as string)
-      cookie.set("refresh_token", res.data?.refresh_token as string)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("token", res.data?.access_token as string);
+        localStorage.setItem("refresh_token", res.data?.refresh_token as string);
+      }
 
       return {
         data: res,
@@ -242,12 +247,14 @@ export async function followUnfollowUser(userId: string) {
  * @returns 
  */
 export async function verifyOTP(email: string, otp: string): Promise<StackResponse<OTPResponse | null>> {
-  const cookieStore = cookies()
   try {
     const { data, status } = await stackbase.post(`/auth/verify-otp/`, {email, otp})
 
     if (status === STATUS.HTTP_200_SUCCESSFUL) {
-      setCookies(cookieStore, data?.access_token, data?.refresh_token)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("token", data?.access_token);
+        localStorage.setItem("refresh_token", data?.refresh_token);
+      }
 
       return {
         data: data as OTPResponse,
@@ -375,13 +382,15 @@ export async function validateToken(uid: string, token: string) {
  * @param { uid: string, token: string, password: string } - `password` is the new password field.
  */
 export async function passwordResetConfirm({ uid, token, password }:{uid: string, token: string, password: string}) {
-  const cookieStore = cookies()
   try {
     const { data, status } = await stackbase.post(`/auth/password-reset/confirm/${uid}/${token}/`, { password })
 
     if (status === STATUS.HTTP_200_SUCCESSFUL) {
       const res = data as ResetPasswordConfirmResponse
-      setCookies(cookieStore, res?.access_token, res?.refresh_token)
+      if (typeof window !== 'undefined' && res?.access_token && res?.refresh_token) {
+        localStorage.setItem("token", res.access_token);
+        localStorage.setItem("refresh_token", res.refresh_token);
+      }
       return { data: res, status }
     }
 
@@ -401,6 +410,9 @@ export async function passwordResetConfirm({ uid, token, password }:{uid: string
 }
 
 export const getCookies = async () => {
-  const cookieStore = await cookies();
-  return { cookieStore, token: cookieStore?.get('token')?.value };
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    return { cookieStore: null, token };
+  }
+  return { cookieStore: null, token: null };
 }
