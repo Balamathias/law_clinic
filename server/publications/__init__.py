@@ -1,1 +1,1 @@
-default_app_config = 'publications.apps.PublicationsConfig'
+default_app_config = "publications.apps.PublicationsConfig"

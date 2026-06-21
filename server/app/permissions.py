@@ -1,22 +1,14 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsStaffUser(BasePermission):
     def has_permission(self, request, view):
-        return bool(
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_staff
-        )
+        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
 
 
 class IsAdminUser(BasePermission):
     def has_permission(self, request, view):
-        return bool(
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_superuser
-        )
+        return bool(request.user and request.user.is_authenticated and request.user.is_superuser)
 
 
 class ReadOnlyOrStaff(BasePermission):
@@ -24,11 +16,7 @@ class ReadOnlyOrStaff(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        return bool(
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_staff
-        )
+        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
 
 
 class IsAdminOrReadOnly(BasePermission):
@@ -44,13 +32,14 @@ class IsAdminOrReadOnly(BasePermission):
 
         # Write operations (POST, PUT, PATCH, DELETE) are restricted to admins
         return request.user and request.user.is_staff  # Checks if user is an admin
-    
+
 
 class IsOwnerOrReadOnly(BasePermission):
     """
     Only allow owners of a model to edit or delete it.
     Everyone else can only read.
     """
+
     def has_object_permission(self, request, view, obj):
         """Read permissions for everyone"""
         if request.method in SAFE_METHODS:
@@ -67,6 +56,6 @@ class IsOwnerOnly(BasePermission):
     Only allow owners of a model to edit or delete it.
     Everyone else can only read.
     """
+
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
-  

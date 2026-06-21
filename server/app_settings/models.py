@@ -1,6 +1,7 @@
-from django.db import models
-from django.core.validators import URLValidator
 import uuid
+
+from django.core.validators import URLValidator
+from django.db import models
 
 
 class AppData(models.Model):
@@ -12,7 +13,7 @@ class AppData(models.Model):
 
     objectives = models.TextField(blank=True, null=True, help_text="Comma-separated objectives")
     history = models.TextField(blank=True, null=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -25,20 +26,18 @@ class AppData(models.Model):
 
 
 class Gallery(models.Model):
-
     DEPARTMENT_CHOICES = (
-        ('clinical', 'Clinical Department'),
-        ('research', 'Research Department'),
-        ('litigation', 'Litigation Department'),
-        ('other', 'Other'),
+        ("clinical", "Clinical Department"),
+        ("research", "Research Department"),
+        ("litigation", "Litigation Department"),
+        ("other", "Other"),
     )
-
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=500)
     description = models.TextField(blank=True, null=True)
 
-    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, default='other')
+    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, default="other")
 
     is_previous = models.BooleanField(default=False, help_text="Is this a previous gallery?")
     year = models.PositiveIntegerField(blank=True, null=True, help_text="Year of the gallery")
@@ -50,24 +49,23 @@ class Gallery(models.Model):
 
     class Meta:
         verbose_name_plural = "Galleries"
-        ordering = ['ordering', 'title']
+        ordering = ["ordering", "title"]
 
     def __str__(self):
         return self.title
-    
+
     def get_gallery_images(self):
-        return self.images.all().order_by('ordering')
-    
+        return self.images.all().order_by("ordering")
+
 
 class GalleryImage(models.Model):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     title = models.CharField(max_length=500, blank=True, null=True)
 
     description = models.TextField(blank=True, null=True)
 
-    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name='images')
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name="images")
 
     image = models.URLField(null=True, validators=[URLValidator()])
 
@@ -82,7 +80,7 @@ class GalleryImage(models.Model):
 
     class Meta:
         verbose_name_plural = "Gallery Images"
-        ordering = ['ordering', 'gallery__year', 'gallery__title']
+        ordering = ["ordering", "gallery__year", "gallery__title"]
 
     def __str__(self):
         return f"Image for {self.gallery.title}"
@@ -90,8 +88,8 @@ class GalleryImage(models.Model):
 
 class Sponsor(models.Model):
     SPONSOR_TYPE = (
-        ('person', 'Person'),
-        ('organization', 'Organization'),
+        ("person", "Person"),
+        ("organization", "Organization"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -99,14 +97,14 @@ class Sponsor(models.Model):
     description = models.TextField(null=True, blank=True)
     image = models.URLField(blank=True, null=True)
     url = models.URLField(blank=True, null=True)
-    type = models.CharField(max_length=12, choices=SPONSOR_TYPE, default='person')
+    type = models.CharField(max_length=12, choices=SPONSOR_TYPE, default="person")
     ordering = models.PositiveIntegerField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['ordering', 'name']
+        ordering = ["ordering", "name"]
 
     def __str__(self):
         return self.name

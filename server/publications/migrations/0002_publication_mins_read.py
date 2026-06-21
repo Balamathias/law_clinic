@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('publications', '0001_initial'),
+        ("publications", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publication',
-            name='mins_read',
-            field=models.PositiveIntegerField(default=0, help_text='Estimated reading time in minutes'),
+            model_name="publication",
+            name="mins_read",
+            field=models.PositiveIntegerField(default=0, help_text="Estimated reading time in minutes"),
         ),
     ]

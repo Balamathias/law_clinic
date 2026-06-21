@@ -7,7 +7,6 @@ def backfill_format(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publications", "0002_publication_mins_read"),
     ]

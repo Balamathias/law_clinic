@@ -1,3 +1,8 @@
+# ruff: noqa: F403, F405
+import os
+
+import dj_database_url
+
 from .base import *
 
 DEBUG = False
@@ -15,13 +20,13 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Database
 DATABASES = {}
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
+    DATABASES["default"] = dj_database_url.config(default=DATABASE_URL)
 else:
     raise ValueError("DATABASE_URL environment variable must be set in production.")
 
-FRONTEND_URL = os.getenv('FRONTEND_URL_PROD', 'https://abulawclinic.org')
+FRONTEND_URL = os.getenv("FRONTEND_URL_PROD", "https://abulawclinic.org")
 
 # Secure production headers
 SECURE_SSL_REDIRECT = True

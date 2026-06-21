@@ -1,39 +1,25 @@
+import logging
 import os
+from concurrent.futures import ThreadPoolExecutor
 
-from rest_framework.response import Response
-from rest_framework import status as drf_status
-
+from django.conf import settings
+from django.template import TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.template import TemplateDoesNotExist
-from django.conf import settings
-
-
-from django.core.mail import send_mail
-
-import logging
+from rest_framework import status as drf_status
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
+
 def custom_response(
-    data=None, 
-    message="", 
-    status=drf_status.HTTP_200_OK, 
-    error=None,
-    count=None,
-    next=None,
-    previous=None
+    data=None, message="", status=drf_status.HTTP_200_OK, error=None, count=None, next=None, previous=None
 ):
     """
     Standard response format for API endpoints
     """
-    response_data = {
-        "message": message,
-        "data": data,
-        "status": status,
-        "error": error
-    }
-    
+    response_data = {"message": message, "data": data, "status": status, "error": error}
+
     # Include pagination data if provided
     if count is not None:
         response_data["count"] = count
@@ -41,8 +27,9 @@ def custom_response(
         response_data["next"] = next
     if previous is not None:
         response_data["previous"] = previous
-        
+
     return Response(data=response_data, status=status)
+
 
 def ensure_template_directories():
     """
@@ -50,10 +37,10 @@ def ensure_template_directories():
     Creates them if they don't exist.
     """
     template_dirs = [
-        os.path.join(settings.BASE_DIR, 'templates'),
-        os.path.join(settings.BASE_DIR, 'templates', 'emails')
+        os.path.join(settings.BASE_DIR, "templates"),
+        os.path.join(settings.BASE_DIR, "templates", "emails"),
     ]
-    
+
     for directory in template_dirs:
         if not os.path.exists(directory):
             try:
@@ -62,46 +49,49 @@ def ensure_template_directories():
             except Exception as e:
                 logger.error(f"Failed to create template directory {directory}: {str(e)}")
 
+
 def render_email_template(template_name, context=None):
     """
     Renders an HTML email template with the given context.
     Returns both HTML and plain text versions.
-    
+
     Args:
         template_name: Name of the template (without extension)
         context: Dictionary of context variables for the template
-    
+
     Returns:
         tuple: (html_content, plain_text_content)
     """
     if context is None:
         context = {}
-        
+
     # Ensure APP_NAME is available in all email templates
-    if 'APP_NAME' not in context:
+    if "APP_NAME" not in context:
         from app.constants import APP_NAME
-        context['APP_NAME'] = APP_NAME
-        
+
+        context["APP_NAME"] = APP_NAME
+
     # Add base URL for images/links
-    if 'BASE_URL' not in context:
-        context['BASE_URL'] = os.environ.get('FRONTEND_URL', 'https://lawstack.ai')
-    
+    if "BASE_URL" not in context:
+        context["BASE_URL"] = os.environ.get("FRONTEND_URL", "https://lawstack.ai")
+
     # Add current year for copyright notices
     from datetime import datetime
-    context['current_year'] = datetime.now().year
-    
+
+    context["current_year"] = datetime.now().year
+
     # Ensure template directories exist
     ensure_template_directories()
-    
+
     try:
         # Render the HTML template
-        html_content = render_to_string(f'emails/{template_name}.html', context)
-        
+        html_content = render_to_string(f"emails/{template_name}.html", context)
+
         # Create a plain text version by stripping HTML tags
         plain_text_content = strip_tags(html_content)
-        
+
         return html_content, plain_text_content
-    
+
     except TemplateDoesNotExist:
         logger.error(f"Email template not found: emails/{template_name}.html")
         # Fallback to basic template
@@ -110,23 +100,24 @@ def render_email_template(template_name, context=None):
         logger.error(f"Error rendering email template {template_name}: {str(e)}")
         return generate_fallback_email(template_name, context)
 
+
 def generate_fallback_email(template_type, context):
     """
     Generate a basic fallback email when the template is not found.
-    
+
     Args:
         template_type: The type of email being sent (otp_verification, welcome, etc.)
         context: The context data for the email
-    
+
     Returns:
         tuple: (html_content, plain_text_content)
     """
-    app_name = context.get('APP_NAME', 'LawStack')
-    
-    if template_type == 'otp_verification':
-        otp = context.get('otp', 'N/A')
-        username = context.get('username', context.get('user_email', 'User'))
-        
+    app_name = context.get("APP_NAME", "LawStack")
+
+    if template_type == "otp_verification":
+        otp = context.get("otp", "N/A")
+        username = context.get("username", context.get("user_email", "User"))
+
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -142,10 +133,10 @@ def generate_fallback_email(template_type, context):
         </body>
         </html>
         """
-    
-    elif template_type == 'welcome':
-        username = context.get('username', context.get('user_email', 'User'))
-        
+
+    elif template_type == "welcome":
+        username = context.get("username", context.get("user_email", "User"))
+
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -160,11 +151,11 @@ def generate_fallback_email(template_type, context):
         </body>
         </html>
         """
-    
-    elif template_type == 'password_reset':
-        username = context.get('username', context.get('user_email', 'User'))
-        reset_url = context.get('reset_url', '#')
-        
+
+    elif template_type == "password_reset":
+        username = context.get("username", context.get("user_email", "User"))
+        reset_url = context.get("reset_url", "#")
+
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -180,7 +171,7 @@ def generate_fallback_email(template_type, context):
         </body>
         </html>
         """
-    
+
     else:
         html_content = f"""
         <!DOCTYPE html>
@@ -195,47 +186,40 @@ def generate_fallback_email(template_type, context):
         </body>
         </html>
         """
-    
+
     plain_text_content = strip_tags(html_content)
     return html_content, plain_text_content
 
 
 class ClinicView:
-
     def clinic_response(
-        self, 
-        data=None, 
-        message="", 
-        status_code=drf_status.HTTP_200_OK, 
+        self,
+        data=None,
+        message="",
+        status_code=drf_status.HTTP_200_OK,
         error=None,
         count=None,
         next=None,
-        previous=None
+        previous=None,
     ):
         """
         Standard response format for API endpoints
         """
-        response_data = {
-            "message": message,
-            "data": data,
-            "status": status_code,
-            "error": error
-        }
-        
+        response_data = {"message": message, "data": data, "status": status_code, "error": error}
+
         if count is not None:
             response_data["count"] = count
         if next is not None:
             response_data["next"] = next
         if previous is not None:
             response_data["previous"] = previous
-            
+
         return Response(data=response_data, status=status_code)
 
 
-from concurrent.futures import ThreadPoolExecutor
-
 # Create a global thread pool for non-blocking asynchronous email delivery
 _email_executor = ThreadPoolExecutor(max_workers=4)
+
 
 def send_email_async(email_message, fail_silently=False):
     """

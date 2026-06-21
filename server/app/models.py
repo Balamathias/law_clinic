@@ -1,10 +1,9 @@
-import uuid
 import datetime
+import uuid
+
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, AbstractUser
 from django.utils import timezone
-from django.conf import settings
-from django.utils.timezone import now, timedelta
 
 
 class UserManager(BaseUserManager):
@@ -84,19 +83,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         # Handle password validation edge cases
-        if hasattr(self, '_password') and self._password is None:
-            self._password = ''
-        
+        if hasattr(self, "_password") and self._password is None:
+            self._password = ""
+
         super().save(*args, **kwargs)
 
 
 class HelpRequest(models.Model):
     STATUS_CHOICES = (
-        ('new', 'New'),
-        ('in_review', 'In review'),
-        ('assigned', 'Assigned'),
-        ('resolved', 'Resolved'),
-        ('closed', 'Closed'),
+        ("new", "New"),
+        ("in_review", "In review"),
+        ("assigned", "Assigned"),
+        ("resolved", "Resolved"),
+        ("closed", "Closed"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
@@ -104,15 +103,11 @@ class HelpRequest(models.Model):
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
     legal_issue_type = models.CharField(max_length=100, db_index=True)
-    had_previous_help = models.CharField(max_length=50, choices=(('yes', 'Yes'), ('no', 'No')))
+    had_previous_help = models.CharField(max_length=50, choices=(("yes", "Yes"), ("no", "No")))
     description = models.TextField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', db_index=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new", db_index=True)
     assigned_to = models.ForeignKey(
-        'User',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='assigned_help_requests'
+        "User", on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_help_requests"
     )
     internal_notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -124,5 +119,4 @@ class HelpRequest(models.Model):
     class Meta:
         verbose_name = "Help Request"
         verbose_name_plural = "Help Requests"
-        ordering = ['-created_at']
-        
+        ordering = ["-created_at"]

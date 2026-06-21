@@ -1,0 +1,23 @@
+# Ruff Configuration for Law Clinic Backend
+line-length = 120
+target-version = "py312"
+
+[lint]
+select = [
+    "F",    # Pyflakes
+    "E",    # Pycodestyle errors
+    "W",    # Pycodestyle warnings
+    "I",    # Isort import sorting
+    "B",    # Flake8-Bugbear checks
+    "UP",   # Pyupgrade modernizations
+    "C4",   # Flake8-comprehensions
+]
+ignore = [
+    "E501", # Line-too-long (handled by formatter)
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

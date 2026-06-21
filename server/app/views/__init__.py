@@ -1,19 +1,20 @@
+# ruff: noqa: F401
 from .auth import (
-    RegisterView,
-    VerifyOTPView,
-    ResendOTPView,
-    RequestPasswordResetView,
-    ValidateResetTokenView,
     ConfirmPasswordResetView,
+    LogoutView,
     ObtainTokenPairView,
     RefreshTokenView,
-    LogoutView,
-)
-from .users import (
-    UpdateUserView,
-    CurrentUserView,
-    UserViewSet,
+    RegisterView,
+    RequestPasswordResetView,
+    ResendOTPView,
+    ValidateResetTokenView,
+    VerifyOTPView,
 )
 from .help_requests import (
     HelpRequestViewSet,
+)
+from .users import (
+    CurrentUserView,
+    UpdateUserView,
+    UserViewSet,
 )

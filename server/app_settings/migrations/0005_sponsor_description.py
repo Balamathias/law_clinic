@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app_settings', '0004_galleryimage_title'),
+        ("app_settings", "0004_galleryimage_title"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sponsor',
-            name='description',
+            model_name="sponsor",
+            name="description",
             field=models.TextField(null=True),
         ),
     ]

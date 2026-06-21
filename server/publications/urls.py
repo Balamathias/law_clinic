@@ -1,6 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import PublicationViewSet, CategoryViewSet
+
+from .views import CategoryViewSet, PublicationViewSet
 
 router = DefaultRouter()
 # Publications endpoints:
@@ -10,7 +11,7 @@ router = DefaultRouter()
 # PUT /api/publications/{id}/ - Update a publication completely
 # PATCH /api/publications/{id}/ - Update a publication partially
 # DELETE /api/publications/{id}/ - Delete a publication
-router.register('', PublicationViewSet, basename='publication')
+router.register("", PublicationViewSet, basename="publication")
 
 # Categories endpoints:
 # GET /api/categories/ - List all categories
@@ -19,13 +20,13 @@ router.register('', PublicationViewSet, basename='publication')
 # PUT /api/categories/{id}/ - Update a category completely
 # PATCH /api/categories/{id}/ - Update a category partially
 # DELETE /api/categories/{id}/ - Delete a category
-router.register('categories', CategoryViewSet, basename='category')
+router.register("categories", CategoryViewSet, basename="category")
 
-app_name = 'publications'
+app_name = "publications"
 
 urlpatterns = [
     # Includes all endpoints defined in the router
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
 
 """
@@ -49,7 +50,7 @@ Publications API:
   * Method: POST
   * Description: Creates a new publication
   * Auth required: Yes
-  * Request body: 
+  * Request body:
     {
       "title": "Publication Title",
       "content": "Full content text",

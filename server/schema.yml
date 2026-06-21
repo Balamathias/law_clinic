@@ -1,0 +1,4314 @@
+openapi: 3.0.3
+info:
+  title: ABU Law Clinic API
+  version: 1.0.0
+  description: Interactive API documentation for the Ahmadu Bello University Law Clinic
+    workspace.
+paths:
+  /api/v1/app_settings/app-data/:
+    get:
+      operationId: api_v1_app_settings_app_data_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAppDataList'
+          description: ''
+    post:
+      operationId: api_v1_app_settings_app_data_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AppData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AppData'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppData'
+          description: ''
+  /api/v1/app_settings/app-data/{id}/:
+    get:
+      operationId: api_v1_app_settings_app_data_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this App Data.
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppData'
+          description: ''
+    put:
+      operationId: api_v1_app_settings_app_data_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this App Data.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AppData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AppData'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppData'
+          description: ''
+    patch:
+      operationId: api_v1_app_settings_app_data_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this App Data.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAppData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAppData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAppData'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppData'
+          description: ''
+    delete:
+      operationId: api_v1_app_settings_app_data_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this App Data.
+        required: true
+      tags:
+      - api
+      responses:
+        '204':
+          description: No response body
+  /api/v1/app_settings/galleries/:
+    get:
+      operationId: api_v1_app_settings_galleries_list
+      parameters:
+      - in: query
+        name: department
+        schema:
+          type: string
+          enum:
+          - clinical
+          - litigation
+          - other
+          - research
+        description: |-
+          * `clinical` - Clinical Department
+          * `research` - Research Department
+          * `litigation` - Litigation Department
+          * `other` - Other
+      - in: query
+        name: is_previous
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: year
+        schema:
+          type: integer
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGalleryList'
+          description: ''
+    post:
+      operationId: api_v1_app_settings_galleries_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          description: ''
+  /api/v1/app_settings/galleries/{id}/:
+    get:
+      operationId: api_v1_app_settings_galleries_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery.
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          description: ''
+    put:
+      operationId: api_v1_app_settings_galleries_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Gallery'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          description: ''
+    patch:
+      operationId: api_v1_app_settings_galleries_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGallery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGallery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGallery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          description: ''
+    delete:
+      operationId: api_v1_app_settings_galleries_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery.
+        required: true
+      tags:
+      - api
+      responses:
+        '204':
+          description: No response body
+  /api/v1/app_settings/galleries/by_department/:
+    get:
+      operationId: api_v1_app_settings_galleries_by_department_retrieve
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gallery'
+          description: ''
+  /api/v1/app_settings/gallery-images/:
+    get:
+      operationId: api_v1_app_settings_gallery_images_list
+      parameters:
+      - in: query
+        name: gallery
+        schema:
+          type: string
+          format: uuid
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGalleryImageList'
+          description: ''
+    post:
+      operationId: api_v1_app_settings_gallery_images_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryImage'
+          description: ''
+  /api/v1/app_settings/gallery-images/{id}/:
+    get:
+      operationId: api_v1_app_settings_gallery_images_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery image.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryImage'
+          description: ''
+    put:
+      operationId: api_v1_app_settings_gallery_images_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery image.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GalleryImage'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryImage'
+          description: ''
+    patch:
+      operationId: api_v1_app_settings_gallery_images_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery image.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGalleryImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGalleryImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGalleryImage'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryImage'
+          description: ''
+    delete:
+      operationId: api_v1_app_settings_gallery_images_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this gallery image.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/app_settings/sponsors/:
+    get:
+      operationId: api_v1_app_settings_sponsors_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - organization
+          - person
+        description: |-
+          * `person` - Person
+          * `organization` - Organization
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSponsorList'
+          description: ''
+    post:
+      operationId: api_v1_app_settings_sponsors_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sponsor'
+          description: ''
+  /api/v1/app_settings/sponsors/{id}/:
+    get:
+      operationId: api_v1_app_settings_sponsors_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this sponsor.
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sponsor'
+          description: ''
+    put:
+      operationId: api_v1_app_settings_sponsors_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this sponsor.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sponsor'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sponsor'
+          description: ''
+    patch:
+      operationId: api_v1_app_settings_sponsors_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this sponsor.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSponsor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSponsor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSponsor'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sponsor'
+          description: ''
+    delete:
+      operationId: api_v1_app_settings_sponsors_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this sponsor.
+        required: true
+      tags:
+      - api
+      responses:
+        '204':
+          description: No response body
+  /api/v1/app_settings/sponsors/by_type/:
+    get:
+      operationId: api_v1_app_settings_sponsors_by_type_retrieve
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sponsor'
+          description: ''
+  /api/v1/app_settings/testimonials/:
+    get:
+      operationId: api_v1_app_settings_testimonials_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTestimonialList'
+          description: ''
+    post:
+      operationId: api_v1_app_settings_testimonials_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+          description: ''
+  /api/v1/app_settings/testimonials/{id}/:
+    get:
+      operationId: api_v1_app_settings_testimonials_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this testimonial.
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+          description: ''
+    put:
+      operationId: api_v1_app_settings_testimonials_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this testimonial.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Testimonial'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+          description: ''
+    patch:
+      operationId: api_v1_app_settings_testimonials_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this testimonial.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTestimonial'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTestimonial'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTestimonial'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+          description: ''
+    delete:
+      operationId: api_v1_app_settings_testimonials_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this testimonial.
+        required: true
+      tags:
+      - api
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/login/:
+    post:
+      operationId: api_v1_auth_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: api_v1_auth_logout_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/password-reset/:
+    post:
+      operationId: api_v1_auth_password_reset_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/password-reset/confirm/{uid}/{token}/:
+    post:
+      operationId: api_v1_auth_password_reset_confirm_create
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/password-reset/validate-token/{uid}/{token}/:
+    post:
+      operationId: api_v1_auth_password_reset_validate_token_create
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/refresh/:
+    post:
+      operationId: api_v1_auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/register/:
+    post:
+      operationId: api_v1_auth_register_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/v1/auth/resend-otp/:
+    post:
+      operationId: api_v1_auth_resend_otp_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/update-user/:
+    put:
+      operationId: api_v1_auth_update_user_update
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/user/:
+    get:
+      operationId: api_v1_auth_user_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/verify-otp/:
+    post:
+      operationId: api_v1_auth_verify_otp_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/events/:
+    get:
+      operationId: api_v1_events_list
+      description: ViewSet for viewing and editing Events
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: featured
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - completed
+          - in_progress
+          - postponed
+          - scheduled
+        description: |-
+          * `scheduled` - Scheduled
+          * `in_progress` - In Progress
+          * `completed` - Completed
+          * `cancelled` - Cancelled
+          * `postponed` - Postponed
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+    post:
+      operationId: api_v1_events_create
+      description: ViewSet for viewing and editing Events
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/events/{slug}/:
+    get:
+      operationId: api_v1_events_retrieve
+      description: ViewSet for viewing and editing Events
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+          description: ''
+    put:
+      operationId: api_v1_events_update
+      description: ViewSet for viewing and editing Events
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+    patch:
+      operationId: api_v1_events_partial_update
+      description: ViewSet for viewing and editing Events
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+    delete:
+      operationId: api_v1_events_destroy
+      description: ViewSet for viewing and editing Events
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/{slug}/cancel_registration/:
+    post:
+      operationId: api_v1_events_cancel_registration_create
+      description: Cancel the current user's registration for the event (alias of
+        unregister)
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/events/{slug}/register/:
+    post:
+      operationId: api_v1_events_register_create
+      description: Register the current user for the event
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/events/{slug}/unregister/:
+    post:
+      operationId: api_v1_events_unregister_create
+      description: Unregister the current user from the event
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/events/event-categories/:
+    get:
+      operationId: api_v1_events_event_categories_list
+      description: ViewSet for viewing and editing Event Categories
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventCategoryList'
+          description: ''
+    post:
+      operationId: api_v1_events_event_categories_create
+      description: ViewSet for viewing and editing Event Categories
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCategory'
+          description: ''
+  /api/v1/events/event-categories/{id}/:
+    get:
+      operationId: api_v1_events_event_categories_retrieve
+      description: ViewSet for viewing and editing Event Categories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Event Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCategory'
+          description: ''
+    put:
+      operationId: api_v1_events_event_categories_update
+      description: ViewSet for viewing and editing Event Categories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Event Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventCategory'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCategory'
+          description: ''
+    patch:
+      operationId: api_v1_events_event_categories_partial_update
+      description: ViewSet for viewing and editing Event Categories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Event Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEventCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEventCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEventCategory'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCategory'
+          description: ''
+    delete:
+      operationId: api_v1_events_event_categories_destroy
+      description: ViewSet for viewing and editing Event Categories
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Event Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/event-registrations/:
+    get:
+      operationId: api_v1_events_event_registrations_list
+      description: ViewSet for managing event registrations
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventRegistrationList'
+          description: ''
+    post:
+      operationId: api_v1_events_event_registrations_create
+      description: ViewSet for managing event registrations
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRegistration'
+          description: ''
+  /api/v1/events/event-registrations/{id}/:
+    get:
+      operationId: api_v1_events_event_registrations_retrieve
+      description: ViewSet for managing event registrations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRegistration'
+          description: ''
+    put:
+      operationId: api_v1_events_event_registrations_update
+      description: ViewSet for managing event registrations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventRegistration'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRegistration'
+          description: ''
+    patch:
+      operationId: api_v1_events_event_registrations_partial_update
+      description: ViewSet for managing event registrations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEventRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEventRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEventRegistration'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRegistration'
+          description: ''
+    delete:
+      operationId: api_v1_events_event_registrations_destroy
+      description: ViewSet for managing event registrations
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/stats/:
+    get:
+      operationId: api_v1_events_stats_retrieve
+      description: Return aggregate event statistics for the dashboard overview.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/help-requests/:
+    get:
+      operationId: api_v1_help_requests_list
+      parameters:
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: full_name
+        schema:
+          type: string
+      - in: query
+        name: had_previous_help
+        schema:
+          type: string
+          enum:
+          - 'no'
+          - 'yes'
+        description: |-
+          * `yes` - Yes
+          * `no` - No
+      - in: query
+        name: legal_issue_type
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHelpRequestList'
+          description: ''
+    post:
+      operationId: api_v1_help_requests_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpRequest'
+          description: ''
+  /api/v1/help-requests/{id}/:
+    get:
+      operationId: api_v1_help_requests_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Help Request.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpRequest'
+          description: ''
+    put:
+      operationId: api_v1_help_requests_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Help Request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HelpRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpRequest'
+          description: ''
+    patch:
+      operationId: api_v1_help_requests_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Help Request.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHelpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHelpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHelpRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpRequest'
+          description: ''
+    delete:
+      operationId: api_v1_help_requests_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Help Request.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/help-requests/statistics/:
+    get:
+      operationId: api_v1_help_requests_statistics_retrieve
+      description: |-
+        Returns statistics about help requests in the system.
+        Only accessible to admin users.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpRequest'
+          description: ''
+  /api/v1/publications/:
+    get:
+      operationId: api_v1_publications_list
+      parameters:
+      - in: query
+        name: author
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: categories
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+        explode: true
+        style: form
+      - in: query
+        name: is_featured
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - archived
+          - draft
+          - published
+        description: |-
+          * `draft` - Draft
+          * `published` - Published
+          * `archived` - Archived
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicationListList'
+          description: ''
+    post:
+      operationId: api_v1_publications_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationCreateUpdate'
+          description: ''
+  /api/v1/publications/{slug}/:
+    get:
+      operationId: api_v1_publications_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationDetail'
+          description: ''
+    put:
+      operationId: api_v1_publications_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicationCreateUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationCreateUpdate'
+          description: ''
+    patch:
+      operationId: api_v1_publications_partial_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicationCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicationCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicationCreateUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationCreateUpdate'
+          description: ''
+    delete:
+      operationId: api_v1_publications_destroy
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/publications/{slug}/add_comment/:
+    post:
+      operationId: api_v1_publications_add_comment_create
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicationList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicationList'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationList'
+          description: ''
+  /api/v1/publications/categories/:
+    get:
+      operationId: api_v1_publications_categories_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+          description: ''
+    post:
+      operationId: api_v1_publications_categories_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/v1/publications/categories/{slug}/:
+    get:
+      operationId: api_v1_publications_categories_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    put:
+      operationId: api_v1_publications_categories_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    patch:
+      operationId: api_v1_publications_categories_partial_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    delete:
+      operationId: api_v1_publications_categories_destroy
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/publications/featured/:
+    get:
+      operationId: api_v1_publications_featured_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationList'
+          description: ''
+  /api/v1/publications/my_publications/:
+    get:
+      operationId: api_v1_publications_my_publications_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationList'
+          description: ''
+  /api/v1/publications/stats/:
+    get:
+      operationId: api_v1_publications_stats_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationList'
+          description: ''
+  /api/v1/users/:
+    get:
+      operationId: api_v1_users_list
+      parameters:
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: first_name
+        schema:
+          type: string
+      - in: query
+        name: last_name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: phone
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: username
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: api_v1_users_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/users/{id}/:
+    get:
+      operationId: api_v1_users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_v1_users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_v1_users_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_v1_users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/overview/:
+    get:
+      operationId: api_v1_users_overview_retrieve
+      description: |-
+        Returns statistics about users in the system.
+        Only accessible to admin users.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/users/stats/:
+    get:
+      operationId: api_v1_users_stats_retrieve
+      description: Flat stats shape for the dashboard overview card.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /auth/token:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /auth/token/refresh:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+components:
+  schemas:
+    AppData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        logo_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        mission_statement:
+          type: string
+        vision_statement:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        objectives:
+          type: string
+          nullable: true
+          description: Comma-separated objectives
+        history:
+          type: string
+          nullable: true
+      required:
+      - created_at
+      - id
+      - mission_statement
+      - name
+      - updated_at
+      - vision_statement
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 120
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+    ContentFormatEnum:
+      enum:
+      - markdown
+      - html
+      type: string
+      description: |-
+        * `markdown` - Markdown
+        * `html` - HTML
+    DepartmentEnum:
+      enum:
+      - clinical
+      - research
+      - litigation
+      - other
+      type: string
+      description: |-
+        * `clinical` - Clinical Department
+        * `research` - Research Department
+        * `litigation` - Litigation Department
+        * `other` - Other
+    Event:
+      type: object
+      description: Serializer for events
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        short_description:
+          type: string
+          nullable: true
+          description: A brief summary of the event (for listings)
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          description: Physical location of the event
+          maxLength: 255
+        virtual_link:
+          type: string
+          format: uri
+          nullable: true
+          description: Link for virtual attendance
+          maxLength: 200
+        category:
+          type: string
+          format: uuid
+          nullable: true
+        category_name:
+          type: string
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          description: Cover image URL for the event
+          maxLength: 200
+        organizer:
+          type: string
+          format: uuid
+          nullable: true
+        organizer_name:
+          type: string
+          readOnly: true
+        max_participants:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: 0 for unlimited participants
+        registration_required:
+          type: boolean
+        registration_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          $ref: '#/components/schemas/Status49cEnum'
+        featured:
+          type: boolean
+          description: Feature this event on the homepage
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        registration_count:
+          type: string
+          readOnly: true
+        is_upcoming:
+          type: string
+          readOnly: true
+        is_ongoing:
+          type: string
+          readOnly: true
+        has_registration_closed:
+          type: string
+          readOnly: true
+      required:
+      - category_name
+      - created_at
+      - description
+      - end_date
+      - has_registration_closed
+      - id
+      - is_ongoing
+      - is_upcoming
+      - location
+      - organizer_name
+      - registration_count
+      - start_date
+      - title
+      - updated_at
+    EventCategory:
+      type: object
+      description: Serializer for event categories
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        event_count:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - event_count
+      - id
+      - name
+      - updated_at
+    EventDetail:
+      type: object
+      description: Detailed serializer for single event view
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        short_description:
+          type: string
+          nullable: true
+          description: A brief summary of the event (for listings)
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          description: Physical location of the event
+          maxLength: 255
+        virtual_link:
+          type: string
+          format: uri
+          nullable: true
+          description: Link for virtual attendance
+          maxLength: 200
+        category:
+          type: string
+          format: uuid
+          nullable: true
+        category_name:
+          type: string
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          description: Cover image URL for the event
+          maxLength: 200
+        organizer:
+          type: string
+          format: uuid
+          nullable: true
+        organizer_name:
+          type: string
+          readOnly: true
+        max_participants:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: 0 for unlimited participants
+        registration_required:
+          type: boolean
+        registration_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          $ref: '#/components/schemas/Status49cEnum'
+        featured:
+          type: boolean
+          description: Feature this event on the homepage
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        registration_count:
+          type: string
+          readOnly: true
+        is_upcoming:
+          type: string
+          readOnly: true
+        is_ongoing:
+          type: string
+          readOnly: true
+        has_registration_closed:
+          type: string
+          readOnly: true
+        registrations:
+          type: string
+          readOnly: true
+      required:
+      - category_name
+      - created_at
+      - description
+      - end_date
+      - has_registration_closed
+      - id
+      - is_ongoing
+      - is_upcoming
+      - location
+      - organizer_name
+      - registration_count
+      - registrations
+      - start_date
+      - title
+      - updated_at
+    EventRegistration:
+      type: object
+      description: Serializer for event registrations
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        event:
+          type: string
+          format: uuid
+        event_title:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          format: uuid
+        user_details:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        registered_at:
+          type: string
+          format: date-time
+          readOnly: true
+        attended:
+          type: boolean
+        notes:
+          type: string
+          nullable: true
+      required:
+      - event
+      - event_title
+      - id
+      - registered_at
+      - user
+      - user_details
+    Gallery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        is_previous:
+          type: boolean
+          description: Is this a previous gallery?
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Year of the gallery
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: string
+          readOnly: true
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Ordering of the gallery
+      required:
+      - created_at
+      - id
+      - images
+      - title
+      - updated_at
+    GalleryImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        gallery:
+          type: string
+          format: uuid
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        instagram:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        x_handle:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        facebook:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - gallery
+      - id
+      - updated_at
+    HadPreviousHelpEnum:
+      enum:
+      - 'yes'
+      - 'no'
+      type: string
+      description: |-
+        * `yes` - Yes
+        * `no` - No
+    HelpRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone_number:
+          type: string
+          maxLength: 20
+        legal_issue_type:
+          type: string
+          maxLength: 100
+        had_previous_help:
+          $ref: '#/components/schemas/HadPreviousHelpEnum'
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/HelpRequestStatusEnum'
+        assigned_to:
+          type: string
+          format: uuid
+          nullable: true
+        assigned_to_name:
+          type: string
+          readOnly: true
+        internal_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - assigned_to_name
+      - created_at
+      - description
+      - email
+      - full_name
+      - had_previous_help
+      - id
+      - legal_issue_type
+      - phone_number
+      - updated_at
+    HelpRequestStatusEnum:
+      enum:
+      - new
+      - in_review
+      - assigned
+      - resolved
+      - closed
+      type: string
+      description: |-
+        * `new` - New
+        * `in_review` - In review
+        * `assigned` - Assigned
+        * `resolved` - Resolved
+        * `closed` - Closed
+    PaginatedAppDataList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppData'
+    PaginatedCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedEventCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventCategory'
+    PaginatedEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    PaginatedEventRegistrationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventRegistration'
+    PaginatedGalleryImageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryImage'
+    PaginatedGalleryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gallery'
+    PaginatedHelpRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/HelpRequest'
+    PaginatedPublicationListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicationList'
+    PaginatedSponsorList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sponsor'
+    PaginatedTestimonialList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Testimonial'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedAppData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        logo_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        mission_statement:
+          type: string
+        vision_statement:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        objectives:
+          type: string
+          nullable: true
+          description: Comma-separated objectives
+        history:
+          type: string
+          nullable: true
+    PatchedCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 120
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+    PatchedEvent:
+      type: object
+      description: Serializer for events
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        short_description:
+          type: string
+          nullable: true
+          description: A brief summary of the event (for listings)
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          description: Physical location of the event
+          maxLength: 255
+        virtual_link:
+          type: string
+          format: uri
+          nullable: true
+          description: Link for virtual attendance
+          maxLength: 200
+        category:
+          type: string
+          format: uuid
+          nullable: true
+        category_name:
+          type: string
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          description: Cover image URL for the event
+          maxLength: 200
+        organizer:
+          type: string
+          format: uuid
+          nullable: true
+        organizer_name:
+          type: string
+          readOnly: true
+        max_participants:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: 0 for unlimited participants
+        registration_required:
+          type: boolean
+        registration_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          $ref: '#/components/schemas/Status49cEnum'
+        featured:
+          type: boolean
+          description: Feature this event on the homepage
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        registration_count:
+          type: string
+          readOnly: true
+        is_upcoming:
+          type: string
+          readOnly: true
+        is_ongoing:
+          type: string
+          readOnly: true
+        has_registration_closed:
+          type: string
+          readOnly: true
+    PatchedEventCategory:
+      type: object
+      description: Serializer for event categories
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        event_count:
+          type: string
+          readOnly: true
+    PatchedEventRegistration:
+      type: object
+      description: Serializer for event registrations
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        event:
+          type: string
+          format: uuid
+        event_title:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          format: uuid
+        user_details:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        registered_at:
+          type: string
+          format: date-time
+          readOnly: true
+        attended:
+          type: boolean
+        notes:
+          type: string
+          nullable: true
+    PatchedGallery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        department:
+          $ref: '#/components/schemas/DepartmentEnum'
+        is_previous:
+          type: boolean
+          description: Is this a previous gallery?
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Year of the gallery
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        images:
+          type: string
+          readOnly: true
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          description: Ordering of the gallery
+    PatchedGalleryImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        gallery:
+          type: string
+          format: uuid
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        instagram:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        x_handle:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        facebook:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedHelpRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone_number:
+          type: string
+          maxLength: 20
+        legal_issue_type:
+          type: string
+          maxLength: 100
+        had_previous_help:
+          $ref: '#/components/schemas/HadPreviousHelpEnum'
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/HelpRequestStatusEnum'
+        assigned_to:
+          type: string
+          format: uuid
+          nullable: true
+        assigned_to_name:
+          type: string
+          readOnly: true
+        internal_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPublicationCreateUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        content:
+          type: string
+        excerpt:
+          type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+            format: uuid
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        is_featured:
+          type: boolean
+        allow_comments:
+          type: boolean
+        meta_title:
+          type: string
+          nullable: true
+          maxLength: 100
+        meta_description:
+          type: string
+          nullable: true
+        keywords:
+          type: string
+          nullable: true
+          maxLength: 255
+        additional_metadata:
+          nullable: true
+        mins_read:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Estimated reading time in minutes
+        content_format:
+          $ref: '#/components/schemas/ContentFormatEnum'
+    PatchedSponsor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+    PatchedTestimonial:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 500
+        occupation:
+          type: string
+          maxLength: 500
+        quote:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        category:
+          type: string
+          nullable: true
+          maxLength: 500
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        username:
+          type: string
+          nullable: true
+          maxLength: 40
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        phone:
+          type: string
+          nullable: true
+          maxLength: 30
+        avatar:
+          type: string
+          nullable: true
+          maxLength: 2000
+        metadata:
+          nullable: true
+        is_superuser:
+          type: boolean
+          readOnly: true
+        is_staff:
+          type: boolean
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+    PublicationCreateUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        content:
+          type: string
+        excerpt:
+          type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+            format: uuid
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        is_featured:
+          type: boolean
+        allow_comments:
+          type: boolean
+        meta_title:
+          type: string
+          nullable: true
+          maxLength: 100
+        meta_description:
+          type: string
+          nullable: true
+        keywords:
+          type: string
+          nullable: true
+          maxLength: 255
+        additional_metadata:
+          nullable: true
+        mins_read:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Estimated reading time in minutes
+        content_format:
+          $ref: '#/components/schemas/ContentFormatEnum'
+      required:
+      - content
+      - title
+    PublicationDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        content:
+          type: string
+        excerpt:
+          type: string
+          nullable: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          readOnly: true
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          readOnly: true
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        views_count:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        allow_comments:
+          type: boolean
+        meta_title:
+          type: string
+          nullable: true
+          maxLength: 100
+        meta_description:
+          type: string
+          nullable: true
+        keywords:
+          type: string
+          nullable: true
+          maxLength: 255
+        additional_metadata:
+          nullable: true
+        comments:
+          type: string
+          readOnly: true
+        mins_read:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Estimated reading time in minutes
+        content_format:
+          $ref: '#/components/schemas/ContentFormatEnum'
+      required:
+      - author
+      - categories
+      - comments
+      - content
+      - created_at
+      - id
+      - published_at
+      - slug
+      - title
+      - updated_at
+      - views_count
+    PublicationList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          nullable: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/UserBrief'
+          readOnly: true
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          readOnly: true
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusDaeEnum'
+        views_count:
+          type: integer
+          readOnly: true
+        is_featured:
+          type: boolean
+        comments_count:
+          type: string
+          readOnly: true
+        content:
+          type: string
+        author_name:
+          type: string
+          readOnly: true
+        categories_names:
+          type: string
+          readOnly: true
+        category_name:
+          type: string
+          readOnly: true
+        mins_read:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Estimated reading time in minutes
+        content_format:
+          $ref: '#/components/schemas/ContentFormatEnum'
+      required:
+      - author
+      - author_name
+      - categories
+      - categories_names
+      - category_name
+      - comments_count
+      - content
+      - created_at
+      - id
+      - published_at
+      - slug
+      - title
+      - views_count
+    Register:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        phone:
+          type: string
+          nullable: true
+          maxLength: 30
+        password:
+          type: string
+          writeOnly: true
+        avatar:
+          type: string
+          nullable: true
+          maxLength: 2000
+        metadata:
+          nullable: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 40
+      required:
+      - email
+      - id
+      - password
+    Sponsor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 500
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        ordering:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+      required:
+      - id
+      - name
+    Status49cEnum:
+      enum:
+      - scheduled
+      - in_progress
+      - completed
+      - cancelled
+      - postponed
+      type: string
+      description: |-
+        * `scheduled` - Scheduled
+        * `in_progress` - In Progress
+        * `completed` - Completed
+        * `cancelled` - Cancelled
+        * `postponed` - Postponed
+    StatusDaeEnum:
+      enum:
+      - draft
+      - published
+      - archived
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+        * `archived` - Archived
+    Testimonial:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 500
+        occupation:
+          type: string
+          maxLength: 500
+        quote:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        category:
+          type: string
+          nullable: true
+          maxLength: 500
+      required:
+      - id
+      - name
+      - occupation
+    TokenObtainPair:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TypeEnum:
+      enum:
+      - person
+      - organization
+      type: string
+      description: |-
+        * `person` - Person
+        * `organization` - Organization
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        username:
+          type: string
+          nullable: true
+          maxLength: 40
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        phone:
+          type: string
+          nullable: true
+          maxLength: 30
+        avatar:
+          type: string
+          nullable: true
+          maxLength: 2000
+        metadata:
+          nullable: true
+        is_superuser:
+          type: boolean
+          readOnly: true
+        is_staff:
+          type: boolean
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - date_joined
+      - email
+      - id
+      - is_active
+      - is_staff
+      - is_superuser
+    UserBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 40
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 30
+        avatar:
+          type: string
+          nullable: true
+          maxLength: 2000
+      required:
+      - email
+      - id
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

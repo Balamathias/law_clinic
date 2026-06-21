@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('app_settings', '0002_sponsor_created_at_sponsor_updated_at_and_more'),
+        ("app_settings", "0002_sponsor_created_at_sponsor_updated_at_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='appdata',
-            name='history',
+            model_name="appdata",
+            name="history",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='appdata',
-            name='objectives',
-            field=models.TextField(blank=True, help_text='Comma-separated objectives', null=True),
+            model_name="appdata",
+            name="objectives",
+            field=models.TextField(blank=True, help_text="Comma-separated objectives", null=True),
         ),
     ]

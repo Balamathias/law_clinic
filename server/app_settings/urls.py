@@ -1,25 +1,25 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from app_settings.views import (
     AppDataViewSet,
-    GalleryViewSet,
     GalleryImageViewSet,
+    GalleryViewSet,
     SponsorViewSet,
     TestimonialViewSet,
 )
 
 # Create a router and register our viewsets with it
 router = DefaultRouter()
-router.register(r'app-data', AppDataViewSet, basename='app-data')
-router.register(r'galleries', GalleryViewSet, basename='gallery')
-router.register(r'gallery-images', GalleryImageViewSet, basename='gallery-image')
-router.register(r'sponsors', SponsorViewSet, basename='sponsor')
-router.register(r'testimonials', TestimonialViewSet, basename='testimonial')
+router.register(r"app-data", AppDataViewSet, basename="app-data")
+router.register(r"galleries", GalleryViewSet, basename="gallery")
+router.register(r"gallery-images", GalleryImageViewSet, basename="gallery-image")
+router.register(r"sponsors", SponsorViewSet, basename="sponsor")
+router.register(r"testimonials", TestimonialViewSet, basename="testimonial")
 
 # The API URLs are now determined automatically by the router
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
 
 # API Endpoints Documentation

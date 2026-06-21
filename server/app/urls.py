@@ -31,27 +31,23 @@ REST Framework Viewsets:
         - GET /help-requests/statistics/ - Get help request statistics (admin only)
 """
 
-from django.urls import path
-
-from django.urls import include
-
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from rest_framework.routers import DefaultRouter
-
 from app.views import (
+    ConfirmPasswordResetView,
     CurrentUserView,
-    UserViewSet,
+    HelpRequestViewSet,
     LogoutView,
     ObtainTokenPairView,
-    UpdateUserView,
     RegisterView,
-    VerifyOTPView,
-    ResendOTPView,
-    HelpRequestViewSet,
     RequestPasswordResetView,
+    ResendOTPView,
+    UpdateUserView,
+    UserViewSet,
     ValidateResetTokenView,
-    ConfirmPasswordResetView,
+    VerifyOTPView,
 )
 
 router = DefaultRouter()
@@ -61,23 +57,28 @@ router.register(r"users", UserViewSet, basename="users")
 router.register(r"help-requests", HelpRequestViewSet, basename="help_requests")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
 
 urlpatterns += [
-    path('auth/login/', ObtainTokenPairView.as_view(), name='token_obtain_pair'),
-    path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/register/', RegisterView.as_view(), name='register'),
-    path('auth/logout/', LogoutView.as_view(), name='logout'),
-
-    path('auth/user/', CurrentUserView.as_view(), name='current_user'),
-    path('auth/update-user/', UpdateUserView.as_view(), name='update_user'),
-
-    path('auth/verify-otp/', VerifyOTPView.as_view(), name='verify-otp'),
-    path('auth/resend-otp/', ResendOTPView.as_view(), name='resend-otp'),
-
+    path("auth/login/", ObtainTokenPairView.as_view(), name="token_obtain_pair"),
+    path("auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/register/", RegisterView.as_view(), name="register"),
+    path("auth/logout/", LogoutView.as_view(), name="logout"),
+    path("auth/user/", CurrentUserView.as_view(), name="current_user"),
+    path("auth/update-user/", UpdateUserView.as_view(), name="update_user"),
+    path("auth/verify-otp/", VerifyOTPView.as_view(), name="verify-otp"),
+    path("auth/resend-otp/", ResendOTPView.as_view(), name="resend-otp"),
     # Password Reset
-    path('auth/password-reset/', RequestPasswordResetView.as_view(), name='password_reset'),
-    path('auth/password-reset/validate-token/<str:uid>/<str:token>/', ValidateResetTokenView.as_view(), name='password_reset_validate'),
-    path('auth/password-reset/confirm/<str:uid>/<str:token>/', ConfirmPasswordResetView.as_view(), name='password_reset_confirm'),
+    path("auth/password-reset/", RequestPasswordResetView.as_view(), name="password_reset"),
+    path(
+        "auth/password-reset/validate-token/<str:uid>/<str:token>/",
+        ValidateResetTokenView.as_view(),
+        name="password_reset_validate",
+    ),
+    path(
+        "auth/password-reset/confirm/<str:uid>/<str:token>/",
+        ConfirmPasswordResetView.as_view(),
+        name="password_reset_confirm",
+    ),
 ]
