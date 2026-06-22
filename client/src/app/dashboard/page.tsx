@@ -41,24 +41,7 @@ export default function DashboardOverviewPage() {
     enabled: !!user?.is_superuser,
   })
 
-  if (isUserLoading) {
-    return (
-      <div className="flex items-center justify-center h-[50vh]">
-        <Loader variant="dots" size={48} text="Loading workspace..." />
-      </div>
-    )
-  }
-
-  const isStatsLoading = isPubsLoading || isEventsLoading || (user?.is_superuser && (isHelpLoading || isUsersLoading))
-
-  // Time of day greeting
-  const hour = new Date().getHours()
-  let greeting = "Welcome back"
-  if (hour < 12) greeting = "Good morning"
-  else if (hour < 17) greeting = "Good afternoon"
-  else greeting = "Good evening"
-
-  // Build activity feed from real stats data
+    // Build activity feed from real stats data
   const activities = useMemo(() => {
     const items: { id: string; text: string; time: string; color: string }[] = []
 
@@ -146,6 +129,24 @@ export default function DashboardOverviewPage() {
 
     return items.slice(0, 5)
   }, [publications, events, helpRequests, users])
+
+
+  if (isUserLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader variant="dots" size={48} text="Loading workspace..." />
+      </div>
+    )
+  }
+
+  const isStatsLoading = isPubsLoading || isEventsLoading || (user?.is_superuser && (isHelpLoading || isUsersLoading))
+
+  // Time of day greeting
+  const hour = new Date().getHours()
+  let greeting = "Welcome back"
+  if (hour < 12) greeting = "Good morning"
+  else if (hour < 17) greeting = "Good afternoon"
+  else greeting = "Good evening"
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto px-1">
