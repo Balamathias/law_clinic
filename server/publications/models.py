@@ -89,6 +89,15 @@ class Publication(models.Model):
         if self.status == "published" and not self.published_at:
             self.published_at = timezone.now()
 
+        # Auto-compute mins_read based on content length
+        if self.content:
+            import re
+            clean_text = re.sub(r'<[^>]*>', '', self.content)
+            words = clean_text.split()
+            self.mins_read = max(1, round(len(words) / 200))
+        else:
+            self.mins_read = 0
+
         super().save(*args, **kwargs)
 
 
