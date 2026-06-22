@@ -1,35 +1,52 @@
-import type { Metadata } from "next";
+'use client'
+
+import React from "react";
 import Link from "next/link";
-import { Plus, Sparkles, BookOpen } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Plus, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PublicationsTable from "@/components/publications/publications-table";
 import PublicationsOverview from "@/components/publications/publications-overview";
 import { getPublications, getPublicationsStats } from "@/services/server/publications";
+import Loader from "@/components/loader";
 
-export const metadata: Metadata = {
-  title: "Publications | ABU Law Clinic",
-  description: "Manage and publish clinic publications.",
-};
+export default function PublicationsPage() {
+  const searchParams = useSearchParams();
 
-interface Props {
-  params: Promise<any>;
-  searchParams: Promise<Record<string, any>>;
-}
+  const params: Record<string, any> = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
 
-export default async function PublicationsPage({ searchParams: _sp }: Props) {
-  const searchParams = await _sp;
+  const { data: publicationsRes, isLoading: isPubsLoading } = useQuery({
+    queryKey: ["publications-list", params],
+    queryFn: () => getPublications({ params }),
+  });
 
-  const [publications, stats] = await Promise.all([
-    getPublications({ params: { ...searchParams } }),
-    getPublicationsStats(),
-  ]);
+  const { data: statsRes, isLoading: isStatsLoading } = useQuery({
+    queryKey: ["publications-stats"],
+    queryFn: () => getPublicationsStats(),
+  });
+
+  if (isPubsLoading || isStatsLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader variant="dots" size={48} text="Loading publications..." />
+      </div>
+    );
+  }
+
+  const publications = publicationsRes?.data || [];
+  const count = publicationsRes?.count || 0;
+  const stats = statsRes?.data ?? null;
 
   return (
     <div className="space-y-8">
       {/* Page Header styled with Apple-level visual hierarchy */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1 text-xs font-semibold text-primary uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
             <BookOpen className="size-3.5" />
             Editorial Hub
           </div>
@@ -50,7 +67,7 @@ export default async function PublicationsPage({ searchParams: _sp }: Props) {
       </div>
 
       {/* Reimagined Publications Overview Card Grid */}
-      <PublicationsOverview stats={stats.data} />
+      <PublicationsOverview stats={stats} />
 
       {/* Publications Table */}
       <div className="space-y-4">
@@ -59,13 +76,13 @@ export default async function PublicationsPage({ searchParams: _sp }: Props) {
             All Publications
           </h2>
           <span className="text-xs text-muted-foreground font-medium">
-            Showing {publications.data?.length ?? 0} of {publications.count ?? 0} items
+            Showing {publications.length} of {count} items
           </span>
         </div>
 
         <PublicationsTable
-          publications={publications.data}
-          count={publications.count}
+          publications={publications}
+          count={count}
           pageSize={20}
         />
       </div>

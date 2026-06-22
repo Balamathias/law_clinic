@@ -284,14 +284,14 @@ export function EventForm({ event, categories, mode }: EventFormProps) {
               control={control}
               render={({ field }) => (
                 <Select
-                  value={field.value ?? ""}
-                  onValueChange={(v) => field.onChange(v || null)}
+                  value={field.value ?? "none"}
+                  onValueChange={(v) => field.onChange(v === "none" ? null : v)}
                 >
                   <SelectTrigger id="evt-category">
                     <SelectValue placeholder="Select category…" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>
                         {cat.name}
