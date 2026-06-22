@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Calendar, FileText, Inbox, Users, ShieldCheck, Activity, Clock, ArrowRight, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
@@ -57,30 +58,94 @@ export default function DashboardOverviewPage() {
   else if (hour < 17) greeting = "Good afternoon"
   else greeting = "Good evening"
 
-  // Mock timeline activities for visual polish
-  const activities = [
-    {
-      id: 1,
-      type: "publication",
-      text: "Draft publication 'Understanding Landlord Tenant Rights' was updated by Staff",
-      time: "2 hours ago",
-      color: "bg-indigo-500",
-    },
-    {
-      id: 2,
-      type: "event",
-      text: "New registration received for the upcoming 'Human Rights Workshop'",
-      time: "4 hours ago",
-      color: "bg-violet-500",
-    },
-    {
-      id: 3,
-      type: "triage",
-      text: "Legal Help request ID #4230 was auto-assigned to triage queue",
-      time: "Yesterday",
-      color: "bg-amber-500",
-    },
-  ]
+  // Build activity feed from real stats data
+  const activities = useMemo(() => {
+    const items: { id: string; text: string; time: string; color: string }[] = []
+
+    const pubStats = publications?.data
+    const evtStats = events?.data
+    const helpStats = helpRequests?.data
+    const userStats = users?.data
+
+    if (pubStats) {
+      if (pubStats.draft > 0) {
+        items.push({
+          id: "pub-draft",
+          text: `${pubStats.draft} publication${pubStats.draft > 1 ? "s" : ""} pending in draft`,
+          time: "Publications",
+          color: "bg-indigo-500",
+        })
+      }
+      if (pubStats.published > 0) {
+        items.push({
+          id: "pub-published",
+          text: `${pubStats.published} article${pubStats.published > 1 ? "s" : ""} currently published`,
+          time: "Publications",
+          color: "bg-emerald-500",
+        })
+      }
+    }
+
+    if (evtStats) {
+      if (evtStats.upcoming > 0) {
+        items.push({
+          id: "evt-upcoming",
+          text: `${evtStats.upcoming} upcoming event${evtStats.upcoming > 1 ? "s" : ""} scheduled`,
+          time: "Events",
+          color: "bg-violet-500",
+        })
+      }
+      if (evtStats.total > 0 && evtStats.upcoming === 0) {
+        items.push({
+          id: "evt-none",
+          text: "No upcoming events — consider scheduling one",
+          time: "Events",
+          color: "bg-zinc-400",
+        })
+      }
+    }
+
+    if (helpStats) {
+      const pending = helpStats.new + (helpStats.in_review || 0)
+      if (pending > 0) {
+        items.push({
+          id: "help-pending",
+          text: `${pending} help request${pending > 1 ? "s" : ""} awaiting triage`,
+          time: "Help Requests",
+          color: "bg-amber-500",
+        })
+      }
+      if (helpStats.resolved > 0) {
+        items.push({
+          id: "help-resolved",
+          text: `${helpStats.resolved} request${helpStats.resolved > 1 ? "s" : ""} resolved`,
+          time: "Help Requests",
+          color: "bg-emerald-500",
+        })
+      }
+    }
+
+    if (userStats && userStats.total > 0) {
+      items.push({
+        id: "user-total",
+        text: `${userStats.total} registered user${userStats.total > 1 ? "s" : ""} in the system`,
+        time: "Users",
+        color: "bg-blue-500",
+      })
+    }
+
+    // If nothing, show a placeholder
+    if (items.length === 0) {
+      items.push({
+        id: "empty",
+        text: "No recent workspace activity to display",
+        time: "Just now",
+        color: "bg-zinc-400",
+      })
+    }
+
+    return items.slice(0, 5)
+  }, [publications, events, helpRequests, users])
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto px-1">
@@ -219,7 +284,7 @@ export default function DashboardOverviewPage() {
           <div className="rounded-2xl border border-border bg-card p-5 space-y-5 shadow-xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground pb-2 border-b border-border/60">
               <Activity className="size-4 text-primary" />
-              Live Workspace Stream
+              Workspace Snapshot
             </div>
             
             <div className="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1px] before:bg-border/60">
@@ -240,7 +305,7 @@ export default function DashboardOverviewPage() {
               href="/dashboard/publications"
               className="inline-flex items-center justify-center w-full gap-1.5 py-2 px-3 border border-border hover:bg-muted/40 transition-colors rounded-xl text-xs font-bold text-foreground mt-2"
             >
-              View System Logs
+              View All Activity
               <ArrowRight className="size-3.5" />
             </Link>
           </div>

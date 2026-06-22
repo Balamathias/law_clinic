@@ -87,9 +87,10 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
     return (
       <section className="bg-surface-muted py-20 md:py-28 lg:py-36">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Upcoming Events</h2>
-          <p className="text-muted-foreground mb-8">No events scheduled at the moment. Check back soon!</p>
-          <Button asChild variant="outline">
+          <span className="text-eyebrow inline-block mb-3">Events & Workshops</span>
+          <h2 className="text-h2-editorial text-foreground mb-4">Upcoming Events</h2>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto">No events scheduled at the moment. Check back soon!</p>
+          <Button asChild variant="outline" className="rounded-xl">
             <Link href="/events">Browse All Events</Link>
           </Button>
         </div>
@@ -124,7 +125,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="relative overflow-hidden rounded-xl border border-border bg-card"
+              className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg transition-shadow duration-300"
               onMouseEnter={() => { hoverRef.current = true }}
               onMouseLeave={() => { hoverRef.current = false }}
             >
@@ -151,7 +152,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 </AnimatePresence>
 
                 {/* Category Badge */}
-                <div className={`${categoryColors[current?.category_name as string] || 'bg-primary'} absolute top-4 left-4 text-white px-3 py-1.5 rounded-full font-medium text-sm`}>
+                <div className={`${categoryColors[current?.category_name as string] || 'bg-primary'} absolute top-4 left-4 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs tracking-wide uppercase shadow-sm backdrop-blur-sm`}>
                   {current?.category_name || 'Event'}
                 </div>
 
@@ -159,42 +160,42 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">
                   <button
                     onClick={prev}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card/90 text-foreground backdrop-blur-sm transition-colors hover:bg-card"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/80 dark:bg-black/50 text-foreground backdrop-blur-md transition-all hover:bg-white dark:hover:bg-black/70 hover:scale-105 shadow-sm"
                     aria-label="Previous event"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
                     onClick={next}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card/90 text-foreground backdrop-blur-sm transition-colors hover:bg-card"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/80 dark:bg-black/50 text-foreground backdrop-blur-md transition-all hover:bg-white dark:hover:bg-black/70 hover:scale-105 shadow-sm"
                     aria-label="Next event"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
 
                 {/* Date Badge */}
-                <div className="absolute bottom-4 left-4 rounded-xl border border-border bg-card p-3">
+                <div className="absolute bottom-4 left-4 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-md px-4 py-3 shadow-md">
                   <div className="text-center">
-                    <span className="block text-2xl font-bold text-foreground">{fmt(startDate, 'd')}</span>
-                    <span className="block text-xs font-medium text-primary uppercase">{fmt(startDate, 'MMM')}</span>
+                    <span className="block text-2xl font-extrabold text-foreground leading-none">{fmt(startDate, 'd')}</span>
+                    <span className="block text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">{fmt(startDate, 'MMM')}</span>
                   </div>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 line-clamp-2">
+              <div className="p-6 md:p-7">
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-foreground mb-3 line-clamp-2 tracking-tight">
                   {current?.title}
                 </h3>
 
-                <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-primary" />
+                <div className="flex flex-wrap gap-4 mb-4 text-xs font-semibold text-muted-foreground">
+                  <div className="flex items-center gap-1.5 bg-muted/40 px-2.5 py-1.5 rounded-lg">
+                    <Clock className="h-3.5 w-3.5 text-primary" />
                     <span>{fmt(startDate, 'h:mm a')}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-1.5 bg-muted/40 px-2.5 py-1.5 rounded-lg">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
                     <span>{current?.location || 'TBA'}</span>
                   </div>
                 </div>
@@ -204,7 +205,7 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <Button asChild>
+                  <Button asChild className="rounded-xl shadow-xs font-bold text-xs h-10 px-5">
                     <Link href={`/events/${current?.slug || current?.id}`}>
                       Register Now
                       <ArrowRight className="h-4 w-4 ml-2" />
@@ -212,12 +213,12 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                   </Button>
 
                   {/* Pagination Dots */}
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5">
                     {orderedEvents.slice(0, 5).map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => goTo(idx)}
-                        className={`h-2 rounded-full transition-all ${idx === activeIndex ? 'bg-primary w-6' : 'bg-muted-foreground/30 w-2 hover:bg-muted-foreground/50'}`}
+                        className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex ? 'bg-primary w-7' : 'bg-muted-foreground/20 w-2 hover:bg-muted-foreground/40'}`}
                         aria-label={`Go to slide ${idx + 1}`}
                       />
                     ))}
@@ -235,8 +236,10 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
+              <h3 className="font-serif text-lg font-bold text-foreground mb-6 flex items-center gap-2.5 border-b border-border/40 pb-4">
+                <div className="size-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
                 Coming Up
               </h3>
 
@@ -254,50 +257,54 @@ const Highlights: React.FC<HighlightsProps> = ({ events }) => {
                       >
                         <Link
                           href={`/events/${event.slug || event.id}`}
-                          className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-border-strong"
+                          className="group flex items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/30 hover:shadow-sm hover:-translate-y-0.5"
                         >
                           {/* Date */}
-                          <div className="min-w-[60px] flex-shrink-0 rounded-lg bg-muted p-3 text-center">
-                            <span className="block text-xl font-bold text-foreground">{fmt(sDate, 'd')}</span>
-                            <span className="block text-xs font-medium text-muted-foreground uppercase">{fmt(sDate, 'MMM')}</span>
+                          <div className="min-w-[56px] flex-shrink-0 rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
+                            <span className="block text-xl font-extrabold text-foreground leading-none">{fmt(sDate, 'd')}</span>
+                            <span className="block text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">{fmt(sDate, 'MMM')}</span>
                           </div>
 
                           {/* Content */}
                           <div className="flex-grow min-w-0">
-                            <h4 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1 mb-1">
+                            <h4 className="font-serif font-bold text-foreground text-sm group-hover:text-primary transition-colors duration-200 line-clamp-1 mb-1.5">
                               {event.title}
                             </h4>
-                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-3 text-[11px] font-semibold text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
+                                <Clock className="h-3 w-3 text-primary/60" />
                                 {fmt(sDate, 'h:mm a')}
                               </span>
                               <span className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />
+                                <MapPin className="h-3 w-3 text-primary/60" />
                                 {event.location || 'TBA'}
                               </span>
                             </div>
                           </div>
 
                           {/* Arrow */}
-                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                          <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 mt-1" />
                         </Link>
                       </motion.div>
                     )
                   })
                 ) : (
-                  <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center">
-                    <p className="text-muted-foreground text-sm">No upcoming events at the moment.</p>
+                  <div className="rounded-2xl border border-dashed border-border bg-muted/10 p-8 text-center">
+                    <div className="size-10 rounded-2xl bg-muted/40 flex items-center justify-center mx-auto mb-3">
+                      <Calendar className="size-5 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-muted-foreground text-sm font-semibold">No upcoming events at the moment.</p>
+                    <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new workshops and seminars.</p>
                   </div>
                 )}
               </div>
 
               {/* View All Button */}
               <div className="mt-6">
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="outline" className="w-full rounded-xl border-border font-bold text-xs h-10 hover:bg-muted/40 transition-colors">
                   <Link href="/events" className="flex items-center justify-center gap-2">
                     View All Events
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
               </div>
