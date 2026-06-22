@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Circle, UserPlus, FileText, CheckCircle, Save } from "lucide-react";
+import { Circle, UserPlus, FileText, CheckCircle, Save, Phone, Mail, User, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,20 +12,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { HelpRequest, User } from "@/@types/db";
+import type { HelpRequest, User as DBUser } from "@/@types/db";
 import { useUpdateHelpRequest } from "@/services/client/help-requests";
+import { cn } from "@/lib/utils";
 
 interface HelpRequestTriageProps {
   helpRequest: HelpRequest;
-  users: User[];
+  users: DBUser[];
 }
 
 const STATUS_OPTIONS = [
-  { value: "new", label: "New" },
-  { value: "in_review", label: "In review" },
-  { value: "assigned", label: "Assigned" },
-  { value: "resolved", label: "Resolved" },
-  { value: "closed", label: "Closed" },
+  { value: "new", label: "New", color: "text-amber-500" },
+  { value: "in_review", label: "In review", color: "text-blue-500" },
+  { value: "assigned", label: "Assigned", color: "text-purple-500" },
+  { value: "resolved", label: "Resolved", color: "text-green-500" },
+  { value: "closed", label: "Closed", color: "text-gray-400" },
 ];
 
 export function HelpRequestTriage({
@@ -56,46 +57,72 @@ export function HelpRequestTriage({
     <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
       {/* Help Request details */}
       <div className="space-y-6">
-        <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 p-6 space-y-6 shadow-sm">
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+        <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-8 shadow-xs">
+          {/* Contact Details */}
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground pb-2 border-b border-border/60 flex items-center gap-1.5">
+              <User className="size-4 text-primary" />
               Contact Information
-            </span>
-            <div className="mt-3 grid gap-6 sm:grid-cols-3">
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Full name</p>
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.full_name}</p>
+            </h3>
+            
+            <div className="grid gap-6 sm:grid-cols-3">
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Full name</p>
+                <p className="font-serif text-base font-bold text-foreground">{helpRequest.full_name}</p>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Email</p>
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.email}</p>
+              
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Email address</p>
+                <a 
+                  href={`mailto:${helpRequest.email}`}
+                  className="font-semibold text-sm text-foreground hover:text-primary transition-colors flex items-center gap-1.5 break-all"
+                >
+                  <Mail className="size-3.5 text-muted-foreground" />
+                  {helpRequest.email}
+                </a>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Phone number</p>
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.phone_number}</p>
+              
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Phone number</p>
+                <a 
+                  href={`tel:${helpRequest.phone_number}`}
+                  className="font-semibold text-sm text-foreground hover:text-primary transition-colors flex items-center gap-1.5"
+                >
+                  <Phone className="size-3.5 text-muted-foreground" />
+                  {helpRequest.phone_number}
+                </a>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-zinc-200/60 dark:border-zinc-800/60 pt-6">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-              Case Details
-            </span>
-            <div className="mt-3 grid gap-6 sm:grid-cols-2">
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Legal issue type</p>
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1">{helpRequest.legal_issue_type}</p>
+          {/* Case Details */}
+          <div className="space-y-4 pt-4 border-t border-border/60">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground pb-2 border-b border-border/60 flex items-center gap-1.5">
+              <ShieldCheck className="size-4 text-primary" />
+              Case Context & Details
+            </h3>
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Legal issue type</p>
+                <p className="font-serif text-base font-bold text-foreground">{helpRequest.legal_issue_type}</p>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Had previous legal help?</p>
-                <p className="font-semibold text-zinc-900 dark:text-zinc-50 mt-1 capitalize">
+              
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Had previous legal help?</p>
+                <p className="font-semibold text-sm text-foreground capitalize inline-flex items-center gap-1.5">
+                  <span className={cn(
+                    "size-2 rounded-full",
+                    helpRequest.had_previous_help === 'yes' ? 'bg-emerald-500' : 'bg-zinc-400'
+                  )} />
                   {helpRequest.had_previous_help}
                 </p>
               </div>
             </div>
-            <div className="mt-5">
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description of issue</p>
-              <div className="mt-2 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-900/10 px-5 py-4 text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed">
+            
+            <div className="space-y-2 pt-4">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Description of issue</p>
+              <div className="rounded-2xl border border-border bg-muted/20 px-6 py-5 text-sm text-foreground whitespace-pre-wrap leading-relaxed shadow-xs">
                 {helpRequest.description}
               </div>
             </div>
@@ -105,15 +132,15 @@ export function HelpRequestTriage({
 
       {/* Triage side panel */}
       <div className="space-y-6">
-        <div className="rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-950 p-6 space-y-5 shadow-sm">
-          <h2 className="font-semibold text-zinc-900 dark:text-zinc-50 flex items-center gap-2 text-base">
+        <div className="rounded-2xl border border-border bg-card p-6 space-y-5 shadow-xs">
+          <h2 className="font-serif text-base font-bold text-foreground flex items-center gap-2 border-b border-border/60 pb-3">
             <CheckCircle className="size-4.5 text-primary" />
             Triage & Workflow
           </h2>
 
           {/* Status Select */}
           <div className="space-y-2">
-            <Label htmlFor="triage-status" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Status</Label>
+            <Label htmlFor="triage-status" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Status</Label>
             <Select
               value={status}
               onValueChange={(v) => {
@@ -123,26 +150,14 @@ export function HelpRequestTriage({
                 }
               }}
             >
-              <SelectTrigger id="triage-status" className="h-10 rounded-lg">
+              <SelectTrigger id="triage-status" className="h-10 rounded-xl border-border focus:ring-primary/20 bg-background">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl border-border bg-card">
                 {STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    <div className="flex items-center gap-2">
-                      <Circle
-                        className={`size-2 fill-current ${
-                          opt.value === "new"
-                            ? "text-amber-500"
-                            : opt.value === "in_review"
-                            ? "text-blue-500"
-                            : opt.value === "assigned"
-                            ? "text-purple-500"
-                            : opt.value === "resolved"
-                            ? "text-green-500"
-                            : "text-gray-400"
-                        }`}
-                      />
+                  <SelectItem key={opt.value} value={opt.value} className="rounded-lg cursor-pointer">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+                      <Circle className={cn("size-2 fill-current", opt.color)} />
                       {opt.label}
                     </div>
                   </SelectItem>
@@ -153,7 +168,7 @@ export function HelpRequestTriage({
 
           {/* Assignee Select */}
           <div className="space-y-2">
-            <Label htmlFor="triage-assignee" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Assigned Staff</Label>
+            <Label htmlFor="triage-assignee" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Assigned Staff</Label>
             <Select
               value={assignedTo ?? "unassigned"}
               onValueChange={(v) => {
@@ -166,13 +181,13 @@ export function HelpRequestTriage({
                 }
               }}
             >
-              <SelectTrigger id="triage-assignee" className="h-10 rounded-lg">
+              <SelectTrigger id="triage-assignee" className="h-10 rounded-xl border-border focus:ring-primary/20 bg-background">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unassigned">Unassigned</SelectItem>
+              <SelectContent className="rounded-xl border-border bg-card">
+                <SelectItem value="unassigned" className="rounded-lg cursor-pointer text-xs font-semibold">Unassigned</SelectItem>
                 {staffUsers.map((u) => (
-                  <SelectItem key={u.id} value={u.id}>
+                  <SelectItem key={u.id} value={u.id} className="rounded-lg cursor-pointer text-xs font-semibold">
                     {`${u.first_name ?? ""} ${u.last_name ?? ""}`.trim() || u.username}
                   </SelectItem>
                 ))}
@@ -182,8 +197,8 @@ export function HelpRequestTriage({
 
           {/* Internal Notes */}
           <div className="space-y-2">
-            <Label htmlFor="triage-notes" className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-              <FileText className="size-3.5 text-zinc-400" />
+            <Label htmlFor="triage-notes" className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <FileText className="size-3.5 text-muted-foreground" />
               Internal Notes
             </Label>
             <Textarea
@@ -192,7 +207,7 @@ export function HelpRequestTriage({
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
               rows={5}
-              className="text-sm rounded-lg"
+              className="text-xs font-medium rounded-xl border-border focus:ring-primary/20 bg-background leading-relaxed"
             />
           </div>
 
@@ -200,7 +215,7 @@ export function HelpRequestTriage({
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="w-full mt-2 h-10 rounded-lg gap-2"
+            className="w-full mt-2 h-10 rounded-xl gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-xs transition-colors"
           >
             <Save className="size-4" />
             {saving ? "Saving changes..." : "Save Details"}
