@@ -17,6 +17,7 @@ import {
   User
 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useDeletePublication } from '@/services/client/publications'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +60,8 @@ const PublicationsTable = ({ publications, count, pageSize = 10 }: Props) => {
   
   const totalPages = Math.ceil(count / pageSize)
 
+  const { mutate: deletePublicationMut } = useDeletePublication()
+
   const navigateToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', page.toString())
@@ -68,10 +71,10 @@ const PublicationsTable = ({ publications, count, pageSize = 10 }: Props) => {
   const handlePublicationAction = (publication: Publication, action: 'view' | 'edit' | 'delete') => {
     switch (action) {
       case 'view':
-        router.push(`/dashboard/publications/${publication.id}`)
+        router.push(`/publications/${publication.slug || publication.id}`)
         break
       case 'edit':
-        router.push(`/dashboard/publications/${publication.id}/edit`)
+        router.push(`/dashboard/publications/${publication.id}`)
         break
       case 'delete':
         setPublicationToDelete(publication)
@@ -79,15 +82,14 @@ const PublicationsTable = ({ publications, count, pageSize = 10 }: Props) => {
     }
   }
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!publicationToDelete) return
     
-    try {
-      console.log(`Deleting publication: ${publicationToDelete.id}`)
-      setPublicationToDelete(null)
-    } catch (error) {
-      console.error('Failed to delete publication:', error)
-    }
+    deletePublicationMut(publicationToDelete.id, {
+      onSuccess: () => {
+        setPublicationToDelete(null)
+      }
+    })
   }
 
   const formatDate = (dateString: string | null) => {

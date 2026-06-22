@@ -1,33 +1,49 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+'use client'
+
+import React from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { PublicationForm } from "@/components/dashboard/publications/publication-form";
-import { getPublication, getCategories } from "@/services/server/publications";
+import { usePublication, useCategories } from "@/services/client/publications";
+import Loader from "@/components/loader";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default function EditPublicationPage() {
+  const { id } = useParams() as { id: string };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const res = await getPublication(id);
-  return {
-    title: res.data?.title
-      ? `Edit: ${res.data.title} | ABU Law Clinic`
-      : "Edit Publication | ABU Law Clinic",
-  };
-}
+  const { data: pubRes, isLoading: isPubLoading } = usePublication(id);
+  const { data: categoriesRes, isLoading: isCatsLoading } = useCategories();
 
-export default async function EditPublicationPage({ params }: Props) {
-  const { id } = await params;
+  if (isPubLoading || isCatsLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader variant="dots" size={48} text="Loading publication..." />
+      </div>
+    );
+  }
 
-  const [pubRes, categoriesRes] = await Promise.all([
-    getPublication(id),
-    getCategories(),
-  ]);
+  const publication = pubRes?.data;
+  const categories = categoriesRes?.data || [];
 
-  if (!pubRes.data) notFound();
+  if (!publication) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Link
+            href="/dashboard/publications"
+            className="inline-flex items-center gap-1 text-small text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="size-3.5" />
+            Publications
+          </Link>
+          <h1 className="mt-2 text-h3 font-semibold text-foreground">
+            Publication Not Found
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -43,13 +59,13 @@ export default async function EditPublicationPage({ params }: Props) {
           Edit publication
         </h1>
         <p className="mt-1 text-small text-muted-foreground">
-          {pubRes.data.title}
+          {publication.title}
         </p>
       </div>
 
       <PublicationForm
-        publication={pubRes.data}
-        categories={categoriesRes.data ?? []}
+        publication={publication}
+        categories={categories}
         mode="edit"
       />
     </div>
