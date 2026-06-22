@@ -299,13 +299,13 @@ export default function GalleryPage() {
       </div>
 
       {/* Tabs list by department */}
-      <Tabs defaultValue="clinical" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-muted/50 p-1 rounded-xl w-full sm:w-auto flex flex-wrap gap-1 h-auto">
+      <Tabs defaultValue="clinical" value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+        <TabsList className="bg-muted/40 p-1.5 rounded-2xl w-full sm:w-auto flex flex-wrap gap-1 h-auto border border-border/40">
           {DEPARTMENTS.map((dept) => (
             <TabsTrigger
               key={dept.value}
               value={dept.value}
-              className="rounded-lg px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:shadow-xs"
+              className="rounded-xl px-5 py-2 text-xs font-bold data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
             >
               {dept.label}
             </TabsTrigger>
@@ -314,68 +314,71 @@ export default function GalleryPage() {
 
         <TabsContent value={activeTab} className="focus-visible:outline-none">
           {filteredGalleries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20 text-center bg-card/30">
-              <Folder className="size-10 text-muted-foreground/30" />
-              <p className="mt-4 text-base font-semibold text-foreground">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-24 text-center bg-muted/10">
+              <div className="size-14 rounded-2xl bg-muted/40 flex items-center justify-center mb-4">
+                <Folder className="size-7 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm font-bold text-foreground">
                 No folders in {DEPARTMENTS.find((d) => d.value === activeTab)?.label}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground max-w-xs leading-relaxed">
                 Start by creating a new media folder for this department.
               </p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGalleries.map((gallery) => (
                 <div
                   key={gallery.id}
-                  className="group rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col"
+                  className="group relative rounded-2xl border border-border bg-card overflow-hidden shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
                 >
+                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="p-5 flex-1 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <Badge variant="secondary" className="text-[10px] font-semibold tracking-wider uppercase rounded-md">
+                      <Badge variant="secondary" className="text-[9px] font-bold tracking-widest uppercase rounded-lg bg-primary/10 text-primary border-primary/20 px-2 py-0.5">
                         {gallery.year || "General"}
                       </Badge>
                       {gallery.is_previous && (
-                        <Badge variant="outline" className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider rounded-md">
+                        <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest rounded-lg px-2 py-0.5">
                           Archive
                         </Badge>
                       )}
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="font-serif text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                    <div className="space-y-1.5">
+                      <h3 className="font-serif text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-200">
                         {gallery.title}
                       </h3>
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
                         {gallery.description || "No description provided."}
                       </p>
                     </div>
                   </div>
 
-                  <div className="px-5 py-4 bg-muted/20 border-t border-border flex items-center justify-between">
+                  <div className="px-5 py-3.5 bg-muted/20 border-t border-border/60 flex items-center justify-between">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenManageImages(gallery)}
-                      className="text-xs font-semibold text-primary hover:text-primary/95 gap-1.5 rounded-lg px-2.5 hover:bg-primary/5"
+                      className="text-[11px] font-bold text-primary hover:text-primary/90 gap-1.5 rounded-xl px-3 hover:bg-primary/5 h-8"
                     >
-                      <Images className="size-4" />
+                      <Images className="size-3.5" />
                       Manage Photos
                     </Button>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleOpenEdit(gallery)}
-                        className="size-8 rounded-lg hover:bg-muted"
+                        className="size-7 rounded-xl hover:bg-muted"
                       >
-                        <Edit2 className="size-3.5 text-zinc-600 dark:text-zinc-400" />
+                        <Edit2 className="size-3.5 text-muted-foreground" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleOpenDelete(gallery)}
-                        className="size-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                        className="size-7 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Trash2 className="size-3.5" />
                       </Button>
@@ -390,7 +393,7 @@ export default function GalleryPage() {
 
       {/* Add Folder Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-xl">
+        <DialogContent className="sm:max-w-[425px] rounded-2xl border-border bg-card">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl font-bold">New Media Folder</DialogTitle>
             <DialogDescription>
@@ -457,11 +460,11 @@ export default function GalleryPage() {
                 Mark as past archive session gallery
               </Label>
             </div>
-            <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} className="rounded-lg">
+            <DialogFooter className="pt-3 border-t border-border/60">
+              <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} className="rounded-xl border-border font-bold text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={createGalleryMutation.isPending} className="rounded-lg">
+              <Button type="submit" disabled={createGalleryMutation.isPending} className="rounded-xl bg-primary hover:bg-primary/90 font-bold text-xs h-9 shadow-xs">
                 {createGalleryMutation.isPending ? "Creating..." : "Create Folder"}
               </Button>
             </DialogFooter>
@@ -471,7 +474,7 @@ export default function GalleryPage() {
 
       {/* Edit Folder Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-xl">
+        <DialogContent className="sm:max-w-[425px] rounded-2xl border-border bg-card">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl font-bold">Edit Folder Details</DialogTitle>
             <DialogDescription>
@@ -536,11 +539,11 @@ export default function GalleryPage() {
                 Mark as past archive session gallery
               </Label>
             </div>
-            <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)} className="rounded-lg">
+            <DialogFooter className="pt-3 border-t border-border/60">
+              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)} className="rounded-xl border-border font-bold text-xs h-9">
                 Cancel
               </Button>
-              <Button type="submit" disabled={updateGalleryMutation.isPending} className="rounded-lg">
+              <Button type="submit" disabled={updateGalleryMutation.isPending} className="rounded-xl bg-primary hover:bg-primary/90 font-bold text-xs h-9 shadow-xs">
                 {updateGalleryMutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </DialogFooter>
@@ -550,22 +553,22 @@ export default function GalleryPage() {
 
       {/* Delete Folder Dialog */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="sm:max-w-[400px] rounded-xl">
+        <DialogContent className="sm:max-w-[400px] rounded-2xl border-border bg-card">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl font-bold text-destructive">Delete Folder</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete **{selectedGallery?.title}**? This will delete all photos inside it.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 pt-4">
-            <Button variant="outline" onClick={() => setIsDeleteOpen(false)} className="rounded-lg">
+          <DialogFooter className="gap-2 pt-4 border-t border-border/60">
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)} className="rounded-xl border-border font-bold text-xs h-9">
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteSubmit}
               disabled={deleteGalleryMutation.isPending}
-              className="rounded-lg"
+              className="rounded-xl font-bold text-xs h-9 bg-rose-600 hover:bg-rose-500"
             >
               {deleteGalleryMutation.isPending ? "Deleting..." : "Delete Folder"}
             </Button>
@@ -575,7 +578,7 @@ export default function GalleryPage() {
 
       {/* Manage Photos Large Dialog */}
       <Dialog open={isManageImagesOpen} onOpenChange={setIsManageImagesOpen}>
-        <DialogContent className="sm:max-w-[650px] md:max-w-[750px] rounded-xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[650px] md:max-w-[750px] rounded-2xl border-border bg-card max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl font-bold flex items-center gap-2">
               <Images className="size-5 text-primary" />
@@ -657,7 +660,7 @@ export default function GalleryPage() {
                   {imagesRes.data.map((img) => (
                     <div
                       key={img.id}
-                      className="group relative border border-border bg-card rounded-lg overflow-hidden flex flex-col"
+                      className="group relative border border-border bg-card rounded-2xl overflow-hidden flex flex-col shadow-xs hover:shadow-sm transition-all"
                     >
                       <div className="aspect-video relative overflow-hidden bg-muted">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -688,8 +691,8 @@ export default function GalleryPage() {
             </div>
           </div>
 
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" onClick={() => setIsManageImagesOpen(false)} className="rounded-lg">
+          <DialogFooter className="pt-3 border-t border-border/60">
+            <Button type="button" variant="outline" onClick={() => setIsManageImagesOpen(false)} className="rounded-xl border-border font-bold text-xs h-9">
               Close Window
             </Button>
           </DialogFooter>

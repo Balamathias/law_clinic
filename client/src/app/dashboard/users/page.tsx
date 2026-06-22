@@ -3,6 +3,7 @@
 import React from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import { Users2 } from 'lucide-react'
 import UsersOverview from '@/components/users/users-overview'
 import UsersTable from '@/components/users/users-table'
 import { PAGE_SIZE } from '@/lib/utils'
@@ -40,7 +41,23 @@ const Page = () => {
   const overview = overviewRes?.data
 
   return (
-    <div className='flex flex-col gap-4 p-4 md:p-10 max-w-7xl mx-auto'>
+    <div className='space-y-8 max-w-7xl mx-auto px-1'>
+      {/* Premium Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-6">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+            <Users2 className="size-3.5" />
+            Clinic Directory
+          </div>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            Roster & Users
+          </h1>
+          <p className="text-sm text-muted-foreground max-w-xl">
+            Configure system privilege roles, enroll new staff members, and audit clinic credentials.
+          </p>
+        </div>
+      </div>
+
       {overview && <UsersOverview {...overview} />}
       <UsersTable users={users} count={count} pageSize={PAGE_SIZE} />
     </div>
