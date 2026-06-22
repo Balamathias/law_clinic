@@ -5,18 +5,6 @@ from .views import EventCategoryViewSet, EventRegistrationViewSet, EventViewSet
 
 router = DefaultRouter()
 
-# Events endpoints:
-# GET /api/events/ - List all events
-# POST /api/events/ - Create a new event
-# GET /api/events/{slug}/ - Retrieve a specific event by slug
-# PUT /api/events/{slug}/ - Update an event completely
-# PATCH /api/events/{slug}/ - Update an event partially
-# DELETE /api/events/{slug}/ - Delete an event
-# POST /api/events/{slug}/register/ - Register for an event
-# DELETE /api/events/{slug}/unregister/ - Unregister from an event
-# GET /api/events/{slug}/check_registration/ - Check if user is registered
-router.register("", EventViewSet, basename="event")
-
 # Event Categories endpoints:
 # GET /api/event-categories/ - List all event categories
 # POST /api/event-categories/ - Create a new event category
@@ -36,6 +24,18 @@ router.register("event-categories", EventCategoryViewSet, basename="event-catego
 # GET /api/event-registrations/my_registrations/ - Get all registrations for current user
 # PATCH /api/event-registrations/{id}/mark_attended/ - Mark a registration as attended (admin only)
 router.register("event-registrations", EventRegistrationViewSet, basename="event-registration")
+
+# Events endpoints:
+# GET /api/events/ - List all events
+# POST /api/events/ - Create a new event
+# GET /api/events/{slug}/ - Retrieve a specific event by slug
+# PUT /api/events/{slug}/ - Update an event completely
+# PATCH /api/events/{slug}/ - Update an event partially
+# DELETE /api/events/{slug}/ - Delete an event
+# POST /api/events/{slug}/register/ - Register for an event
+# DELETE /api/events/{slug}/unregister/ - Unregister from an event
+# GET /api/events/{slug}/check_registration/ - Check if user is registered
+router.register("", EventViewSet, basename="event")
 
 app_name = "events"
 

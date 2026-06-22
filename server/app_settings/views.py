@@ -22,7 +22,6 @@ class AppDataViewSet(ModelViewSet, ClinicView):
     queryset = AppData.objects.all()
     serializer_class = AppDataSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = []
     lookup_field = "id"
 
     def list(self, request, *args, **kwargs):
@@ -66,7 +65,6 @@ class GalleryViewSet(ModelViewSet, ClinicView):
     queryset = Gallery.objects.all()
     serializer_class = GallerySerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = []
     lookup_field = "id"
     pagination_class = StackPagination
 
@@ -212,7 +210,6 @@ class SponsorViewSet(ModelViewSet, ClinicView):
     queryset = Sponsor.objects.all()
     serializer_class = SponsorSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = []
     lookup_field = "id"
     pagination_class = StackPagination
 
@@ -290,7 +287,6 @@ class TestimonialViewSet(ModelViewSet, ClinicView):
     queryset = Testimonial.objects.all()
     serializer_class = TestimonialSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = []
     lookup_field = "id"
     pagination_class = StackPagination
 

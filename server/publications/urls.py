@@ -4,15 +4,6 @@ from rest_framework.routers import DefaultRouter
 from .views import CategoryViewSet, CommentViewSet, PublicationViewSet
 
 router = DefaultRouter()
-# Publications endpoints:
-# GET /api/publications/ - List all publications with pagination
-# POST /api/publications/ - Create a new publication
-# GET /api/publications/{id}/ - Retrieve a specific publication by id
-# PUT /api/publications/{id}/ - Update a publication completely
-# PATCH /api/publications/{id}/ - Update a publication partially
-# DELETE /api/publications/{id}/ - Delete a publication
-router.register("", PublicationViewSet, basename="publication")
-
 # Categories endpoints:
 # GET /api/categories/ - List all categories
 # POST /api/categories/ - Create a new category
@@ -24,6 +15,15 @@ router.register("categories", CategoryViewSet, basename="category")
 
 # Comments endpoints:
 router.register("comments", CommentViewSet, basename="comment")
+
+# Publications endpoints:
+# GET /api/publications/ - List all publications with pagination
+# POST /api/publications/ - Create a new publication
+# GET /api/publications/{id}/ - Retrieve a specific publication by id
+# PUT /api/publications/{id}/ - Update a publication completely
+# PATCH /api/publications/{id}/ - Update a publication partially
+# DELETE /api/publications/{id}/ - Delete a publication
+router.register("", PublicationViewSet, basename="publication")
 
 app_name = "publications"
 
