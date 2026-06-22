@@ -3,6 +3,8 @@ import { followUnfollowUser, login, logout, register, updateUser, verifyOTP, res
 import { User } from "@/@types/db";
 import { QUERY_KEYS } from "./query-keys";
 
+export { getUser } from "@/services/server/auth";
+
 export const useRegister = () => useMutation({
   mutationKey: ['register'],
   mutationFn: async ({...data}: { email: string, username?: string, password: string}) => register({...data}),

@@ -18,6 +18,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { 
     LucideArrowLeft,
     LucideLoader2, 
@@ -30,9 +31,11 @@ import {
     EyeOff
 } from 'lucide-react'
 import { useLogin } from '@/services/client/auth'
+import { getUser } from '@/services/server/auth'
 import { toast } from 'sonner'
 import Logo from '../logo'
 import LoadingOverlay from '../loading-overlay'
+import { QUERY_KEYS } from '@/services/client/query-keys'
 
 const AuthSchema = z.object({
  email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -42,11 +45,12 @@ const AuthSchema = z.object({
 const LoginForm = () => {
     
     const router = useRouter()
+    const queryClient = useQueryClient()
     const [step, setStep] = useState(1)
     const [showPassword, setShowPassword] = useState(false)
     const searchParams = useSearchParams()
 
-    const { mutate: login, isPending } = useLogin()
+    const { mutateAsync: login, isPending } = useLogin()
 
     const form = useForm<z.infer<typeof AuthSchema>>({
         resolver: zodResolver(AuthSchema),
@@ -57,26 +61,30 @@ const LoginForm = () => {
     })
 
     async function onSubmit(values: z.infer<typeof AuthSchema>) {
+        try {
+            const data = await login(values)
 
-        login(values, {
-            onSuccess: (data) => {
-                toast.success(data?.message || 'Login successful')
-
-                const next = searchParams?.get('next')
-
-                form.reset()
-                
-                if (next) {
-                    router.replace(next)
-                } else {
-                    router.replace('/dashboard')
-                }
-            },
-            onError: (error) => {
-                toast.error(error?.message || 'An error occurred')
-                form.setError('email', { message: error?.message || 'An error occurred' })
+            if (data?.error) {
+                throw new Error(data.message || 'An error occurred')
             }
-        })
+
+            toast.success(data?.message || 'Login successful')
+
+            await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.get_user] })
+            await queryClient.fetchQuery({
+                queryKey: [QUERY_KEYS.get_user],
+                queryFn: getUser,
+            })
+
+            const next = searchParams?.get('next')
+
+            form.reset()
+
+            router.replace(next || '/dashboard')
+        } catch (error: any) {
+            toast.error(error?.message || 'An error occurred')
+            form.setError('email', { message: error?.message || 'An error occurred' })
+        }
     }
 
  return (
