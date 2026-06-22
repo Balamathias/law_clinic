@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FileText, Settings, Image as ImageIcon, Save, X, Eye, Sparkles } from "lucide-react";
 
 import {
@@ -28,8 +28,11 @@ import {
 import type { Publication, PublicationCategory } from "@/@types/db";
 import {
   createPublication,
+  updatePublication,
   type CreatePublicationPayload,
 } from "@/services/server/publications";
+import { usePublications } from "@/services/client/publications";
+import { useUser } from "@/services/client/auth";
 
 interface PublicationFormProps {
   publication?: Publication;
@@ -37,8 +40,57 @@ interface PublicationFormProps {
   mode: "create" | "edit";
 }
 
-const SESSION_ID =
-  typeof crypto !== "undefined" ? crypto.randomUUID?.() ?? "pub-new" : "pub-new";
+const AUTOSAVE_DRAFT_KEY = "publication-editor-draft-id";
+
+const createEmptyValues = (): PublicationFormValues => ({
+  title: "",
+  slug: "",
+  excerpt: "",
+  content: "",
+  content_format: "html",
+  featured_image: null,
+  categories: [],
+  status: "draft",
+  is_featured: false,
+  allow_comments: true,
+  meta_title: "",
+  meta_description: "",
+  keywords: "",
+  mins_read: 0,
+});
+
+const publicationToFormValues = (draft: Publication): PublicationFormValues => ({
+  title: draft.title ?? "",
+  slug: draft.slug ?? "",
+  excerpt: draft.excerpt ?? "",
+  content: draft.content ?? "",
+  content_format: draft.content_format ?? "html",
+  featured_image: draft.featured_image ?? null,
+  categories: draft.categories?.map((category) => category.id) ?? [],
+  status: draft.status ?? "draft",
+  is_featured: draft.is_featured ?? false,
+  allow_comments: draft.allow_comments ?? true,
+  meta_title: draft.meta_title ?? "",
+  meta_description: draft.meta_description ?? "",
+  keywords: draft.keywords ?? "",
+  mins_read: draft.mins_read ?? 0,
+});
+
+const toAutosavePayload = (values: PublicationFormValues): CreatePublicationPayload & Record<string, any> => ({
+  title: values.title,
+  content: values.content,
+  excerpt: values.excerpt || undefined,
+  featured_image: values.featured_image || undefined,
+  status: "draft",
+  is_featured: values.is_featured,
+  allow_comments: values.allow_comments,
+  meta_title: values.meta_title || undefined,
+  meta_description: values.meta_description || undefined,
+  keywords: values.keywords || undefined,
+  mins_read: values.mins_read,
+  content_format: values.content_format,
+  categories: values.categories,
+});
 
 export function PublicationForm({
   publication,
@@ -46,7 +98,19 @@ export function PublicationForm({
   mode,
 }: PublicationFormProps) {
   const router = useRouter();
+  const { data: userResponse } = useUser();
+  const currentUserId = userResponse?.data?.id ?? null;
   const [submitting, setSubmitting] = useState(false);
+  const [autosaving, setAutosaving] = useState(false);
+  const [storedDraftId, setStoredDraftId] = useState<string | null>(null);
+  const [draftPublicationId, setDraftPublicationId] = useState<string | null>(publication?.id ?? null);
+  const [draftHydrated, setDraftHydrated] = useState(mode === "edit" || !!publication);
+  const autosaveTimerRef = useRef<number | null>(null);
+  const autosaveInFlightRef = useRef(false);
+  const queuedAutosaveRef = useRef<PublicationFormValues | null>(null);
+  const draftPublicationIdRef = useRef<string | null>(publication?.id ?? null);
+  const lastSavedSnapshotRef = useRef<string>("");
+  const draftStorageKey = currentUserId ? `${AUTOSAVE_DRAFT_KEY}:${currentUserId}` : AUTOSAVE_DRAFT_KEY;
 
   const {
     register,
@@ -54,31 +118,165 @@ export function PublicationForm({
     control,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<PublicationFormValues>({
     resolver: zodResolver(publicationSchema) as any,
-    defaultValues: {
-      title: publication?.title ?? "",
-      slug: publication?.slug ?? "",
-      excerpt: publication?.excerpt ?? "",
-      content: publication?.content ?? "",
-      content_format: publication?.content_format ?? "html",
-      featured_image: publication?.featured_image ?? null,
-      categories:
-        publication?.categories?.map((c) => c.id) ?? [],
-      status: publication?.status ?? "draft",
-      is_featured: publication?.is_featured ?? false,
-      allow_comments: publication?.allow_comments ?? true,
-      meta_title: publication?.meta_title ?? "",
-      meta_description: publication?.meta_description ?? "",
-      keywords: publication?.keywords ?? "",
-      mins_read: publication?.mins_read ?? 0,
-    },
+    defaultValues: publication ? publicationToFormValues(publication) : createEmptyValues(),
   });
+
+  const allDrafts = usePublications(
+    mode === "create" && currentUserId
+      ? { params: { status: "draft", author: currentUserId } }
+      : undefined,
+  );
+  const watchedValues = watch();
+
+  useEffect(() => {
+    draftPublicationIdRef.current = publication?.id ?? draftPublicationId;
+  }, [publication?.id, draftPublicationId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !currentUserId) {
+      return;
+    }
+
+    setStoredDraftId(window.localStorage.getItem(draftStorageKey));
+  }, [currentUserId, draftStorageKey]);
+
+  const latestServerDraft = useMemo(() => {
+    const drafts = allDrafts.data?.data ?? [];
+    if (!drafts.length) {
+      return null;
+    }
+
+    return [...drafts]
+      .filter((draft) => draft.status === "draft")
+      .sort((left, right) => {
+        const leftTime = new Date(left.updated_at).getTime();
+        const rightTime = new Date(right.updated_at).getTime();
+        return rightTime - leftTime;
+      })[0] ?? null;
+  }, [allDrafts.data?.data]);
+
+  const storedDraft = useMemo(() => {
+    if (!storedDraftId) {
+      return null;
+    }
+
+    return (
+      allDrafts.data?.data?.find((draft) => draft.id === storedDraftId) ??
+      latestServerDraft
+    );
+  }, [storedDraftId, allDrafts.data?.data, latestServerDraft]);
+
+  useEffect(() => {
+    if (mode !== "create" || publication) {
+      setDraftHydrated(true);
+      return;
+    }
+
+    if (!currentUserId) {
+      return;
+    }
+
+    if (!allDrafts.isLoading && !draftHydrated) {
+      const draft = storedDraft;
+
+      if (draft) {
+        const values = publicationToFormValues(draft);
+        reset(values);
+        setDraftPublicationId(draft.id);
+        lastSavedSnapshotRef.current = JSON.stringify(values);
+
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(draftStorageKey, draft.id);
+        }
+      }
+
+      setDraftHydrated(true);
+    }
+  }, [mode, publication, storedDraft, allDrafts.isLoading, draftHydrated, reset, currentUserId, draftStorageKey]);
+
+  const persistDraft = async (values: PublicationFormValues) => {
+    if (autosaveInFlightRef.current) {
+      queuedAutosaveRef.current = values;
+      return;
+    }
+
+    autosaveInFlightRef.current = true;
+
+    try {
+      const payload = toAutosavePayload(values);
+      const saveTargetId = publication?.id ?? draftPublicationIdRef.current;
+
+      const response = saveTargetId
+        ? await updatePublication(saveTargetId, payload)
+        : await createPublication(payload);
+
+      const savedPublication = response?.data;
+      if (savedPublication?.id) {
+        draftPublicationIdRef.current = savedPublication.id;
+        setDraftPublicationId(savedPublication.id);
+
+        if (typeof window !== "undefined") {
+            window.localStorage.setItem(draftStorageKey, savedPublication.id);
+        }
+      }
+
+      lastSavedSnapshotRef.current = JSON.stringify(values);
+    } finally {
+      autosaveInFlightRef.current = false;
+
+      if (queuedAutosaveRef.current) {
+        const queuedValues = queuedAutosaveRef.current;
+        queuedAutosaveRef.current = null;
+
+        if (JSON.stringify(queuedValues) !== lastSavedSnapshotRef.current) {
+          void persistDraft(queuedValues);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (autosaveTimerRef.current) {
+      window.clearTimeout(autosaveTimerRef.current);
+    }
+
+    const canAutosave = (mode === "create" || publication?.status === "draft") && draftHydrated && !submitting;
+    const snapshot = JSON.stringify(watchedValues);
+
+    if (!canAutosave || snapshot === lastSavedSnapshotRef.current) {
+      return;
+    }
+
+    const hasWritableContent = watchedValues.title.trim().length > 0 || watchedValues.content.trim().length > 0;
+    if (!hasWritableContent) {
+      return;
+    }
+
+    autosaveTimerRef.current = window.setTimeout(async () => {
+      try {
+        setAutosaving(true);
+        await persistDraft(watchedValues);
+      } catch {
+        // Keep the user's local progress even if an autosave attempt fails.
+      } finally {
+        setAutosaving(false);
+      }
+    }, 1200);
+
+    return () => {
+      if (autosaveTimerRef.current) {
+        window.clearTimeout(autosaveTimerRef.current);
+      }
+    };
+  }, [draftHydrated, draftPublicationId, mode, publication?.id, publication?.status, submitting, watchedValues, draftStorageKey]);
 
   const contentFormat = watch("content_format");
   const featuredImage = watch("featured_image");
-  const pubId = publication?.id ?? SESSION_ID;
+  const pubId = publication?.id ?? draftPublicationId ?? "pub-new";
 
   const onSubmit = async (values: PublicationFormValues) => {
     setSubmitting(true);
@@ -99,15 +297,20 @@ export function PublicationForm({
         categories: values.categories,
       } as any;
 
-      const res =
-        mode === "create"
-          ? await createPublication(payload)
-          : await (await import("@/services/server/publications")).updatePublication(
-              publication!.id,
-              payload
-            );
+      const saveTargetId = publication?.id ?? draftPublicationId;
+      const res = saveTargetId
+        ? await updatePublication(saveTargetId, payload as any)
+        : await createPublication(payload);
 
       if (res?.data) {
+        if (typeof window !== "undefined") {
+          if (values.status === "draft") {
+            window.localStorage.setItem(draftStorageKey, res.data.id);
+          } else {
+            window.localStorage.removeItem(draftStorageKey);
+          }
+        }
+
         toast.success(
           mode === "create"
             ? "Publication created successfully"

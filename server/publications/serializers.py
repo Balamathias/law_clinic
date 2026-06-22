@@ -201,6 +201,8 @@ class PublicationDetailSerializer(serializers.ModelSerializer):
 
 class PublicationCreateUpdateSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), many=True, required=False)
+    title = serializers.CharField(required=False, allow_blank=True, max_length=255)
+    content = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Publication
@@ -222,9 +224,19 @@ class PublicationCreateUpdateSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, attrs):
-        if attrs.get("content_format", "html") == "html" and attrs.get("content"):
+        status_value = attrs.get("status", getattr(self.instance, "status", "draft"))
+        title = attrs.get("title", getattr(self.instance, "title", "")) or ""
+        content = attrs.get("content", getattr(self.instance, "content", "")) or ""
+
+        if status_value == "published" and not title.strip():
+            raise serializers.ValidationError({"title": "Title is required when publishing."})
+
+        if status_value == "published" and not content.strip():
+            raise serializers.ValidationError({"content": "Content is required when publishing."})
+
+        if attrs.get("content_format", "html") == "html" and content:
             attrs["content"] = bleach.clean(
-                attrs["content"],
+                content,
                 tags=ALLOWED_TAGS,
                 attributes=ALLOWED_ATTRS,
                 strip=True,

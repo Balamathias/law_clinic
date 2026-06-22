@@ -82,8 +82,9 @@ class Publication(models.Model):
 
     def save(self, *args, **kwargs):
         # Generate slug if not provided
-        if not self.slug:
-            self.slug = slugify(self.title)
+        if not self.slug or self.slug.startswith("draft-"):
+            generated_slug = slugify(self.title) if self.title else ""
+            self.slug = generated_slug or f"draft-{uuid.uuid4().hex}"
 
         # Set published_at when status changes to published
         if self.status == "published" and not self.published_at:

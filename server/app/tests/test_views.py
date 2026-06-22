@@ -223,3 +223,23 @@ def test_upload_view(mock_boto_client, api_client, regular_user, settings):
     assert response.data["data"]["url"].endswith(".png")
     mock_s3.upload_fileobj.assert_called_once()
 
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@pytest.mark.django_db
+def test_user_logout(api_client, regular_user):
+    url = "/api/v1/auth/logout/"
+    
+    # 1. Anonymous user gets unauthorized
+    response = api_client.post(url, {"refresh": "fake-refresh-token"}, format="json")
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    # 2. Authenticated user successfully logs out
+    api_client.force_authenticate(user=regular_user)
+    refresh = RefreshToken.for_user(regular_user)
+    
+    response = api_client.post(url, {"refresh": str(refresh)}, format="json")
+    assert response.status_code == status.HTTP_205_RESET_CONTENT
+    assert response.data["message"] == "Logout successful"
+
+

@@ -35,13 +35,13 @@ export const usePublications = (payload?: { params?: Record<string, string | num
 };
 
 // Get a single publication by ID
-export const usePublication = (id: string) => {
+export const usePublication = (id: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: [QUERY_KEYS.get_publication, id],
         queryFn: async () => {
             return getPublication(id);
         },
-        enabled: !!id,
+        enabled: options?.enabled ?? !!id,
     });
 };
 

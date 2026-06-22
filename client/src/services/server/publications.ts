@@ -70,10 +70,17 @@ export const getPublication = async (id: string): Promise<StackResponse<Publicat
 export interface CreatePublicationPayload {
     title: string
     content: string
-    summary?: string | null
-    category?: string | null
-    image?: string | null
-    is_published?: boolean
+    excerpt?: string | null
+    featured_image?: string | null
+    status?: 'draft' | 'published' | 'archived'
+    is_featured?: boolean
+    allow_comments?: boolean
+    meta_title?: string | null
+    meta_description?: string | null
+    keywords?: string | null
+    mins_read?: number
+    content_format?: 'markdown' | 'html'
+    categories?: string[]
 }
 
 export const createPublication = async (payload: CreatePublicationPayload): Promise<StackResponse<Publication | null>> => {
@@ -93,10 +100,17 @@ export const createPublication = async (payload: CreatePublicationPayload): Prom
 export interface UpdatePublicationPayload {
     title?: string
     content?: string
-    summary?: string | null
-    category?: string | null
-    image?: string | null
-    is_published?: boolean
+    excerpt?: string | null
+    featured_image?: string | null
+    status?: 'draft' | 'published' | 'archived'
+    is_featured?: boolean
+    allow_comments?: boolean
+    meta_title?: string | null
+    meta_description?: string | null
+    keywords?: string | null
+    mins_read?: number
+    content_format?: 'markdown' | 'html'
+    categories?: string[]
 }
 
 export const updatePublication = async (id: string, payload: UpdatePublicationPayload): Promise<StackResponse<Publication | null>> => {

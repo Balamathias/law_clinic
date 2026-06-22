@@ -515,9 +515,9 @@ class LogoutView(APIView, ClinicView):
             token = RefreshToken(refresh_token)
             token.blacklist()
             return self.clinic_response(
-                data={"message": "Logout successful"}, message="Logout successful", status=status.HTTP_205_RESET_CONTENT
+                data={"message": "Logout successful"}, message="Logout successful", status_code=status.HTTP_205_RESET_CONTENT
             )
         except Exception:
             return self.clinic_response(
-                data={"message": "Bad request"}, message="Bad request", status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Bad request"}, message="Bad request", status_code=status.HTTP_400_BAD_REQUEST
             )
