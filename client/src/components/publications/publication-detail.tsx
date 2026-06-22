@@ -46,21 +46,6 @@ const PublicationDetail: React.FC<PublicationDetailProps> = ({ publication }) =>
 
   return (
     <div className="container-prose py-12">
-      {/* Back button */}
-      <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mb-8"
-      >
-        <Button variant="ghost" size="sm" asChild className="group flex items-center gap-2">
-          <Link href="/publications">
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            <span>Back to publications</span>
-          </Link>
-        </Button>
-      </motion.div>
-
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

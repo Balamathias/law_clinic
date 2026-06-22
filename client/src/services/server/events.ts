@@ -2,7 +2,7 @@
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { Event, EventCategory, EventRegistration } from '@/@types/db'
-import { stackbase } from '../server.entry'
+import { stackbase, parseApiError } from '../server.entry'
 
 
 export interface EventsStats {
@@ -34,7 +34,7 @@ export const getEvents = async (payload?: EventPayload): Promise<PaginatedStackR
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -51,7 +51,7 @@ export const getEvent = async (slug: string): Promise<StackResponse<Event | null
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -82,7 +82,7 @@ export const createEvent = async (payload: CreateEventPayload): Promise<StackRes
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -96,7 +96,7 @@ export const updateEvent = async (slug: string, payload: CreateEventPayload): Pr
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -110,7 +110,7 @@ export const partialUpdateEvent = async (slug: string, payload: Partial<CreateEv
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -124,7 +124,7 @@ export const deleteEvent = async (slug: string): Promise<StackResponse<null>> =>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -138,7 +138,7 @@ export const registerForEvent = async (slug: string): Promise<StackResponse<Even
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -152,7 +152,7 @@ export const unregisterFromEvent = async (slug: string): Promise<StackResponse<n
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -166,7 +166,7 @@ export const checkEventRegistration = async (slug: string): Promise<StackRespons
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -185,7 +185,7 @@ export const getEventCategories = async (payload?: EventCategoryPayload): Promis
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -199,7 +199,7 @@ export const getEventCategory = async (id: string): Promise<StackResponse<EventC
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -218,7 +218,7 @@ export const createEventCategory = async (payload: CreateEventCategoryPayload): 
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -232,7 +232,7 @@ export const updateEventCategory = async (id: string, payload: CreateEventCatego
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -246,7 +246,7 @@ export const partialUpdateEventCategory = async (id: string, payload: Partial<Cr
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -260,7 +260,7 @@ export const deleteEventCategory = async (id: string): Promise<StackResponse<nul
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -279,7 +279,7 @@ export const getEventRegistrations = async (payload?: EventRegistrationPayload):
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -296,7 +296,7 @@ export const getEventRegistration = async (id: string): Promise<StackResponse<Ev
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -315,7 +315,7 @@ export const createEventRegistration = async (payload: CreateEventRegistrationPa
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -334,7 +334,7 @@ export const updateEventRegistration = async (id: string, payload: UpdateEventRe
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -348,7 +348,7 @@ export const partialUpdateEventRegistration = async (id: string, payload: Update
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -362,7 +362,7 @@ export const deleteEventRegistration = async (id: string): Promise<StackResponse
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -376,7 +376,7 @@ export const getMyEventRegistrations = async (): Promise<PaginatedStackResponse<
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -393,7 +393,7 @@ export const markRegistrationAttended = async (id: string, attended: boolean): P
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status

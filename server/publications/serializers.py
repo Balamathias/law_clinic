@@ -233,7 +233,8 @@ class PublicationCreateUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         categories_data = validated_data.pop("categories", [])
-        publication = Publication.objects.create(author=self.context["request"].user, **validated_data)
+        author = validated_data.pop("author", None) or self.context["request"].user
+        publication = Publication.objects.create(author=author, **validated_data)
         if categories_data:
             publication.categories.set(categories_data)
         return publication

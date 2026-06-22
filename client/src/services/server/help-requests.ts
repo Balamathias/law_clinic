@@ -2,7 +2,7 @@
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { HelpRequest } from '@/@types/db'
-import { stackbase } from '../server.entry'
+import { stackbase, parseApiError } from '../server.entry'
 
 export interface HelpRequestsStats {
     total: number
@@ -34,7 +34,7 @@ export const getHelpRequests = async (payload?: HelpRequestPayload): Promise<Pag
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -51,7 +51,7 @@ export const getHelpRequest = async (id: string): Promise<StackResponse<HelpRequ
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -74,7 +74,7 @@ export const createHelpRequest = async (payload: CreateHelpRequestPayload): Prom
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -100,7 +100,7 @@ export const updateHelpRequest = async (id: string, payload: UpdateHelpRequestPa
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -114,7 +114,7 @@ export const partialUpdateHelpRequest = async (id: string, payload: UpdateHelpRe
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -128,7 +128,7 @@ export const deleteHelpRequest = async (id: string): Promise<StackResponse<null>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -142,7 +142,7 @@ export const getHelpRequestStats = async (): Promise<StackResponse<any>> => {
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status

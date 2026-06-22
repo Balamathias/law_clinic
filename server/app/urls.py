@@ -45,6 +45,7 @@ from app.views import (
     RequestPasswordResetView,
     ResendOTPView,
     UpdateUserView,
+    UploadView,
     UserViewSet,
     ValidateResetTokenView,
     VerifyOTPView,
@@ -81,4 +82,5 @@ urlpatterns += [
         ConfirmPasswordResetView.as_view(),
         name="password_reset_confirm",
     ),
+    path("uploads/", UploadView.as_view(), name="uploads"),
 ]

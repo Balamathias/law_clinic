@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion"
 import { usePathname } from "next/navigation"
 import { MobileNav } from "./mobile-nav"
@@ -20,6 +20,7 @@ const navItems = [
 
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeHash, setActiveHash] = useState("")
   const { scrollY } = useScroll()
   const prefersReduced = useReducedMotion()
   const pathname = usePathname()
@@ -32,10 +33,34 @@ export function SiteHeader() {
     setIsScrolled(latest > 40)
   })
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleHashChange = () => {
+      setActiveHash(window.location.hash)
+    }
+    handleHashChange()
+    window.addEventListener('hashchange', handleHashChange)
+    window.addEventListener('popstate', handleHashChange)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+      window.removeEventListener('popstate', handleHashChange)
+    }
+  }, [])
+
   const useDarkText = isLightBgPage || isScrolled
 
   const isActive = (href: string) => {
-    if (href.startsWith('/#')) return pathname === "/"
+    const [path, hash] = href.split('#')
+    const hasHash = !!hash
+
+    if (hasHash) {
+      return pathname === path && activeHash === '#' + hash
+    }
+
+    if (path === '/') {
+      return pathname === '/' && !activeHash
+    }
+
     return pathname === href || pathname.startsWith(href + '/')
   }
 

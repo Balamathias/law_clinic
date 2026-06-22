@@ -65,3 +65,47 @@ clientClient.interceptors.response.use(
 );
 
 export { clientClient as stackbase };
+
+export function parseApiError(error: any): string {
+  const responseData = error?.response?.data;
+  if (!responseData) {
+    return error?.message || "An unexpected error occurred";
+  }
+
+  // If the backend wrapped the validation errors inside `error` property
+  const errorObj = responseData.error || responseData;
+
+  if (typeof errorObj === "object" && errorObj !== null) {
+    const errorMessages = Object.entries(errorObj)
+      .map(([field, msgs]) => {
+        if (field === "status" || field === "message" || field === "error") return null;
+
+        const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+        if (Array.isArray(msgs)) {
+          return `${fieldName}: ${msgs.join(", ")}`;
+        }
+        if (typeof msgs === "string") {
+          return `${fieldName}: ${msgs}`;
+        }
+        if (typeof msgs === "object" && msgs !== null) {
+          return `${fieldName}: ${JSON.stringify(msgs)}`;
+        }
+        return `${fieldName}: ${msgs}`;
+      })
+      .filter(Boolean)
+      .join("\n");
+
+    if (errorMessages) {
+      return errorMessages;
+    }
+  }
+
+  if (responseData.message && typeof responseData.message === "string") {
+    return responseData.message;
+  }
+  if (responseData.detail && typeof responseData.detail === "string") {
+    return responseData.detail;
+  }
+
+  return "An unexpected error occurred";
+}

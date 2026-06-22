@@ -1,3 +1,5 @@
+import { stackbase } from "@/services/server.entry";
+
 type UploadArgs = {
   file: File;
   category: "publications" | "gallery" | "avatars" | "sponsors" | "events";
@@ -11,40 +13,31 @@ export async function uploadImage({
   id,
   onProgress,
 }: UploadArgs): Promise<string> {
-  const presignRes = await fetch("/api/uploads/presign", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      category,
-      filename: file.name,
-      contentType: file.type,
-      id,
-    }),
-  });
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("category", category);
+  formData.append("id", id);
 
-  if (!presignRes.ok) {
-    const err = await presignRes.json().catch(() => ({}));
-    throw new Error(err?.error ?? "Failed to obtain upload URL");
+  try {
+    const response = await stackbase.post("/uploads/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          onProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
+        }
+      },
+    });
+
+    const result = response.data;
+    if (result && result.data && result.data.url) {
+      return result.data.url;
+    }
+    
+    throw new Error(result?.message || "Invalid upload response from server");
+  } catch (error: any) {
+    const errorMsg = error?.response?.data?.message || error?.message || "Failed to upload image";
+    throw new Error(errorMsg);
   }
-
-  const { uploadUrl, publicUrl } = await presignRes.json();
-
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", uploadUrl);
-    xhr.setRequestHeader("Content-Type", file.type);
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable && onProgress) {
-        onProgress(Math.round((e.loaded / e.total) * 100));
-      }
-    };
-    xhr.onload = () =>
-      xhr.status >= 200 && xhr.status < 300
-        ? resolve()
-        : reject(new Error(`Upload failed: ${xhr.status}`));
-    xhr.onerror = () => reject(new Error("Network error during upload"));
-    xhr.send(file);
-  });
-
-  return publicUrl as string;
 }

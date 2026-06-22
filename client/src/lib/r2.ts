@@ -43,7 +43,7 @@ export async function presignPut(
 ): Promise<string> {
   const client = r2Client();
   const cmd = new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET!,
+    Bucket: process.env.R2_BUCKET_NAME!,
     Key: key,
     ContentType: contentType,
   });

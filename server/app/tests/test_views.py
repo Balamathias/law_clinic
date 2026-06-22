@@ -183,3 +183,43 @@ def test_password_reset_flow(api_client, regular_user, settings):
     regular_user.refresh_from_db()
     assert regular_user.check_password("testpassword123") is False
     assert regular_user.check_password("newstrongpassword123") is True
+
+
+from unittest.mock import patch, MagicMock
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+@pytest.mark.django_db
+@patch("app.views.uploads.boto3.client")
+def test_upload_view(mock_boto_client, api_client, regular_user, settings):
+    """
+    Test that authenticated users can upload files to R2 via UploadView.
+    """
+    settings.R2_ACCOUNT_ID = "test-account"
+    settings.R2_ACCESS_KEY_ID = "test-key"
+    settings.R2_SECRET_ACCESS_KEY = "test-secret"
+    settings.R2_BUCKET_NAME = "test-bucket"
+    settings.R2_PUBLIC_URL_BASE = "https://cdn.example.com"
+
+    mock_s3 = MagicMock()
+    mock_boto_client.return_value = mock_s3
+
+    url = "/api/v1/uploads/"
+    file_content = b"fake image content"
+    uploaded_file = SimpleUploadedFile("test_image.png", file_content, content_type="image/png")
+
+    # 1. Anonymous user gets unauthorized
+    response = api_client.post(url, {"file": uploaded_file, "category": "publications"}, format="multipart")
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    # 2. Authenticated user successfully uploads
+    api_client.force_authenticate(user=regular_user)
+    # Re-create uploaded file because it gets consumed
+    uploaded_file = SimpleUploadedFile("test_image.png", file_content, content_type="image/png")
+    response = api_client.post(url, {"file": uploaded_file, "category": "publications"}, format="multipart")
+    
+    assert response.status_code == status.HTTP_201_CREATED
+    assert "url" in response.data["data"]
+    assert response.data["data"]["url"].startswith("https://cdn.example.com/publications/")
+    assert response.data["data"]["url"].endswith(".png")
+    mock_s3.upload_fileobj.assert_called_once()
+

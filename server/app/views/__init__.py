@@ -18,3 +18,5 @@ from .users import (
     UpdateUserView,
     UserViewSet,
 )
+from .uploads import UploadView
+

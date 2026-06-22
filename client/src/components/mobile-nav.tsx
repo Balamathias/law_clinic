@@ -51,15 +51,40 @@ export function MobileNav({ useDarkElements = false }: MobileNavProps) {
     }
   }, [isOpen])
 
+  const [activeHash, setActiveHash] = useState("")
+
   // Close menu on route change
   useEffect(() => {
     setIsOpen(false)
   }, [pathname])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleHashChange = () => {
+      setActiveHash(window.location.hash)
+    }
+    handleHashChange()
+    window.addEventListener('hashchange', handleHashChange)
+    window.addEventListener('popstate', handleHashChange)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+      window.removeEventListener('popstate', handleHashChange)
+    }
+  }, [])
+
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/'
-    if (href.startsWith('/#')) return pathname === '/'
-    return pathname.startsWith(href)
+    const [path, hash] = href.split('#')
+    const hasHash = !!hash
+
+    if (hasHash) {
+      return pathname === path && activeHash === '#' + hash
+    }
+
+    if (path === '/') {
+      return pathname === '/' && !activeHash
+    }
+
+    return pathname === path || pathname.startsWith(path + '/')
   }
 
   const menuVariants = {

@@ -1,7 +1,7 @@
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { Publication, PublicationCategory, PublicationsOverview, PublicationStats } from '@/@types/db'
-import { stackbase } from '../server.entry'
+import { stackbase, parseApiError } from '../server.entry'
 
 export interface PublicationsStats {
     total: number
@@ -42,7 +42,7 @@ export const getPublications = async (payload?: PublicationPayload): Promise<Pag
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -59,7 +59,7 @@ export const getPublication = async (id: string): Promise<StackResponse<Publicat
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -82,7 +82,7 @@ export const createPublication = async (payload: CreatePublicationPayload): Prom
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -105,7 +105,7 @@ export const updatePublication = async (id: string, payload: UpdatePublicationPa
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -119,7 +119,7 @@ export const partialUpdatePublication = async (id: string, payload: UpdatePublic
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -133,7 +133,7 @@ export const deletePublication = async (id: string): Promise<StackResponse<null>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -152,7 +152,7 @@ export const getCategories = async (payload?: CategoryPayload): Promise<StackRes
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -166,7 +166,7 @@ export const getCategory = async (id: string): Promise<StackResponse<Publication
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -185,7 +185,7 @@ export const createCategory = async (payload: CreateCategoryPayload): Promise<St
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -204,7 +204,7 @@ export const updateCategory = async (id: string, payload: UpdateCategoryPayload)
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -218,7 +218,7 @@ export const partialUpdateCategory = async (id: string, payload: UpdateCategoryP
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -232,7 +232,7 @@ export const deleteCategory = async (id: string): Promise<StackResponse<null>> =
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -246,7 +246,7 @@ export const getPublicationStats = async (): Promise<StackResponse<PublicationSt
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -260,7 +260,7 @@ export const getPublicationOverview = async (): Promise<StackResponse<Publicatio
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status

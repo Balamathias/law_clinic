@@ -1,7 +1,7 @@
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { User, UsersOverview } from '@/@types/db'
-import { stackbase } from '../server.entry'
+import { stackbase, parseApiError } from '../server.entry'
 
 export interface UsersStats {
     total: number
@@ -31,7 +31,7 @@ export const getUsers = async (payload?: UserPayload): Promise<PaginatedStackRes
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status,
@@ -48,7 +48,7 @@ export const getUsersOview = async (payload?: UserPayload): Promise<StackRespons
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -62,7 +62,7 @@ export const getUser = async (id: string): Promise<StackResponse<User | null>> =
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -76,7 +76,7 @@ export const getUserQuizStats = async (userId: string): Promise<StackResponse<an
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -90,7 +90,7 @@ export const getUserActivity = async (userId: string): Promise<StackResponse<any
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -115,7 +115,7 @@ export const createUser = async (payload: CreateUserPayload): Promise<StackRespo
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -140,7 +140,7 @@ export const updateUser = async (id: string, payload: UpdateUserPayload): Promis
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -154,7 +154,7 @@ export const deleteUser = async (id: string): Promise<StackResponse<User | null>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
