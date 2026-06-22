@@ -181,7 +181,7 @@ interface EventCategoryPayload {
 
 export const getEventCategories = async (payload?: EventCategoryPayload): Promise<StackResponse<EventCategory[]>> => {
     try {
-        const { data } = await stackbase.get('/event-categories/', { ...payload })
+        const { data } = await stackbase.get('/events/event-categories/', { ...payload })
         return data
     } catch (error: any) {
         return {
@@ -195,7 +195,7 @@ export const getEventCategories = async (payload?: EventCategoryPayload): Promis
 
 export const getEventCategory = async (id: string): Promise<StackResponse<EventCategory | null>> => {
     try {
-        const { data } = await stackbase.get(`/event-categories/${id}/`)
+        const { data } = await stackbase.get(`/events/event-categories/${id}/`)
         return data
     } catch (error: any) {
         return {
@@ -214,7 +214,7 @@ export interface CreateEventCategoryPayload {
 
 export const createEventCategory = async (payload: CreateEventCategoryPayload): Promise<StackResponse<EventCategory | null>> => {
     try {
-        const { data } = await stackbase.post('/event-categories/', payload)
+        const { data } = await stackbase.post('/events/event-categories/', payload)
         return data
     } catch (error: any) {
         return {
@@ -228,7 +228,7 @@ export const createEventCategory = async (payload: CreateEventCategoryPayload): 
 
 export const updateEventCategory = async (id: string, payload: CreateEventCategoryPayload): Promise<StackResponse<EventCategory | null>> => {
     try {
-        const { data } = await stackbase.put(`/event-categories/${id}/`, payload)
+        const { data } = await stackbase.put(`/events/event-categories/${id}/`, payload)
         return data
     } catch (error: any) {
         return {
@@ -242,7 +242,7 @@ export const updateEventCategory = async (id: string, payload: CreateEventCatego
 
 export const partialUpdateEventCategory = async (id: string, payload: Partial<CreateEventCategoryPayload>): Promise<StackResponse<EventCategory | null>> => {
     try {
-        const { data } = await stackbase.patch(`/event-categories/${id}/`, payload)
+        const { data } = await stackbase.patch(`/events/event-categories/${id}/`, payload)
         return data
     } catch (error: any) {
         return {
@@ -256,7 +256,7 @@ export const partialUpdateEventCategory = async (id: string, payload: Partial<Cr
 
 export const deleteEventCategory = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/event-categories/${id}/`)
+        const { data } = await stackbase.delete(`/events/event-categories/${id}/`)
         return data
     } catch (error: any) {
         return {
@@ -275,7 +275,7 @@ interface EventRegistrationPayload {
 
 export const getEventRegistrations = async (payload?: EventRegistrationPayload): Promise<PaginatedStackResponse<EventRegistration[]>> => {
     try {
-        const { data } = await stackbase.get('/event-registrations/', { ...payload })
+        const { data } = await stackbase.get('/events/event-registrations/', { ...payload })
         return data
     } catch (error: any) {
         return {
@@ -292,7 +292,7 @@ export const getEventRegistrations = async (payload?: EventRegistrationPayload):
 
 export const getEventRegistration = async (id: string): Promise<StackResponse<EventRegistration | null>> => {
     try {
-        const { data } = await stackbase.get(`/event-registrations/${id}/`)
+        const { data } = await stackbase.get(`/events/event-registrations/${id}/`)
         return data
     } catch (error: any) {
         return {
@@ -311,7 +311,7 @@ export interface CreateEventRegistrationPayload {
 
 export const createEventRegistration = async (payload: CreateEventRegistrationPayload): Promise<StackResponse<EventRegistration | null>> => {
     try {
-        const { data } = await stackbase.post('/event-registrations/', payload)
+        const { data } = await stackbase.post('/events/event-registrations/', payload)
         return data
     } catch (error: any) {
         return {
@@ -330,7 +330,7 @@ export interface UpdateEventRegistrationPayload {
 
 export const updateEventRegistration = async (id: string, payload: UpdateEventRegistrationPayload): Promise<StackResponse<EventRegistration | null>> => {
     try {
-        const { data } = await stackbase.put(`/event-registrations/${id}/`, payload)
+        const { data } = await stackbase.put(`/events/event-registrations/${id}/`, payload)
         return data
     } catch (error: any) {
         return {
@@ -344,7 +344,7 @@ export const updateEventRegistration = async (id: string, payload: UpdateEventRe
 
 export const partialUpdateEventRegistration = async (id: string, payload: UpdateEventRegistrationPayload): Promise<StackResponse<EventRegistration | null>> => {
     try {
-        const { data } = await stackbase.patch(`/event-registrations/${id}/`, payload)
+        const { data } = await stackbase.patch(`/events/event-registrations/${id}/`, payload)
         return data
     } catch (error: any) {
         return {
@@ -358,7 +358,7 @@ export const partialUpdateEventRegistration = async (id: string, payload: Update
 
 export const deleteEventRegistration = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/event-registrations/${id}/`)
+        const { data } = await stackbase.delete(`/events/event-registrations/${id}/`)
         return data
     } catch (error: any) {
         return {
@@ -372,7 +372,7 @@ export const deleteEventRegistration = async (id: string): Promise<StackResponse
 
 export const getMyEventRegistrations = async (): Promise<PaginatedStackResponse<EventRegistration[]>> => {
     try {
-        const { data } = await stackbase.get('/event-registrations/my_registrations/')
+        const { data } = await stackbase.get('/events/event-registrations/my_registrations/')
         return data
     } catch (error: any) {
         return {
@@ -389,7 +389,7 @@ export const getMyEventRegistrations = async (): Promise<PaginatedStackResponse<
 
 export const markRegistrationAttended = async (id: string, attended: boolean): Promise<StackResponse<EventRegistration | null>> => {
     try {
-        const { data } = await stackbase.patch(`/event-registrations/${id}/mark_attended/`, { attended })
+        const { data } = await stackbase.patch(`/events/event-registrations/${id}/mark_attended/`, { attended })
         return data
     } catch (error: any) {
         return {

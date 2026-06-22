@@ -36,6 +36,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from app.views import (
+    ChangePasswordView,
     ConfirmPasswordResetView,
     CurrentUserView,
     HelpRequestViewSet,
@@ -68,6 +69,7 @@ urlpatterns += [
     path("auth/logout/", LogoutView.as_view(), name="logout"),
     path("auth/user/", CurrentUserView.as_view(), name="current_user"),
     path("auth/update-user/", UpdateUserView.as_view(), name="update_user"),
+    path("auth/change-password/", ChangePasswordView.as_view(), name="change_password"),
     path("auth/verify-otp/", VerifyOTPView.as_view(), name="verify-otp"),
     path("auth/resend-otp/", ResendOTPView.as_view(), name="resend-otp"),
     # Password Reset

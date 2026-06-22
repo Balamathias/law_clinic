@@ -2,7 +2,7 @@
 
 import { StackResponse, PaginatedStackResponse } from '@/@types/generics'
 import { AppData, Gallery, GalleryImage, Sponsor, Testimonial } from '@/@types/db'
-import { stackbase } from '../server.entry'
+import { stackbase, parseApiError } from '../server.entry'
 
 // App Data functions
 interface AppDataPayload {
@@ -15,7 +15,7 @@ export const getAppData = async (payload?: AppDataPayload): Promise<StackRespons
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -29,7 +29,7 @@ export const getSingleAppData = async (id: string): Promise<StackResponse<AppDat
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -42,6 +42,8 @@ export interface CreateAppDataPayload {
     logo_url?: string | null
     mission_statement: string
     vision_statement: string
+    objectives?: string | null
+    history?: string | null
 }
 
 export const createAppData = async (payload: CreateAppDataPayload): Promise<StackResponse<AppData | null>> => {
@@ -50,7 +52,7 @@ export const createAppData = async (payload: CreateAppDataPayload): Promise<Stac
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -63,6 +65,8 @@ export interface UpdateAppDataPayload {
     logo_url?: string | null
     mission_statement?: string
     vision_statement?: string
+    objectives?: string | null
+    history?: string | null
 }
 
 export const updateAppData = async (id: string, payload: UpdateAppDataPayload): Promise<StackResponse<AppData | null>> => {
@@ -71,7 +75,7 @@ export const updateAppData = async (id: string, payload: UpdateAppDataPayload): 
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -85,7 +89,7 @@ export const partialUpdateAppData = async (id: string, payload: UpdateAppDataPay
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -99,7 +103,7 @@ export const deleteAppData = async (id: string): Promise<StackResponse<null>> =>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -118,7 +122,7 @@ export const getGalleries = async (payload?: GalleryPayload): Promise<StackRespo
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -132,7 +136,7 @@ export const getGalleriesByDepartment = async (department: string): Promise<Stac
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -146,7 +150,7 @@ export const getGallery = async (id: string): Promise<StackResponse<Gallery | nu
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -169,7 +173,7 @@ export const createGallery = async (payload: CreateGalleryPayload): Promise<Stac
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -192,7 +196,7 @@ export const updateGallery = async (id: string, payload: UpdateGalleryPayload): 
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -206,7 +210,7 @@ export const partialUpdateGallery = async (id: string, payload: UpdateGalleryPay
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -220,7 +224,7 @@ export const deleteGallery = async (id: string): Promise<StackResponse<null>> =>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -239,7 +243,7 @@ export const getGalleryImages = async (payload?: GalleryImagePayload): Promise<S
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -253,7 +257,7 @@ export const getGalleryImage = async (id: string): Promise<StackResponse<Gallery
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -277,7 +281,7 @@ export const createGalleryImage = async (payload: CreateGalleryImagePayload): Pr
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -301,7 +305,7 @@ export const updateGalleryImage = async (id: string, payload: UpdateGalleryImage
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -315,7 +319,7 @@ export const partialUpdateGalleryImage = async (id: string, payload: UpdateGalle
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -329,7 +333,7 @@ export const deleteGalleryImage = async (id: string): Promise<StackResponse<null
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -348,7 +352,7 @@ export const getSponsors = async (payload?: SponsorPayload): Promise<StackRespon
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -362,7 +366,7 @@ export const getSponsorsByType = async (type: 'person' | 'organization'): Promis
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -376,7 +380,7 @@ export const getSponsor = async (id: string): Promise<StackResponse<Sponsor | nu
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -398,7 +402,7 @@ export const createSponsor = async (payload: CreateSponsorPayload): Promise<Stac
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -420,7 +424,7 @@ export const updateSponsor = async (id: string, payload: UpdateSponsorPayload): 
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -434,7 +438,7 @@ export const partialUpdateSponsor = async (id: string, payload: UpdateSponsorPay
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -448,7 +452,7 @@ export const deleteSponsor = async (id: string): Promise<StackResponse<null>> =>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -467,7 +471,7 @@ export const getTestimonials = async (payload?: TestimonialPayload): Promise<Sta
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: [],
             status: error?.response?.status
@@ -481,7 +485,7 @@ export const getTestimonial = async (id: string): Promise<StackResponse<Testimon
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -503,7 +507,7 @@ export const createTestimonial = async (payload: CreateTestimonialPayload): Prom
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -525,7 +529,7 @@ export const updateTestimonial = async (id: string, payload: UpdateTestimonialPa
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -539,7 +543,7 @@ export const partialUpdateTestimonial = async (id: string, payload: UpdateTestim
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status
@@ -553,7 +557,7 @@ export const deleteTestimonial = async (id: string): Promise<StackResponse<null>
         return data
     } catch (error: any) {
         return {
-            message: error?.response?.data?.message || error.response?.data?.detail,
+            message: parseApiError(error),
             error: error?.response?.data,
             data: null,
             status: error?.response?.status

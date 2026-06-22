@@ -1,7 +1,7 @@
 import { LoginResponse, OTPResponse, RefreshResponse, RegisterResponse, ResendOTPResponse, ResetPasswordConfirmResponse, ResetPasswordResponse } from "@/@types/auth"
 import { User } from "@/@types/db"
 import { status as STATUS } from "@/lib/utils"
-import { stackbase } from "../server.entry"
+import { stackbase, parseApiError } from "../server.entry"
 import { StackResponse } from "@/@types/generics"
 
 /**
@@ -415,4 +415,18 @@ export const getCookies = async () => {
     return { cookieStore: null, token };
   }
   return { cookieStore: null, token: null };
+}
+
+export const changePassword = async (payload: { old_password: string; new_password: string }): Promise<StackResponse<null>> => {
+  try {
+    const { data } = await stackbase.post('/auth/change-password/', payload)
+    return data
+  } catch (error: any) {
+    return {
+      message: parseApiError(error),
+      error: error?.response?.data,
+      data: null,
+      status: error?.response?.status
+    }
+  }
 }

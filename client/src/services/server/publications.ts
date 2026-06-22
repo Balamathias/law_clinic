@@ -267,3 +267,69 @@ export const getPublicationOverview = async (): Promise<StackResponse<Publicatio
         }
     }
 }
+
+// Comment functions
+export interface CommentPayload {
+    params?: Record<string, string | number | boolean>
+}
+
+export interface ClinicComment {
+    id: string
+    content: string
+    created_at: string
+    is_approved: boolean
+    parent: string | null
+    author: {
+        id: string
+        username: string
+        first_name?: string
+        last_name?: string
+        email: string
+    }
+}
+
+export const getComments = async (payload?: CommentPayload): Promise<PaginatedStackResponse<ClinicComment[]>> => {
+    try {
+        const { data } = await stackbase.get('/publications/comments/', { ...payload })
+        return data
+    } catch (error: any) {
+        return {
+            message: parseApiError(error),
+            error: error?.response?.data,
+            data: [],
+            status: error?.response?.status,
+            count: 0,
+            next: '',
+            previous: ''
+        }
+    }
+}
+
+export const updateComment = async (id: string, payload: { is_approved?: boolean; content?: string }): Promise<StackResponse<ClinicComment | null>> => {
+    try {
+        const { data } = await stackbase.patch(`/publications/comments/${id}/`, payload)
+        return data
+    } catch (error: any) {
+        return {
+            message: parseApiError(error),
+            error: error?.response?.data,
+            data: null,
+            status: error?.response?.status
+        }
+    }
+}
+
+export const deleteComment = async (id: string): Promise<StackResponse<null>> => {
+    try {
+        const { data } = await stackbase.delete(`/publications/comments/${id}/`)
+        return data
+    } catch (error: any) {
+        return {
+            message: parseApiError(error),
+            error: error?.response?.data,
+            data: null,
+            status: error?.response?.status
+        }
+    }
+}
+

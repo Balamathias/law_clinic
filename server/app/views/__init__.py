@@ -14,6 +14,7 @@ from .help_requests import (
     HelpRequestViewSet,
 )
 from .users import (
+    ChangePasswordView,
     CurrentUserView,
     UpdateUserView,
     UserViewSet,

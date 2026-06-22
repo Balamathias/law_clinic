@@ -271,3 +271,92 @@ class PublicationViewSet(viewsets.ModelViewSet, ClinicView):
                 "message": "Publication statistics retrieved successfully",
             }
         )
+
+
+class CommentViewSet(viewsets.ModelViewSet, ClinicView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve", "create"]:
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        # Admin / staff can see all comments, public can only see approved ones or filter by publication
+        if not (request.user.is_authenticated and request.user.is_staff):
+            queryset = queryset.filter(is_approved=True)
+
+        publication_id = request.query_params.get("publication")
+        if publication_id:
+            queryset = queryset.filter(publication_id=publication_id)
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            paginated_data = self.get_paginated_response(serializer.data).data
+            return self.clinic_response(
+                data=paginated_data["results"],
+                message="Comments retrieved successfully",
+                status_code=status.HTTP_200_OK,
+                count=paginated_data["count"],
+                next=paginated_data["next"],
+                previous=paginated_data["previous"],
+            )
+
+        serializer = self.get_serializer(queryset, many=True)
+        return self.clinic_response(data=serializer.data, message="Comments retrieved successfully")
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return self.clinic_response(data=serializer.data, message="Comment retrieved successfully")
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        
+        # Allow editing is_approved field for staff
+        if request.user.is_staff and "is_approved" in request.data:
+            instance.is_approved = request.data["is_approved"]
+            instance.save()
+            
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return self.clinic_response(
+                data=serializer.data,
+                message="Comment updated successfully",
+                status_code=status.HTTP_200_OK,
+            )
+        return self.clinic_response(
+            error=serializer.errors,
+            message="Failed to update comment",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return self.clinic_response(
+            message="Comment deleted successfully",
+            status_code=status.HTTP_204_NO_CONTENT,
+        )
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAdminUser])
+    def approve(self, request, pk=None):
+        comment = self.get_object()
+        comment.is_approved = True
+        comment.save()
+        return self.clinic_response(message="Comment approved successfully")
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAdminUser])
+    def reject(self, request, pk=None):
+        comment = self.get_object()
+        comment.is_approved = False
+        comment.save()
+        return self.clinic_response(message="Comment rejected successfully")
+

@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet, PublicationViewSet
+from .views import CategoryViewSet, CommentViewSet, PublicationViewSet
 
 router = DefaultRouter()
 # Publications endpoints:
@@ -21,6 +21,9 @@ router.register("", PublicationViewSet, basename="publication")
 # PATCH /api/categories/{id}/ - Update a category partially
 # DELETE /api/categories/{id}/ - Delete a category
 router.register("categories", CategoryViewSet, basename="category")
+
+# Comments endpoints:
+router.register("comments", CommentViewSet, basename="comment")
 
 app_name = "publications"
 
