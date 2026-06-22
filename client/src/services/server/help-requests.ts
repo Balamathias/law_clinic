@@ -124,8 +124,13 @@ export const partialUpdateHelpRequest = async (id: string, payload: UpdateHelpRe
 
 export const deleteHelpRequest = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/help-requests/${id}/`)
-        return data
+        const response = await stackbase.delete(`/help-requests/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),

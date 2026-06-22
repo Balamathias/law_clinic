@@ -120,8 +120,13 @@ export const partialUpdateEvent = async (slug: string, payload: Partial<CreateEv
 
 export const deleteEvent = async (slug: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/events/${slug}/`)
-        return data
+        const response = await stackbase.delete(`/events/${slug}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -148,8 +153,13 @@ export const registerForEvent = async (slug: string): Promise<StackResponse<Even
 
 export const unregisterFromEvent = async (slug: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/events/${slug}/unregister/`)
-        return data
+        const response = await stackbase.delete(`/events/${slug}/unregister/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -256,8 +266,13 @@ export const partialUpdateEventCategory = async (id: string, payload: Partial<Cr
 
 export const deleteEventCategory = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/events/event-categories/${id}/`)
-        return data
+        const response = await stackbase.delete(`/events/event-categories/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -358,8 +373,13 @@ export const partialUpdateEventRegistration = async (id: string, payload: Update
 
 export const deleteEventRegistration = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/events/event-registrations/${id}/`)
-        return data
+        const response = await stackbase.delete(`/events/event-registrations/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),

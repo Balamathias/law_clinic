@@ -99,8 +99,13 @@ export const partialUpdateAppData = async (id: string, payload: UpdateAppDataPay
 
 export const deleteAppData = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/app_settings/app-data/${id}/`)
-        return data
+        const response = await stackbase.delete(`/app_settings/app-data/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -220,8 +225,13 @@ export const partialUpdateGallery = async (id: string, payload: UpdateGalleryPay
 
 export const deleteGallery = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/app_settings/galleries/${id}/`)
-        return data
+        const response = await stackbase.delete(`/app_settings/galleries/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -329,8 +339,13 @@ export const partialUpdateGalleryImage = async (id: string, payload: UpdateGalle
 
 export const deleteGalleryImage = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/app_settings/gallery-images/${id}/`)
-        return data
+        const response = await stackbase.delete(`/app_settings/gallery-images/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -448,8 +463,13 @@ export const partialUpdateSponsor = async (id: string, payload: UpdateSponsorPay
 
 export const deleteSponsor = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/app_settings/sponsors/${id}/`)
-        return data
+        const response = await stackbase.delete(`/app_settings/sponsors/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -553,8 +573,13 @@ export const partialUpdateTestimonial = async (id: string, payload: UpdateTestim
 
 export const deleteTestimonial = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/app_settings/testimonials/${id}/`)
-        return data
+        const response = await stackbase.delete(`/app_settings/testimonials/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),

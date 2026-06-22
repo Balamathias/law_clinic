@@ -150,8 +150,13 @@ export const updateUser = async (id: string, payload: UpdateUserPayload): Promis
 
 export const deleteUser = async (id: string): Promise<StackResponse<User | null>> => {
     try {
-        const { data } = await stackbase.delete(`/users/${id}/`)
-        return data
+        const response = await stackbase.delete(`/users/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),

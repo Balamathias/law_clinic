@@ -129,8 +129,13 @@ export const partialUpdatePublication = async (id: string, payload: UpdatePublic
 
 export const deletePublication = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/publications/${id}/`)
-        return data
+        const response = await stackbase.delete(`/publications/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
@@ -228,8 +233,13 @@ export const partialUpdateCategory = async (id: string, payload: UpdateCategoryP
 
 export const deleteCategory = async (id: string): Promise<StackResponse<null>> => {
     try {
-        const { data } = await stackbase.delete(`/publications/categories/${id}/`)
-        return data
+        const response = await stackbase.delete(`/publications/categories/${id}/`)
+        return {
+            data: response.data || null,
+            status: response.status,
+            message: 'Deleted successfully',
+            error: null
+        }
     } catch (error: any) {
         return {
             message: parseApiError(error),
